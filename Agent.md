@@ -10,4 +10,4 @@ Przed publikacją każdego nowego wydania zwiększ numer wersji względem ostatn
 
 ## Kompletność paczki
 
-Każda paczka dla użytkowników musi zawierać aplikację oraz komplet wymaganych bibliotek i komponentów, w tym środowisko uruchomieniowe. Użytkownik ma móc rozpakować paczkę i uruchomić aplikację bez samodzielnego instalowania zależności. Przed publikacją uruchom aplikację z rozpakowanej paczki i sprawdź, czy korzysta z dołączonego środowiska.
+Każda paczka dla użytkowników musi zawierać aplikację i wszystkie wymagane pliki spoza obsługiwanego systemu Windows. Korzystaj z systemowego .NET Framework 4.8 lub nowszego w celu utrzymania niewielkiej paczki. Użytkownik obsługiwanej wersji Windows ma móc rozpakować paczkę i uruchomić aplikację bez instalowania dodatkowych zależności. Zapisuj nazwy plików w ZIP-ie w UTF-8. Przed publikacją rozpakuj paczkę w Windows i sprawdź uruchomienie programu.

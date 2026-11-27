@@ -1,5 +1,5 @@
 ﻿Dostępna Biblia
-Wersja 1.1.1
+Wersja 1.1.2
 Dokumentacja użytkownika i kompilacji
 
 1. Do czego służy program
@@ -8,9 +8,10 @@ Dostępna Biblia to aplikacja dla Windows do czytania Biblii i liturgii słowa n
 wybrany dzień. Pobiera teksty z TwojaBiblia.pl. Tekst biblijny
 pochodzi z Biblii Tysiąclecia, wydanie V.
 
-Pobierz paczkę Windows dla swojej architektury (x64 lub ARM64),
-rozpakuj wszystkie pliki do jednego folderu i uruchom „Dostępna Biblia.exe”.
-Paczka zawiera środowisko uruchomieniowe i wszystkie biblioteki aplikacji.
+Pobierz paczkę Windows, rozpakuj wszystkie pliki do jednego folderu
+i uruchom „Dostępna Biblia.exe”. Program korzysta z systemowego
+.NET Framework 4.8 lub nowszego, dostępnego m.in. w Windows 11
+i Windows 10 22H2.
 Do pobierania czytań potrzebne jest połączenie z internetem.
 Po uruchomieniu wybrana jest bieżąca data i opcja „Cała liturgia”.
 Fokus jest na pasku zakładek. Użyj strzałek w lewo i w prawo, aby
@@ -119,10 +120,10 @@ Wyszukiwanie wymaga internetu.
 
 8. Kod źródłowy i kompilacja
 
-Program napisano w C# z użyciem Windows Forms na .NET 10.
-Kod aplikacji jest w pliku DostepnaBiblia.cs, a ustawienia kompilacji
-są w DostepnaBiblia.csproj. Do budowania ze źródeł potrzebny jest
-Windows i .NET 10 SDK.
+Program napisano w C# z użyciem Windows Forms na .NET Framework 4.8.
+Kod aplikacji jest w pliku DostepnaBiblia.cs, a ustawienia uruchamiania
+są w App.config. Skrypt używa kompilatora C# dołączonego do systemowego
+.NET Framework.
 
 Pobierz kod z repozytorium https://github.com/puszkin-dev/dostepna-biblia
 lub rozpakuj archiwum kodu źródłowego. Otwórz PowerShell w folderze
@@ -130,9 +131,8 @@ zawierającym DostepnaBiblia.cs i Kompiluj.ps1, a następnie uruchom:
 
     .\Kompiluj.ps1
 
-Skrypt tworzy gotowy do spakowania folder wydanie\win-x64,
-z plikiem EXE, dokumentacją i dołączonym środowiskiem .NET.
-Dla ARM64 użyj .\Kompiluj.ps1 -Platforma win-arm64.
+Skrypt tworzy gotowy do spakowania folder wydanie\net48
+z plikiem EXE, jego konfiguracją i dokumentacją.
 Dodaj -Spakuj, aby utworzyć obok folderu archiwum ZIP z nazwami plików
 zapisanymi w UTF-8.
 
