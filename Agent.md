@@ -7,3 +7,7 @@ Po każdym utworzonym commicie wypchnij aktualny stan gałęzi z tym commitem do
 ## Wersjonowanie wydań
 
 Przed publikacją każdego nowego wydania zwiększ numer wersji względem ostatniego opublikowanego wydania. Zastosuj nowy numer w metadanych aplikacji, dokumentacji, tagu Git i nazwie paczki. Przed publikacją sprawdź wersję w zbudowanym pliku EXE.
+
+## Kompletność paczki
+
+Każda paczka dla użytkowników musi zawierać aplikację oraz komplet wymaganych bibliotek i komponentów, w tym środowisko uruchomieniowe. Użytkownik ma móc rozpakować paczkę i uruchomić aplikację bez samodzielnego instalowania zależności. Przed publikacją uruchom aplikację z rozpakowanej paczki i sprawdź, czy korzysta z dołączonego środowiska.

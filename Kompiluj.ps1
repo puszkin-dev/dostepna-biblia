@@ -1,10 +1,17 @@
-﻿$ErrorActionPreference = 'Stop'
-$compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-if (-not (Test-Path -LiteralPath $compiler)) {
-    $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe'
+param(
+    [string]$Dotnet = 'dotnet',
+    [ValidateSet('win-x64', 'win-arm64', 'win-x86')]
+    [string]$Platforma = 'win-x64',
+    [string]$Wyjscie
+)
+
+$ErrorActionPreference = 'Stop'
+$project = Join-Path $PSScriptRoot 'DostepnaBiblia.csproj'
+if (-not $Wyjscie) {
+    $Wyjscie = Join-Path $PSScriptRoot "wydanie\$Platforma"
 }
-$source = Join-Path $PSScriptRoot 'DostepnaBiblia.cs'
-$output = Join-Path $PSScriptRoot 'Dostępna Biblia.exe'
-& $compiler /nologo /target:winexe /optimize+ /codepage:65001 "/out:$output" /r:System.Net.Http.dll /r:System.Web.Extensions.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll $source
+
+& $Dotnet publish $project --configuration Release --runtime $Platforma --self-contained true --output $Wyjscie
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Write-Output $output
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Dokumentacja.txt') -Destination $Wyjscie
+Write-Output $Wyjscie
