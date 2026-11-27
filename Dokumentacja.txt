@@ -1,0 +1,138 @@
+﻿Dostępna Biblia
+Dokumentacja użytkownika i kompilacji
+
+1. Do czego służy program
+
+Dostępna Biblia to aplikacja dla Windows do czytania Biblii i liturgii słowa na
+wybrany dzień. Pobiera teksty z TwojaBiblia.pl. Tekst biblijny
+pochodzi z Biblii Tysiąclecia, wydanie V.
+
+Program wymaga połączenia z internetem do pobrania czytań oraz
+.NET Framework 4.8.1. Uruchom plik „Dostępna Biblia.exe”. Instalator
+nie jest potrzebny. Po uruchomieniu wybrana jest bieżąca data
+i opcja „Cała liturgia”.
+Fokus jest na pasku zakładek. Użyj strzałek w lewo i w prawo, aby
+zmienić zakładkę, a klawisza Tab, aby przejść do jej kontrolek.
+
+2. Wybieranie i czytanie z klawiatury
+
+1) Ustaw dzień, miesiąc i rok. Klawiszem Tab przechodzisz do następnej
+   kontrolki, a Shift+Tab wracasz do poprzedniej. Na liście użyj strzałek
+   w górę i w dół. Alt+strzałka w dół rozwija listę.
+2) Na liście „Część liturgii” wybierz jedną z sześciu opcji:
+   cała liturgia, pierwsze czytanie, drugie czytanie, psalm,
+   aklamacja albo Ewangelia.
+3) Przejdź do przycisku „Czytaj” i naciśnij Enter albo Spację.
+   Po pobraniu tekstu fokus przejdzie do pola „Treść liturgii”,
+   a kursor znajdzie się na początku.
+
+NVDA odczytuje zawartość pola tekstowego. Do czytania po liniach użyj
+strzałek w górę i w dół. Ctrl+Home wraca na początek tekstu.
+Pole jest tylko do odczytu, ale możesz zaznaczyć i skopiować treść.
+
+Jeśli zmienisz miesiąc lub rok, lista dni dopasuje się do nowej daty.
+Na przykład po zmianie stycznia na luty dzień 31 zmieni się na 28 lub 29.
+
+3. Zapisywanie do pliku TXT
+
+1) Ustaw datę i część liturgii, którą chcesz zapisać.
+2) Klawiszem Tab przejdź do przycisku „Zapisz do TXT”. Znajduje się
+   zaraz po przycisku „Czytaj”. Naciśnij Enter albo Spację.
+   Wcześniejsze naciśnięcie „Czytaj” nie jest wymagane.
+3) W standardowym oknie zapisu Windows wybierz folder i nazwę pliku.
+   Proponowana nazwa zawiera datę i wybraną część, na przykład
+   „2026-11-27 - Psalm.txt”. Zatwierdź przyciskiem „Zapisz”.
+   Aby zamknąć okno bez zapisywania, naciśnij Esc.
+
+Zapisany plik zawiera datę, treść i informację o źródle. Kodowanie UTF-8
+zachowuje polskie znaki. Później możesz otworzyć plik w Notatniku
+i przeczytać go bez połączenia z internetem.
+
+4. Zakładka „Czytaj Biblię”
+
+Ctrl+Tab przechodzi do następnej zakładki.
+Możesz też ustawić fokus na pasku zakładek i użyć strzałek w lewo i w prawo.
+
+1) Na liście „Co chcesz czytać” wybierz „Cała Biblia”, „Stary Testament”
+   lub „Nowy Testament”. Wybór określa, które księgi pojawią się na liście.
+2) Wybierz księgę i poczekaj na pobranie listy rozdziałów.
+3) Wybierz rozdział, przejdź do „Czytaj” i naciśnij Enter lub Spację.
+   Fokus przejdzie do pola „Tekst Biblii”.
+   Pozycja „0 — Wstęp” jest pierwsza na liście rozdziałów i zaznacza
+   się domyślnie po wyborze księgi. Strzałka w dół pozwala przejść
+   do rozdziału 1. Listy św. Jana mają wspólny wstęp.
+4) Przycisk „Zapisz do TXT” zapisuje wybrany rozdział. Plik zawiera nazwę
+   księgi, numer rozdziału, tekst i adres źródłowy.
+
+Program pobiera tekst na żądanie. Opcja „Cała Biblia” daje dostęp do
+ksiąg obu testamentów. Zapis TXT obejmuje jeden rozdział. Program nie
+oferuje zbiorczego eksportu całego przekładu.
+
+5. Zakładka „Losuj cytat”
+
+Wybierz kategorię z listy „Kategoria cytatu”. Dostępne są opcje
+„Losowo”, „Zagrzewające do życia i pracy”, „Kiedy jest mi smutno”,
+„Na dobry dzień” i „Kiedy brak mi sił”.
+
+Naciśnij Tab, aby przejść do listy „Akcja”. Wybierz „Losuj cytat”
+i naciśnij Enter. Jeśli lista jest rozwinięta, zamknij ją Enterem
+i naciśnij Enter ponownie, aby wykonać akcję.
+
+Program korzysta z losowania TwojaBiblia.pl. Wynik zawiera cytat,
+odsyłacz biblijny i nazwę przekładu. Po pobraniu fokus przejdzie
+do pola „Wylosowany cytat”.
+
+Z pola wyniku wróć klawiszem Shift+Tab do listy „Akcja”. Wybierz
+strzałkami „Losuj ponownie”, „Zapisz do TXT” lub „Powrót”,
+a następnie naciśnij Enter. „Losuj ponownie” zachowuje wybraną
+kategorię. „Powrót” pozwala ją zmienić. „Zapisz do TXT” otwiera
+standardowe okno zapisu Windows. Losowanie wymaga internetu.
+
+6. Zakładka „Wyszukaj”
+
+Przejdź do zakładki „Wyszukaj” i naciśnij Tab, aby wejść do pola
+„Słowa kluczowe”. Wpisz słowo lub frazę, np. „miłość” albo „chleb życia”.
+Naciśnij Enter lub przejdź klawiszem Tab do przycisku „Szukaj”.
+
+Program pobiera wyniki z wyszukiwarki TwojaBiblia.pl. Każdy wynik
+zawiera nazwę księgi, numer rozdziału i dopasowany fragment.
+Po pobraniu fokus przejdzie do pola „Wyniki wyszukiwania w Biblii”.
+
+Gdy wyników jest więcej, użyj przycisków „Następna strona” i
+„Poprzednia strona”. Przycisk „Zapisz do TXT” zapisuje bieżącą
+stronę wyników, łącznie z wpisaną frazą i numerem strony.
+Wyszukiwanie wymaga internetu.
+
+7. Gdy brakuje tekstu lub pliku
+
+- Brak czytań dla daty. Sprawdź, czy wybrano właściwą datę. Zakres
+  dostępnych tekstów zależy od kalendarza TwojaBiblia.pl.
+- Brak wybranej części. W wiele dni powszednich nie ma drugiego
+  czytania. Wybierz „Cała liturgia”, żeby zobaczyć dostępne części.
+- Błąd pobierania. Sprawdź połączenie z internetem i spróbuj ponownie.
+  Jeśli strona działa, ale program zgłasza zmianę układu, jego sposób
+  odczytu strony może wymagać aktualizacji.
+- Błąd zapisu. Wybierz inny folder, na przykład „Dokumenty”, albo inną
+  nazwę pliku, jeśli plik jest otwarty w innym programie.
+
+8. Kod źródłowy i kompilacja
+
+Program napisano w C# z użyciem Windows Forms i bibliotek .NET Framework.
+Cały kod aplikacji jest w pliku DostepnaBiblia.cs. Nie trzeba pobierać
+dodatkowych pakietów NuGet.
+
+Rozpakuj archiwum „Dostępna Biblia - kod źródłowy.zip”. Otwórz PowerShell
+w rozpakowanym folderze zawierającym plik DostepnaBiblia.cs i uruchom:
+
+    .\Kompiluj.ps1
+
+Skrypt używa kompilatora C# z .NET Framework i tworzy „Dostępna Biblia.exe”
+w tym samym folderze.
+
+Program pobiera kalendarz miesięczny z TwojaBiblia.pl, wyszukuje wybrany
+dzień, a następnie pobiera stronę z czytaniami. Po wyborze pojedynczej
+części program wydziela ją na podstawie nagłówków lekcjonarza.
+Aplikacja nie zawiera wbudowanej bazy tekstów liturgicznych ani Biblii.
+
+Źródło czytań i informacja o przekładzie
+https://twojabiblia.pl/czytania-z-dnia/
