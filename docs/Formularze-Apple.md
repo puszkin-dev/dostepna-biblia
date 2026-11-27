@@ -37,3 +37,5 @@ Brak implementacji kryptografii poza transportem systemowym: podpisana aplikacja
 ## Materiały wizualne
 
 Sześć oryginałów z fizycznego iPhone’a 17 Pro ma 1206 × 2622 (6,3 cala). Uzupełniający katalog screenshots/iphone-6_9 zawiera sześć nowych PNG 1320 × 2868 z rzeczywistego uruchomienia na symulatorze dużego iPhone’a. To nie są zdjęcia z fizycznego Pro Max ani przeskalowane miniatury. Sprawdzono brak kanału alfa, wymiary i kadry: liturgia, księga, czytanie, wersety, ustawienia i losowanie. Ikonę sklepu Apple bierze z archiwum — nie wysyłano buildu. [Wymiary Apple](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/).
+
+Stan po rejestracji: kategorie, lokalizację, 12 zrzutów, oba zestawy notatek dla recenzenta i opis beta zapisano dla 6840151385. Dane kontaktowe pozostały puste na polecenie właściciela. Pięć cech dostępności w szkicu. API odrzuciło niepełną deklarację wieku; prywatność i prawa pozostają nierozstrzygnięte. [Wynik każdej sekcji](task-memory/rejestracja-01a21e18-12a1-7263-8438-22872efcb118/FINAL_REPORT.md).

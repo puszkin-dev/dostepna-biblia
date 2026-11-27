@@ -27,3 +27,5 @@ R-011 — Przygotować TestFlight i informacje do recenzji bez dystrybucji ani z
 R-012 — Zweryfikować grafiki, szyfrowanie, możliwości i Xcode w obu konfiguracjach (§14–15).
 
 R-013 — Ponowne odczyty, synchronizacja i raport wszystkich 23 pozycji (§16–17).
+
+Doprecyzowania: R-004/R-006 — oba słowa małymi literami; R-011 — na polecenie właściciela kontakt do recenzji pozostaje pusty.
