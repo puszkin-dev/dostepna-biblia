@@ -47,3 +47,23 @@ R-020 — Po większych etapach testować, commitować i aktualizować ten sam c
 R-021 — Odbiór na podstawie używalności, dostępności i parytetu, nie samej kompilacji.
 
 R-022 — Dopisek właściciela: Wszystkie wybory listowe, w szczególności część liturgii, bez menu kontekstowych: bezpośrednia regulacja VO; akcje pozostają przyciskami.
+
+## Dopisek: estetyka, dostępność wzrokowa i profil globalny
+
+R-023 — Samodzielny projekt wizualny iOS: estetyka skupienia, spójne barwy, hierarchia, fonty, odstępy, SF Symbols, sekcje, formularze, stany, wygodna nawigacja do wersetów i długi tekst.
+
+R-024 — Systemowy Dynamic Type do AX5, pogrubienie, zwiększony kontrast, jasny i ciemny motyw, ograniczenie ruchu, przewijanie i pełne długie nazwy.
+
+R-025 — Dostępne ustawienia wielkości tekstu Biblii z resetem i trwałością po restarcie; własna wielkość nie skaluje podwójnie systemowej.
+
+R-026 — Kontrast tekstu i ikon sprawdzony zgodnie z WCAG i HIG; znaczenie nie tylko w kolorze.
+
+R-027 — Rzeczywiste zrzuty i kontrola wszystkich kart, daty, wyborów i wersetów, czytnika, ustawień, formularza/dialogu, małego i dużego iPhone’a, obrotu i AX5.
+
+R-028 — Ponowna weryfikacja VO po zmianach wyglądu: role, nagłówki, kolejność, aktywna karta, bez dekoracji w drzewie; fizyczny iPhone.
+
+R-029 — Opisać wygląd, decyzje, działanie rozmiarów i znalezione błędy bez wymagania oglądania obrazów; odróżnić własną analizę od oceny człowieka.
+
+R-030 — Bezpiecznie skopiować globalne instrukcje i wprowadzić trwałą regułę jakości UI dla wszystkich platform; sprawdzić wczytanie, zachować SOUL/hooki i izolację od projektu.
+
+R-031 — Te same dokumenty, aktualny checkpoint, lokalny commit oraz końcowe rozliczenie również wymagań wizualnych.

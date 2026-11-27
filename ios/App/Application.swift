@@ -30,6 +30,7 @@ final class BibleScene: UIResponder, UIWindowSceneDelegate {
             return navigation
         }
         let window = UIWindow(windowScene: scene)
+        window.tintColor = BookStyle.accent
         window.rootViewController = tabs
         self.window = window
         window.makeKeyAndVisible()
@@ -37,6 +38,7 @@ final class BibleScene: UIResponder, UIWindowSceneDelegate {
 }
 
 final class BibleTabs: UITabBarController {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .allButUpsideDown }
     private var firstAppearance = true
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

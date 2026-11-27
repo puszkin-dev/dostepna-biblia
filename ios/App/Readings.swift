@@ -10,6 +10,12 @@ struct ReaderError: LocalizedError {
 struct Reading: Equatable {
     let name: String
     let text: String
+    var verses: [Verse] = []
+
+    struct Verse: Equatable {
+        let number: Int
+        let offset: Int
+    }
 
     func writeTXT(in directory: URL) throws -> URL {
         let filename = name.replacingOccurrences(of: "/", with: "-") + ".txt"
@@ -208,13 +214,37 @@ struct BibleService {
                 if lastChapter != (number == 50) { continue }
             }
             guard !node.hasClass("initial") else { continue }
+            if node.hasClass("inicjal2znaki"), try node.text().allSatisfy({ $0.isNumber || $0.isWhitespace }) { continue }
+            if number > 0 {
+                for mark in try node.select("span.num") {
+                    let value = try mark.text()
+                    if let verse = Int(value), verse > 0 {
+                        try mark.text("\u{E000}" + value + "\u{E001}")
+                    }
+                }
+            }
             let text = try plain(node)
             if !text.isEmpty { paragraphs.append(text) }
         }
         guard !paragraphs.isEmpty else { throw ReaderError("TwojaBiblia.pl nie udostępnia tekstu tego rozdziału.") }
         let title = book.name + (number == 0 ? " — wstęp" : " — rozdział \(number)")
         if shared { paragraphs.insert("Wspólny wstęp do Listów św. Jana.", at: 0) }
-        return Reading(name: title, text: ([title] + paragraphs + [Self.source + "\n" + url.absoluteString]).joined(separator: "\n\n"))
+        let marked = ([title] + paragraphs + [Self.source + "\n" + url.absoluteString]).joined(separator: "\n\n") as NSString
+        let markers = try NSRegularExpression(pattern: "\u{E000}([0-9]+)\u{E001}")
+        let clean = NSMutableString(capacity: marked.length)
+        var verses: [Reading.Verse] = []
+        var position = 0
+        for match in markers.matches(in: marked as String, range: NSRange(location: 0, length: marked.length)) {
+            clean.append(marked.substring(with: NSRange(location: position, length: match.range.location - position)))
+            let digits = marked.substring(with: match.range(at: 1))
+            if let value = Int(digits), value > (verses.last?.number ?? 0) {
+                verses.append(.init(number: value, offset: clean.length))
+            }
+            clean.append(digits)
+            position = NSMaxRange(match.range)
+        }
+        clean.append(marked.substring(from: position))
+        return Reading(name: title, text: clean as String, verses: verses)
     }
 
     func quote(_ category: String) async throws -> Reading {

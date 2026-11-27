@@ -4,6 +4,34 @@ import XCTest
 @available(iOS 27.0, *)
 @MainActor
 final class VoiceOverTests: XCTestCase {
+    func testUstawieniaCzytaniaZMowa() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        app.launch()
+        let voice = XCUIDevice.shared.voiceOverService
+        let enabled = voice.isEnabled
+        if !enabled { try voice.enable() }
+        defer { if !enabled { try? voice.disable() } }
+        let center = CGVector(dx: 0.5, dy: 0.5)
+        app.buttons["Ustawienia czytania"].coordinate(withNormalizedOffset: center).tap()
+        XCTAssertTrue(try voice.currentSpeech().utterance.contains("Ustawienia czytania"))
+        app.coordinate(withNormalizedOffset: center).doubleTap()
+        let slider = app.sliders["Wielkość tekstu Biblii"]
+        XCTAssertTrue(slider.waitForExistence(timeout: 5))
+        slider.coordinate(withNormalizedOffset: center).tap()
+        let speech = try voice.currentSpeech().utterance
+        XCTAssertTrue(speech.contains("Wielkość tekstu Biblii") && speech.contains("regulacja"), speech)
+        let original = try XCTUnwrap(slider.value as? String)
+        let maximum = original == "Bardzo duży"
+        if maximum { app.swipeDown() } else { app.swipeUp() }
+        let changed = try voice.currentSpeech().utterance
+        if maximum { app.swipeUp() } else { app.swipeDown() }
+        XCTAssertEqual(slider.value as? String, original)
+        print("VoiceOver, ustawienia: \(speech) → \(changed) → \(try voice.currentSpeech().utterance)")
+        XCTAssertFalse(changed.isEmpty)
+    }
+
     func testGestyDatyICzytanieZPowrotem() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

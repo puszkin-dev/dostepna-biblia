@@ -11,10 +11,13 @@ final class ChoiceSlider: UISlider {
         self.name = name
         super.init(frame: .zero)
         accessibilityLabel = name
+        minimumTrackTintColor = BookStyle.accent
+        maximumTrackTintColor = BookStyle.track
         isContinuous = false
         caption.font = .preferredFont(forTextStyle: .body)
         caption.adjustsFontForContentSizeCategory = true
         caption.numberOfLines = 0
+        caption.textColor = BookStyle.ink
         caption.isAccessibilityElement = false
         caption.accessibilityElementsHidden = true
         addTarget(self, action: #selector(changeByTouch), for: .valueChanged)

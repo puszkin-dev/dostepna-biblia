@@ -20,5 +20,21 @@ Punkt odniesienia: DostepnaBiblia.cs, Dokumentacja.txt i projekt Windows 1.1.1. 
 | Pole tekstowe tylko do odczytu, kursor na początku, zaznaczanie, kopiowanie | UITextView z selekcją; pokrętło VoiceOver zamiast komend NVDA; systemowy powrót | Przeniesione z inną nawigacją | Wejście w tekst: testy UI. Kopiowanie: zachowanie UIKit, nie test schowka |
 | TXT: polskie znaki, proponowana nazwa, wybór folderu, anulowanie, komunikat, źródło | UIDocumentPicker, UTF-8; liturgia i rozdział także bez Czytaj; cytat i wyniki po pobraniu | Przeniesione | Próba UI eksportu; skład treści potwierdzają testy źródła |
 | Sieć, błędy pobrania i zapisu, stan oczekiwania, blokada podwójnej akcji, brak kradzieży fokusu z innej karty | Stan na ekranie, komunikat VO lub alert; blokada akcji, kontrola widoczności | Przeniesione | Próby błędnych danych; osobny komunikat dla HTTP 429 |
-| Ustawienia, konta, zakładki użytkownika, lokalna pełna Biblia, hurtowy eksport | W oryginale ich nie ma, nie dodano ich w porcie | Zgodne | Przegląd źródła i całej dokumentacji |
+| Ustawienia, konta, zakładki użytkownika, lokalna pełna Biblia, hurtowy eksport | W oryginale ich nie ma. Na osobne życzenie dodano tylko ustawienia czytania | Rozszerzenie zakresu | Test ustawień, resetu i ponownego uruchomienia |
 | Paczka Windows zawiera środowisko .NET | Natywna aplikacja iOS; biblioteka parsera w produkcie, bez instalowania zależności przez użytkownika | Dostosowane | Archiwum Release i eksport IPA |
+
+## Wynik weryfikacji poszczególnych ścieżek
+
+| Ścieżka | Wynik i zakres potwierdzenia |
+|---|---|
+| Start i data | Na fizycznym iPhonie odczytano miesiąc, dzień i rok w tej kolejności. Każdy z trzech gestów zmienił wartość i pozwolił wrócić. Wybór 31 stycznia → luty 2024 → zmiana na rok 2025 dał kolejno 29 i 28. |
+| Pasek kart | Usługa VoiceOver podała cztery nazwy oraz pozycje „1 z 4” do „4 z 4”. Podwójne stuknięcie przełączyło ekran; zaznaczenie pierwszej karty było obecne w mowie. |
+| Wybory z list | Mowa: „Część liturgii Cała liturgia regulacja”; gest w górę „Pierwsze czytanie”, w dół „Cała liturgia”. Kategorie i zakres również odczytane jako regulacje. Brak UIMenu w produkcie sprawdza test przenośny. |
+| Liturgia i jej źródło | Na telefonie zaliczono pobranie aktualnych czytań i pięciu pojedynczych części z niedzielnej strony. Dodatkowo sprawdzono brak dnia, złą domenę, puste dane, brak sekcji oraz wiele psalmów na kontrolnych danych. |
+| Księgi | Zgodne wszystkie 73 kody, nazwy, kolejność i testamenty z C#. Wstęp Rodzaju otwarto przez interfejs; osobno pobrano rzeczywisty wspólny wstęp Jana oraz Rdz 50. Sprawdzono próg przejścia z Rdz 49, pierwsze siedem odsyłaczy i usuwanie przypisów. |
+| Cytaty | Fizyczny iPhone pobrał cytat w każdej z pięciu kategorii; zaliczono przejście do tekstu i powrót do wyboru kategorii. Podczas wcześniejszej serii wystąpił rzeczywisty limit HTTP 429, dla którego dodano polski komunikat. |
+| Wyszukiwarka | Zaliczono wpisanie „chleb”, wyszukanie klawiszem na klawiaturze, otwarcie drugiej strony, wykrycie linku powrotnego i brak wyników dla nieistniejącego słowa. Pusta fraza daje alert; po zamknięciu interfejs pozostaje dostępny. |
+| Czytnik | Na sprzęcie VoiceOver po załadowaniu przeczytał datę z początku liturgii, a powrót otworzył ponownie formularz. Wyszukanie wersetu z listy przenosi do tekstu. Selekcja i kopiowanie są natywne; nie odczytywano prywatnego schowka i nie testowano zewnętrznej klawiatury. |
+| TXT | Zaliczono otwarcie okna zapisu na urządzeniu i osobno rzeczywisty zapis UTF-8 z polskimi znakami oraz błąd przy niepoprawnym miejscu zapisu. Nie zapisano testowego dokumentu w prywatnym iCloud właściciela. |
+| Ustawienia | Test na telefonie ustawił największy rozmiar, zamknął aplikację, uruchomił ją od nowa i odczytał tę samą wartość. Podgląd i czytnik używają tego samego skalowania. |
+| Dystrybucja | Przygotowano lokalne archiwum i IPA. Dokładny podpis, suma pliku i wyniki końcowej kompilacji są w raporcie. Nie wysyłano do Apple ani na GitHub. |

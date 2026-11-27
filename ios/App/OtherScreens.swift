@@ -143,15 +143,22 @@ final class SearchScreen: FormScreen, UITextFieldDelegate {
         label.text = "Słowa kluczowe"
         label.isAccessibilityElement = false
         label.accessibilityElementsHidden = true
-        fields.addArrangedSubview(label)
+        choices.addArrangedSubview(label)
         query.accessibilityLabel = "Słowa kluczowe"
         query.font = .preferredFont(forTextStyle: .body)
         query.adjustsFontForContentSizeCategory = true
         query.borderStyle = .roundedRect
+        query.layer.cornerRadius = 7
+        query.layer.borderWidth = 1
+        query.layer.borderColor = BookStyle.track.resolvedColor(with: traitCollection).cgColor
+        registerForTraitChanges([UITraitUserInterfaceStyle.self, UITraitAccessibilityContrast.self]) {
+            (screen: SearchScreen, _: UITraitCollection) in
+            screen.query.layer.borderColor = BookStyle.track.resolvedColor(with: screen.traitCollection).cgColor
+        }
         query.returnKeyType = .search
         query.autocorrectionType = .no
         query.delegate = self
-        addControl(query)
+        addControl(query, to: choices)
         button("Szukaj") { [weak self] in self?.firstPage() }
         reopen = button("Otwórz wyniki") { [weak self] in self?.openReading() }
         previous = button("Poprzednia strona") { [weak self] in

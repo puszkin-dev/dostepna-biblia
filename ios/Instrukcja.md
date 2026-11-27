@@ -4,7 +4,13 @@ Na dole są cztery karty: Liturgia, Czytaj Biblię, Losuj cytat i Wyszukaj. Prze
 
 **Liturgia.** Miesiąc, dzień i rok to trzy osobne systemowe koła. Przesuwaj jednym palcem w górę lub w dół, aby zmienić wartość, a w prawo, aby przejść do następnej regulacji. Krótszy miesiąc skraca listę dni. Kolejny suwak wybiera część liturgii bez otwierania menu. „Czytaj” otwiera tekst. „Zapisz do TXT” działa również bez wcześniejszego czytania.
 
+Przy systemowych rozmiarach tekstu z kategorii dostępności zamiast trzech kół obok siebie pojawiają się trzy suwaki jeden pod drugim. Kolejność i gesty VoiceOver pozostają takie same.
+
 **Czytaj Biblię.** Wyreguluj testament, księgę, a po pobraniu listy — rozdział. „0 — Wstęp” oznacza wprowadzenie do księgi. „Zapisz do TXT” zapisuje wybrany rozdział. Nie ma eksportu całej Biblii.
+
+Gdy źródło podaje numery wersetów, w czytniku działa przycisk „Przejdź do wersetu”. Otwiera listę numerów z początkiem tekstu; wybranie wiersza przenosi do wskazanego miejsca bez ponownego pobierania. Wstępy bez numerowanych wersetów nie pokazują tego przycisku.
+
+**Ustawienia czytania.** Przycisk z literami znajduje się przy nagłówku każdej karty oraz na pasku czytnika. Suwak „Wielkość tekstu Biblii” ma pięć pozycji i podgląd. Standard to druga pozycja. Przycisk „Przywróć domyślny rozmiar” cofa zmianę. Ustawienie pozostaje po zamknięciu aplikacji. Rozmiar wybrany tutaj określa bazową czcionkę czytania, a iOS skaluje ją zgodnie z Dynamic Type tylko raz. Kolorystyka zmienia się razem z systemem; nie trzeba przełączać jej osobno.
 
 **Losuj cytat.** Suwakiem wybierz kategorię i użyj przycisku „Losuj cytat”. Wróć z tekstu przyciskiem systemowym lub gestem cofnięcia. „Losuj ponownie” zachowuje kategorię, „Powrót” przywraca jej wybór.
 

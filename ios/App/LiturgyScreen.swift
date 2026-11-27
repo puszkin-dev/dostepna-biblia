@@ -3,7 +3,7 @@ import UIKit
 /// Systemowe koło daty. Każda kolumna jest osobną regulacją VoiceOver.
 final class CalendarWheels: UIPickerView, UIPickerViewDataSource, UIPickerViewAccessibilityDelegate {
     private(set) var date: ReadingDate
-    private let years: ClosedRange<Int>
+    let years: ClosedRange<Int>
     private let names = ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"]
     var changed: (() -> Void)?
 
@@ -54,10 +54,16 @@ final class CalendarWheels: UIPickerView, UIPickerViewDataSource, UIPickerViewAc
         }
         changed?()
     }
+
+    func adjust(_ component: Int, _ row: Int) {
+        selectRow(row, inComponent: component, animated: false)
+        pickerView(self, didSelectRow: row, inComponent: component)
+    }
 }
 
 final class LiturgyScreen: FormScreen {
     private let wheels = CalendarWheels()
+    private let largeDate = ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"].map(ChoiceSlider.init)
     private var part = Part.all
     private let partSlider = ChoiceSlider("Część liturgii")
     private var reopen = UIButton()
@@ -67,7 +73,13 @@ final class LiturgyScreen: FormScreen {
             self?.clearResult()
             self?.refresh()
         }
-        fields.addArrangedSubview(wheels)
+        choices.addArrangedSubview(wheels)
+        for (component, slider) in largeDate.enumerated() {
+            addChoice(slider) { [weak self] row in self?.wheels.adjust(component, row) }
+        }
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) {
+            (screen: LiturgyScreen, _: UITraitCollection) in screen.refresh()
+        }
         addChoice(partSlider) { [weak self] i in
             self?.part = Part.allCases[i]
             self?.clearResult()
@@ -79,6 +91,16 @@ final class LiturgyScreen: FormScreen {
     }
 
     override func refresh() {
+        let large = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+        wheels.isHidden = large
+        for slider in largeDate {
+            slider.caption.isHidden = !large
+            slider.isHidden = !large
+        }
+        let date = wheels.date
+        largeDate[0].show(ReadingDate.months, index: date.month - 1)
+        largeDate[1].show((1...date.lastDay).map(String.init), index: date.day - 1)
+        largeDate[2].show(wheels.years.map(String.init), index: date.year - wheels.years.lowerBound)
         partSlider.show(Part.allCases.map(\.rawValue), index: Part.allCases.firstIndex(of: part) ?? 0)
         reopen.isHidden = reading == nil
     }

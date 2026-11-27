@@ -23,6 +23,7 @@ final class SourceTests: XCTestCase {
         let genesis = try XCTUnwrap(Book.all.first)
         let final = try await service.chapter(genesis, 50)
         XCTAssertTrue(final.text.contains("/Rdz/49/"))
+        XCTAssertEqual(final.verses.prefix(7).map(\.number), Array(1...7))
         XCTAssertGreaterThan(final.text.count, 1000)
     }
 
