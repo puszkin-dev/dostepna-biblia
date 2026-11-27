@@ -24,7 +24,7 @@ Nie trzeba się logować. Z internetem: w karcie Liturgia wybierz datę i użyj 
 
 ## Co jest w paczce, a co należy do karty sklepu
 
-Stan po dodaniu mowy: aplikacja nie pobiera głosów z chmury ani nie nagrywa mikrofonu. Tryb tła `audio` służy wyłącznie słuchaniu rozpoczętego tekstu. Poniższy audyt IPA 1.0 (8) i sześć sklepowych zdjęć dotyczą poprzedniej wersji z czterema kartami.
+Stan po dodaniu mowy: aplikacja nie pobiera głosów z chmury ani nie nagrywa mikrofonu. Tryb tła `audio` służy wyłącznie słuchaniu rozpoczętego tekstu. Zdjęcia w tym katalogu pokazują aktualny interfejs 1.0 (9) z pięcioma kartami. Poniższy historyczny audyt 1.0 (8) dotyczy wcześniejszego wydania.
 
 **Prawa do treści przed dystrybucją.** Dokumentacja Windows i stopka [TwojaBiblia.pl](https://twojabiblia.pl/) wskazują V wydanie Biblii Tysiąclecia. Serwis podaje, że korzysta z tekstu za zgodą Pallottinum. [Wydawca o prawach do opracowania](https://biblia.pl/informacje-o-wydaniu/) wskazuje ochronę i potrzebę uzyskania zgody. W projekcie nie znaleziono dokumentu rozszerzającego zgodę serwisu na dystrybucję tej aplikacji, odczyt głosowy i eksport tekstów. Sama atrybucja i publiczne repozytorium nie potwierdzają takich uprawnień. Przed udostępnieniem również w TestFlight trzeba wyjaśnić z uprawnionymi zakres korzystania z przekładu i pozostałych tekstów liturgicznych.
 
@@ -35,7 +35,7 @@ Stan po dodaniu mowy: aplikacja nie pobiera głosów z chmury ani nie nagrywa mi
 
 ## Kolejność zrzutów i wynik kontroli
 
-Sześć nowych plików PNG, 1206 × 2622 piksele, pion, bez kanału alfa. Pokazują kolejno liturgię, wybór księgi, czytanie rozdziału, listę wersetów, ustawienia wielkości tekstu i losowanie. W podglądzie sprawdzono wszystkie kadry: bez prywatnych powiadomień, klawiatury i alertów testowych. Zachowano oryginalne piksele i pasek stanu telefonu. To materiały z polskiego interfejsu, nie wersja angielska.
+Sześć plików PNG z fizycznego iPhone’a 17 Pro, kompilacja 9: 1206 × 2622 piksele, pion, bez kanału alfa. Pokazują kolejno liturgię, wybór księgi, czytanie rozdziału z przyciskiem mowy, listę wersetów, piątą kartę ustawień oraz losowanie. W podglądzie sprawdzono wszystkie kadry: bez prywatnych powiadomień, klawiatury i alertów testowych. Zachowano oryginalne piksele i pasek stanu telefonu. To materiały z polskiego interfejsu.
 
 Sprawdzenie lokalne wydania 1.0 (7): trzy pakiety projektu — aplikacja, testy logiki i testy interfejsu — otrzymały 1.0 (7). Archiwa o kolejnych numerach 5, 6 i 7; numer 7 pozostał niezmieniony po budowaniu do testów. W IPA potwierdzono identyfikator, zespół, deklarację szyfrowania, ekran startowy, orientacje, rodzinę iPhone i manifest prywatności. Ikona źródłowa PNG i ikona sklepowa w skompilowanym katalogu mają 1024 × 1024 piksele i są nieprzezroczyste. Po wykonaniu zrzutów ponownie zainstalowano i uruchomiono na fizycznym iPhonie aplikację z archiwum. Eksport podpisany Apple Distribution, lokalny; nie przeprowadzano walidacji serwerowej ani wysyłki do App Store Connect.
 

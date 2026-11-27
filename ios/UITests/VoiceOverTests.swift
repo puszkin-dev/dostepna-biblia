@@ -15,10 +15,21 @@ final class VoiceOverTests: XCTestCase {
         defer { if !wasEnabled { try? voice.disable() } }
         let center = CGVector(dx: 0.5, dy: 0.5)
         func focus(_ element: XCUIElement, _ label: String) throws {
-            element.coordinate(withNormalizedOffset: center).tap()
-            let said = try voice.currentSpeech().utterance
-            print("VoiceOver podczas próby syntezy: " + said)
-            XCTAssertTrue(said.contains(label), said)
+            let banner = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+                .descendants(matching: .any)["NotificationShortLookView"]
+            for _ in 0..<2 {
+                if banner.exists {
+                    let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: banner)
+                    XCTAssertEqual(XCTWaiter.wait(for: [hidden], timeout: 18), .completed)
+                }
+                element.coordinate(withNormalizedOffset: center).tap()
+                let said = try voice.currentSpeech().utterance
+                if said.contains(label) {
+                    print("VoiceOver potwierdził: " + label)
+                    return
+                }
+            }
+            XCTFail("VoiceOver nie potwierdził elementu: " + label)
         }
         func activate() { app.coordinate(withNormalizedOffset: center).doubleTap() }
         try focus(app.tabBars.buttons["Ustawienia"], "Ustawienia")
@@ -106,6 +117,14 @@ final class VoiceOverTests: XCTestCase {
         XCTAssertTrue(result.contains("Czytaj na głos"), String(result.prefix(120)))
         let text = try voice.moveForward().utterance
         XCTAssertTrue(text.localizedCaseInsensitiveContains("czytanie") || text.contains("20"), String(text.prefix(120)))
+        app.buttons["Czytaj na głos"].coordinate(withNormalizedOffset: center).tap()
+        app.coordinate(withNormalizedOffset: center).doubleTap()
+        let pause = app.buttons["Wstrzymaj czytanie"]
+        XCTAssertTrue(pause.waitForExistence(timeout: 8))
+        pause.coordinate(withNormalizedOffset: center).tap()
+        XCTAssertTrue(try voice.currentSpeech().utterance.contains("Wstrzymaj czytanie"))
+        XCTAssertTrue(try voice.moveForward().utterance.contains("Czytaj od początku"))
+        XCTAssertTrue(pause.exists)
         let back = app.navigationBars.buttons.firstMatch
         back.coordinate(withNormalizedOffset: center).tap()
         app.coordinate(withNormalizedOffset: center).doubleTap()

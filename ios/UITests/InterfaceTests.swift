@@ -1,3 +1,4 @@
+import AVFoundation
 import XCTest
 
 @MainActor
@@ -102,13 +103,68 @@ final class InterfaceTests: XCTestCase {
                                 ["Pauza", "Wstrzymaj", "Wstrzymaj odtwarzanie", "Pause"], "Pause", "playpause")
         let systemPause = system.descendants(matching: .any).matching(names).firstMatch
         let centerPause = center.descendants(matching: .any).matching(names).firstMatch
-        if systemPause.waitForExistence(timeout: 5) { systemPause.tap() }
-        else if centerPause.waitForExistence(timeout: 5) { centerPause.tap() }
-        else { throw XCTSkip("W bieżącym układzie Centrum sterowania XCTest nie znalazł kontrolki odtwarzania.") }
+        // Centrum może otworzyć ostatnio używaną stronę zamiast Ulubionych.
+        for _ in 0..<3 {
+            if systemPause.waitForExistence(timeout: 2) || centerPause.exists { break }
+            let media = system.descendants(matching: .any).matching(NSPredicate(format:
+                "identifier CONTAINS[c] %@ OR label CONTAINS[c] %@", "NowPlaying", "Teraz odtwarzane")).firstMatch
+            if media.exists { media.press(forDuration: 0.8); break }
+            let page = system.coordinate(withNormalizedOffset: CGVector(dx: 0.76, dy: 0.46))
+            page.press(forDuration: 0.05, thenDragTo: system.coordinate(withNormalizedOffset: CGVector(dx: 0.76, dy: 0.87)))
+        }
+        if !systemPause.exists && !centerPause.exists {
+            // Wyspa odtwarzania to drugi systemowy punkt sterowania na obsługiwanych iPhone’ach.
+            XCUIDevice.shared.press(.home)
+            let island = system.descendants(matching: .any).matching(NSPredicate(format:
+                "identifier CONTAINS[c] %@ OR label CONTAINS[c] %@", "DynamicIsland", "dostępna biblia,")).firstMatch
+            if island.waitForExistence(timeout: 2) { island.press(forDuration: 1) }
+        }
+        if systemPause.exists { systemPause.tap() }
+        else if centerPause.waitForExistence(timeout: 3) { centerPause.tap() }
+        else {
+            throw XCTSkip("W bieżącym układzie Centrum sterowania XCTest nie znalazł kontrolki odtwarzania.")
+        }
         XCUIDevice.shared.press(.home)
         app.activate()
         XCTAssertTrue(app.buttons["Wznów czytanie"].waitForExistence(timeout: 5))
         app.buttons["Zatrzymaj czytanie"].tap()
+    }
+
+    func testPrzerwaniePrzezDrugaSesjeAudio() throws {
+        #if targetEnvironment(simulator)
+        throw XCTSkip("Próbę arbitrażu dwóch procesów audio wykonujemy na fizycznym iPhonie.")
+        #else
+        app.buttons["Czytaj"].tap()
+        _ = try result()
+        app.buttons["Czytaj na głos"].tap()
+        XCTAssertTrue(app.buttons["Wstrzymaj czytanie"].waitForExistence(timeout: 8))
+        // Osobny proces testujący staje się drugim odtwarzaczem. Nie wykonuje połączenia telefonicznego.
+        let runner = XCUIApplication(bundleIdentifier: try XCTUnwrap(Bundle.main.bundleIdentifier))
+        runner.activate()
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playback, mode: .default)
+        try session.setActive(true)
+        defer { try? session.setActive(false, options: .notifyOthersOnDeactivation) }
+        let engine = AVAudioEngine(), player = AVAudioPlayerNode()
+        engine.attach(player)
+        let format = try XCTUnwrap(AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1))
+        let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 44100))
+        buffer.frameLength = buffer.frameCapacity
+        let samples = try XCTUnwrap(buffer.floatChannelData?[0])
+        for index in 0..<Int(buffer.frameLength) {
+            samples[index] = 0.015 * sin(2 * .pi * 220 * Float(index) / 44100)
+        }
+        engine.connect(player, to: engine.mainMixerNode, format: format)
+        try engine.start()
+        defer { engine.stop() }
+        let played = expectation(description: "Drugi proces odtworzył dźwięk")
+        player.scheduleBuffer(buffer, completionCallbackType: .dataPlayedBack) { _ in played.fulfill() }
+        player.play()
+        wait(for: [played], timeout: 5)
+        app.activate()
+        XCTAssertTrue(app.buttons["Czytaj na głos"].waitForExistence(timeout: 8))
+        XCTAssertFalse(app.buttons["Wznów czytanie"].exists)
+        #endif
     }
 
     func testUstawieniaSyntezyITrwalosc() throws {

@@ -146,6 +146,15 @@ final class VisualTests: XCTestCase {
         reveal(link)
         link.tap()
         XCTAssertTrue(app.wait(for: .runningBackground, timeout: 10) || app.state == .runningBackgroundSuspended)
+        let browsers = ["com.apple.mobilesafari", "com.google.chrome.ios", "org.mozilla.ios.Firefox", "com.microsoft.msedge"]
+        if let browser = browsers.map({ XCUIApplication(bundleIdentifier: $0) }).first(where: { $0.state == .runningForeground }) {
+            let repository = browser.descendants(matching: .any).matching(NSPredicate(
+                format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+                "puszkin-dev/dostepna-biblia", "puszkin-dev/dostepna-biblia")).firstMatch
+            XCTAssertTrue(repository.waitForExistence(timeout: 15), "Przeglądarka nie potwierdziła strony repozytorium.")
+        } else {
+            XCTFail("Nie potwierdzono otwarcia w systemowej przeglądarce.")
+        }
         app.activate()
         app.navigationBars.buttons.firstMatch.tap()
         XCTAssertTrue(app.tabBars.buttons["Ustawienia"].isSelected)
@@ -166,6 +175,28 @@ final class VisualTests: XCTestCase {
         XCTAssertTrue(app.buttons["Zatrzymaj czytanie"].isHittable)
         try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
         app.buttons["Zatrzymaj czytanie"].tap()
+    }
+
+    func testAktualneEkranyPublikacji() throws {
+        capture("01-liturgia")
+        app.tabBars.buttons["Czytaj Biblię"].tap()
+        let chapters = app.sliders["Wybierz rozdział"]
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: chapters)
+        waitForExpectations(timeout: 35)
+        chapters.adjust(toNormalizedSliderPosition: 1)
+        XCTAssertEqual(chapters.value as? String, "50")
+        capture("02-wybor-ksiegi")
+        app.buttons["Czytaj"].tap()
+        XCTAssertTrue(app.textViews["tekstWyniku"].waitForExistence(timeout: 35))
+        capture("03-czytanie")
+        app.buttons["Przejdź do wersetu"].tap()
+        XCTAssertTrue(app.tables.cells.firstMatch.waitForExistence(timeout: 5))
+        capture("04-wersety")
+        app.tabBars.buttons["Ustawienia"].tap()
+        XCTAssertTrue(app.buttons["Odsłuchaj próbkę"].exists)
+        capture("05-ustawienia")
+        app.tabBars.buttons["Losuj cytat"].tap()
+        capture("06-losowanie")
     }
 }
 
