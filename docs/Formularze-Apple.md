@@ -1,4 +1,4 @@
-# Karta sklepu i formularze dla iOS 1.0 (10)
+# Karta sklepu i formularze dla iOS 1.0 (1)
 
 Stan zapisów potwierdzonych ponownym odczytem podaje raport rejestracji. Wskazówki o otwartych formularzach nie są złożoną deklaracją. Teksty pól: [Metadane-pl.json](../screenshots/Metadane-pl.json). Nazwa: 15/30 znaków; podtytuł: 29/30; promocja: 119/170; opis: 999/4000; słowa kluczowe: 71/100 bajtów UTF-8. Wydanie pierwsze: bez osobnej historii zmian wymaganej dla aktualizacji. SKU DOSTEPNA-BIBLIA-IOS (techniczny, po utworzeniu niezmienny). Potwierdzono polską lokalizację, iOS i identyfikator com.dostepna.biblia. Kategorie Reference oraz Books, bez podkategorii gier. Brak zakupów i subskrypcji w aplikacji.
 
