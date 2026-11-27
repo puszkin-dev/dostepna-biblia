@@ -42,6 +42,15 @@ final class SettingsScreen: FormScreen {
             about.title = "O programie"
             self?.navigationController?.pushViewController(about, animated: !UIAccessibility.isReduceMotionEnabled)
         }
+        heading("Pomoc i prywatność", in: fields)
+        for (title, address) in [
+            ("Pomoc i kontakt", "https://axelek.pl/dostepna-biblia.html#pomoc"),
+            ("Polityka prywatności", "https://axelek.pl/dostepna-biblia-prywatnosc.html")
+        ] {
+            button(title) {
+                if let url = URL(string: address) { UIApplication.shared.open(url) }
+            }.accessibilityTraits = .link
+        }
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(updateSample), name: SpeechReader.changed, object: nil)
         center.addObserver(self, selector: #selector(reloadVoices), name: AVSpeechSynthesizer.availableVoicesDidChangeNotification, object: nil)

@@ -29,3 +29,13 @@ R-012 — Zweryfikować grafiki, szyfrowanie, możliwości i Xcode w obu konfigu
 R-013 — Ponowne odczyty, synchronizacja i raport wszystkich 23 pozycji (§16–17).
 
 Doprecyzowania: R-004/R-006 — oba słowa małymi literami; R-011 — na polecenie właściciela kontakt do recenzji pozostaje pusty.
+
+## Dopiski właściciela — strony i pozostałe pola
+
+Zastąpiono poprzednie polecenie o pustym kontakcie: dane Grzegorza Przystupy w obu formularzach. Właściciel wskazał do Copyright aplikacji iOS Mieczysława Bąka i aktualny rok. Publiczny dostęp do źródła został wskazany przez właściciela; nie posiada informacji o retencji u operatora. Uzupełnić maksymalnie dużo pól samodzielnie, zrozumiale opisać korzystanie z usług, nie deklarować niepotwierdzonych faktów. Zgoda na WWW nie jest zgodą na wydanie w sklepie.
+
+R-014 — Opublikować strony marketingu/wsparcia i polityki prywatności bez podkatalogu; obaj autorzy i pierwowzór na obu stronach.
+
+R-015 — Powiązać działające publiczne strony z aplikacją i kartą, sprawdzić wygląd, dostępność, archiwum i telefon.
+
+R-016 — Wypełnić potwierdzony kontakt w obu formularzach, prawa do programu i rzetelne instrukcje recenzji.

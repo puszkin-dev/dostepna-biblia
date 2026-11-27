@@ -128,6 +128,34 @@ final class VisualTests: XCTestCase {
         capture("13-ustawienia-poziomo")
     }
 
+    func testStronaPomocyZUstawien() throws {
+        try sprawdzStrone("Pomoc i kontakt")
+    }
+
+    func testPolitykaPrywatnosciZUstawien() throws {
+        try sprawdzStrone("Polityka prywatności")
+    }
+
+    private func sprawdzStrone(_ title: String) throws {
+        app.tabBars.buttons["Ustawienia"].tap()
+        let link = app.links[title]
+        reveal(link)
+        link.tap()
+        let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        XCTAssertTrue(safari.wait(for: .runningForeground, timeout: 12))
+        let target = safari.webViews.descendants(matching: .any).matching(NSPredicate(format: "label == %@", title)).firstMatch
+        XCTAssertTrue(target.waitForExistence(timeout: 20))
+        #if compiler(>=6.4)
+        if #available(iOS 27.0, *) {
+            let voice = XCUIDevice.shared.voiceOverService
+            try voice.enable()
+            defer { try? voice.disable() }
+            target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            XCTAssertTrue(try voice.currentSpeech().utterance.localizedCaseInsensitiveContains(title))
+        }
+        #endif
+    }
+
     func testNoweUstawieniaIAutorzy() throws {
         app.tabBars.buttons["Ustawienia"].tap()
         capture("14-synteza")
