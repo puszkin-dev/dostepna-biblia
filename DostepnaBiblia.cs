@@ -5,12 +5,18 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
+
+[assembly: AssemblyVersion("1.1.2.0")]
+[assembly: AssemblyFileVersion("1.1.2.0")]
+[assembly: AssemblyInformationalVersion("1.1.2")]
+[assembly: TargetFramework(".NETFramework,Version=v4.8")]
 
 internal static class Liturgia
 {
@@ -22,6 +28,7 @@ internal static class Liturgia
     [STAThread]
     private static void Main()
     {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new ReaderWindow());
@@ -43,7 +50,7 @@ internal static class Liturgia
         if (json.Trim() == "[]")
             return null;
 
-        var days = JsonSerializer.Deserialize<Dictionary<string, ReadingLink>>(json);
+        var days = new JavaScriptSerializer().Deserialize<Dictionary<string, ReadingLink>>(json);
         ReadingLink entry;
         if (!days.TryGetValue(date.Day.ToString(CultureInfo.InvariantCulture), out entry))
             return null;
@@ -365,7 +372,7 @@ internal static class Liturgia
         string encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(key));
         var url = new Uri(Site, "wp-json/tbapi/v1/get_quote/" + Uri.EscapeDataString(encoded));
         string json = await Http.GetStringAsync(url).ConfigureAwait(false);
-        var response = JsonSerializer.Deserialize<QuoteResponse>(json);
+        var response = new JavaScriptSerializer().Deserialize<QuoteResponse>(json);
         var quote = response == null ? null : response.body_response;
         if (response == null || response.status != 200 || quote == null ||
             string.IsNullOrWhiteSpace(quote.content) || string.IsNullOrWhiteSpace(quote.siglum) ||
@@ -378,7 +385,6 @@ internal static class Liturgia
 
     private sealed class QuoteResponse
     {
-        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int status { get; set; }
         public QuoteData body_response { get; set; }
     }
