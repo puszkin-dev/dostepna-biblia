@@ -39,3 +39,5 @@ R-014 — Opublikować strony marketingu/wsparcia i polityki prywatności bez po
 R-015 — Powiązać działające publiczne strony z aplikacją i kartą, sprawdzić wygląd, dostępność, archiwum i telefon.
 
 R-016 — Wypełnić potwierdzony kontakt w obu formularzach, prawa do programu i rzetelne instrukcje recenzji.
+
+R-017 — Numer kompilacji zmienia wyłącznie jawne uruchomienie podbij_build.sh. Przywrócono 1.0 (10); Archive nie zwiększa licznika. Nazwa projektu Xcode, schematu, targetu aplikacji, produktu i nowych archiwów: „dostępna biblia”. Alias na biurku prowadzi do przemianowanego projektu. Dopisek zastępuje wcześniejszy automatyczny przyrost przy archiwizacji. Nie zmienia identyfikatora pakietu ani historii starych archiwów.

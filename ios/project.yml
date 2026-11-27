@@ -1,4 +1,4 @@
-name: Biblia
+name: dostępna biblia
 options:
   developmentLanguage: pl
   deploymentTarget:
@@ -22,37 +22,16 @@ settings:
     MARKETING_VERSION: "1.0"
     GENERATE_INFOPLIST_FILE: NO
     INFOPLIST_FILE: InfoTests.plist
-    INFOPLIST_PREPROCESS: YES
-    INFOPLIST_PREFIX_HEADER: "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NumerKompilacji.h"
-aggregateTargets:
-  NumerKompilacji:
-    targets: []
-    platform: iOS
-    settings:
-      ENABLE_USER_SCRIPT_SANDBOXING: NO
-    buildScripts:
-      - name: Przygotuj wspólny numer kompilacji
-        basedOnDependencyAnalysis: false
-        outputFiles:
-          - "$(INFOPLIST_PREFIX_HEADER)"
-        script: |
-          set -eu
-          if [ "$ACTION" = install ]; then
-            numer=$("$SRCROOT/../podbij_build.sh")
-          else
-            numer=$("$SRCROOT/../podbij_build.sh" --obecny)
-          fi
-          printf '#define NUMER_KOMPILACJI %s\n' "$numer" > "$SCRIPT_OUTPUT_FILE_0"
 targets:
-  Biblia:
+  dostępna biblia:
     type: application
     platform: iOS
     sources: [App]
     dependencies:
-      - target: NumerKompilacji
       - package: SwiftSoup
     settings:
       base:
+        PRODUCT_MODULE_NAME: DostepnaBiblia
         PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia
         TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_FILE: Info.plist
@@ -62,28 +41,28 @@ targets:
       configs:
         Release:
           VALIDATE_PRODUCT: YES
-  BibliaTests:
+  dostępna biblia – testy:
     type: bundle.unit-test
     platform: iOS
     sources: [Tests]
     dependencies:
-      - target: NumerKompilacji
-      - target: Biblia
+      - target: dostępna biblia
     settings:
+      PRODUCT_MODULE_NAME: DostepnaBibliaTests
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.tests
-  BibliaUITests:
+  dostępna biblia – testy interfejsu:
     type: bundle.ui-testing
     platform: iOS
     sources: [UITests]
     dependencies:
-      - target: NumerKompilacji
-      - target: Biblia
+      - target: dostępna biblia
     settings:
+      PRODUCT_MODULE_NAME: DostepnaBibliaUITests
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.uitests
 schemes:
-  Biblia:
+  dostępna biblia:
     build:
       targets:
-        Biblia: all
+        dostępna biblia: all
     test:
-      targets: [BibliaTests, BibliaUITests]
+      targets: [dostępna biblia – testy, dostępna biblia – testy interfejsu]

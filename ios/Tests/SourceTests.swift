@@ -1,5 +1,5 @@
 import XCTest
-@testable import Biblia
+@testable import DostepnaBiblia
 
 /// Próby integracyjne z żywym źródłem; wymagają internetu i dostępnego kalendarza.
 final class SourceTests: XCTestCase {

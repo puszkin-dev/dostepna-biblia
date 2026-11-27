@@ -1,6 +1,6 @@
 import AVFoundation
 import XCTest
-@testable import Biblia
+@testable import DostepnaBiblia
 
 @MainActor
 final class SpeechTests: XCTestCase {

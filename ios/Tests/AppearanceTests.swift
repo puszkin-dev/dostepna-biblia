@@ -1,6 +1,6 @@
 import XCTest
 import UIKit
-@testable import Biblia
+@testable import DostepnaBiblia
 
 final class AppearanceTests: XCTestCase {
     func testUstawienieICzynnikiSystemowe() throws {

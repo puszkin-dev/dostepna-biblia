@@ -9,7 +9,7 @@
     <key>CFBundleName</key><string>$(PRODUCT_NAME)</string>
     <key>CFBundlePackageType</key><string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
-    <key>CFBundleVersion</key><string>NUMER_KOMPILACJI</string>
+    <key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
     <key>CFBundleDisplayName</key><string>$(INFOPLIST_KEY_CFBundleDisplayName)</string>
     <key>ITSAppUsesNonExemptEncryption</key><false/>
     <key>LSApplicationCategoryType</key><string>$(INFOPLIST_KEY_LSApplicationCategoryType)</string>

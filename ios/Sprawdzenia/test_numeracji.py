@@ -72,6 +72,17 @@ def test_wersja_i_eksport() -> None:
     assert opcje["manageAppVersionAndBuildNumber"] is False
 
 
+def test_xcode_tylko_odczytuje_numer() -> None:
+    """Archiwizacja nie uruchamia skryptu, a wszystkie pakiety czytają wspólny licznik."""
+    for nazwa in ("project.yml", "dostępna biblia.xcodeproj/project.pbxproj"):
+        konfiguracja = (ROOT / "ios" / nazwa).read_text(encoding="utf-8")
+        assert "podbij_build.sh" not in konfiguracja
+        assert "Build.xcconfig" in konfiguracja
+    for nazwa in ("Info.plist", "InfoTests.plist"):
+        info = plistlib.loads((ROOT / "ios" / nazwa).read_bytes())
+        assert info["CFBundleVersion"] == "$(CURRENT_PROJECT_VERSION)"
+
+
 def test_metadane_do_dystrybucji() -> None:
     """Chroni deklarację HTTPS, ekran startowy, orientacje i ikonę przed regresją."""
     import json
