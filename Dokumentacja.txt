@@ -122,8 +122,9 @@ Program napisano w C# z użyciem Windows Forms i bibliotek .NET Framework.
 Cały kod aplikacji jest w pliku DostepnaBiblia.cs. Nie trzeba pobierać
 dodatkowych pakietów NuGet.
 
-Rozpakuj archiwum „Dostępna Biblia - kod źródłowy.zip”. Otwórz PowerShell
-w rozpakowanym folderze zawierającym plik DostepnaBiblia.cs i uruchom:
+Pobierz kod z repozytorium https://github.com/puszkin-dev/dostepna-biblia
+lub rozpakuj archiwum kodu źródłowego. Otwórz PowerShell w folderze
+zawierającym DostepnaBiblia.cs i Kompiluj.ps1, a następnie uruchom:
 
     .\Kompiluj.ps1
 
