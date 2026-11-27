@@ -22,4 +22,8 @@ Gdy źródło podaje numery wersetów, w czytniku działa przycisk „Przejdź d
 
 Otwórz `ios/Biblia.xcodeproj`, wybierz schemat Biblia i podłączonego iPhone’a. Zależność SwiftSoup jest przypięta w Package.resolved, nie trzeba regenerować projektu. Minimalna wersja to iOS 17; próby sterowanej mowy korzystają z Xcode i iOS 27. Po zmianie project.yml w katalogu ios wykonaj `xcodegen generate` i dołącz zaktualizowany projekt Xcode. XCTest zawiera oddzielne testy parserów, integracji z serwisem oraz interfejsu. Testy żywego źródła zależą od dostępności i limitów pobrań. Na Windowsie zgodność katalogu z oryginałem sprawdza `python -m pytest ios/Sprawdzenia`.
 
-Dla wydania wybierz w Xcode archiwizację schematu Biblia. ExportOptions.plist wskazuje dystrybucję App Store Connect, ale z **lokalnym eksportem**, nie wysyłką. Zespół 9N975WV782, identyfikator com.dostepna.biblia. Dla kolejnej kompilacji przeznaczonej do wysłania należy użyć niewykorzystanego numeru kompilacji. Stan rzeczywistych testów i artefaktów podaje raport zadania.
+Dla wydania wybierz **Product → Archive** w schemacie Biblia, a potem **Distribute App** w Organizerze. Wersja aplikacji pozostaje dokładnie **1.0**. Archiwizacja rezerwuje jeden wspólny numer kompilacji aplikacji i targetów testowych. Zwykłe uruchomienie, kompilacja i testy używają ostatniego numeru, bez podbijania. Jeżeli archiwizacja zostanie przerwana już po rezerwacji, jej numer nie wraca do puli.
+
+Skrypt `podbij_build.sh` leży w głównym katalogu repozytorium. Xcode uruchamia go sam. Ręczne uruchomienie również rezerwuje numer; opcja `--obecny` tylko go odczytuje. Licznik jest przechowywany w śledzonym pliku `ios/Build.xcconfig`, wspólnym dla Debug i Release. Nie cofaj tego pliku podczas synchronizacji.
+
+Zespół: `9N975WV782`. Identyfikator: `com.dostepna.biblia`. Do sprawdzania wydania bez wysyłki służy lokalny eksport według `ExportOptions.plist`: zachowuje numer z archiwum. Sama archiwizacja niczego nie publikuje.

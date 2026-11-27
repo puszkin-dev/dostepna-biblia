@@ -7,38 +7,59 @@ packages:
   SwiftSoup:
     url: https://github.com/scinfu/SwiftSoup.git
     exactVersion: 2.8.8
+configFiles:
+  Debug: Build.xcconfig
+  Release: Build.xcconfig
 settings:
   base:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: 9N975WV782
     CODE_SIGN_STYLE: Automatic
     TARGETED_DEVICE_FAMILY: "1"
-    MARKETING_VERSION: 1.2.0
-    CURRENT_PROJECT_VERSION: 1
-    GENERATE_INFOPLIST_FILE: YES
+    MARKETING_VERSION: "1.0"
+    GENERATE_INFOPLIST_FILE: NO
+    INFOPLIST_FILE: InfoTests.plist
+    INFOPLIST_PREPROCESS: YES
+    INFOPLIST_PREFIX_HEADER: "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NumerKompilacji.h"
+aggregateTargets:
+  NumerKompilacji:
+    targets: []
+    platform: iOS
+    settings:
+      ENABLE_USER_SCRIPT_SANDBOXING: NO
+    buildScripts:
+      - name: Przygotuj wspólny numer kompilacji
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - "$(INFOPLIST_PREFIX_HEADER)"
+        script: |
+          set -eu
+          if [ "$ACTION" = install ]; then
+            numer=$("$SRCROOT/../podbij_build.sh")
+          else
+            numer=$("$SRCROOT/../podbij_build.sh" --obecny)
+          fi
+          printf '#define NUMER_KOMPILACJI %s\n' "$numer" > "$SCRIPT_OUTPUT_FILE_0"
 targets:
   Biblia:
     type: application
     platform: iOS
     sources: [App]
     dependencies:
+      - target: NumerKompilacji
       - package: SwiftSoup
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia
         TARGETED_DEVICE_FAMILY: "1"
-        INFOPLIST_KEY_CFBundleDisplayName: dostępna biblia
-        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
-        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_FILE: Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
   BibliaTests:
     type: bundle.unit-test
     platform: iOS
     sources: [Tests]
     dependencies:
+      - target: NumerKompilacji
       - target: Biblia
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.tests
@@ -47,6 +68,7 @@ targets:
     platform: iOS
     sources: [UITests]
     dependencies:
+      - target: NumerKompilacji
       - target: Biblia
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.uitests

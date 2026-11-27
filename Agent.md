@@ -4,7 +4,11 @@ Po utworzeniu lokalnego repozytorium Git dla tego projektu twórz lokalny commit
 
 Po każdym utworzonym commicie wypchnij aktualny stan gałęzi z tym commitem do repozytorium GitHub `puszkin-dev/dostepna-biblia` (zdalne repozytorium `origin`). Potwierdź, że commit dotarł na GitHub.
 
-## Wersjonowanie wydań
+## Wersjonowanie iOS
+
+Wersja widoczna dla użytkownika zawsze wynosi dokładnie `1.0`. Zmieniaj wyłącznie numer kompilacji. Wszystkie targety iOS dziedziczą tę samą wersję i licznik. W Xcode wystarczą Archive i Distribute App: archiwizacja sama rezerwuje kolejny numer przed podpisaniem. Nie podbijaj go osobno przed Archive. Zachowuj ostatni licznik z `ios/Build.xcconfig` przy synchronizacji Windows–Mac. Nie wysyłaj kompilacji bez polecenia właściciela.
+
+## Wersjonowanie wydań Windows
 
 Przed publikacją każdego nowego wydania zwiększ numer wersji względem ostatniego opublikowanego wydania. Zastosuj nowy numer w metadanych aplikacji, dokumentacji, tagu Git i nazwie paczki. Przed publikacją sprawdź wersję w zbudowanym pliku EXE.
 

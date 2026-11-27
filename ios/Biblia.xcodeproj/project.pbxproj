@@ -6,6 +6,22 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		8D8FF70135032085D86E3999 /* NumerKompilacji */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DB161D3FAA49980A3FBA1242 /* Build configuration list for PBXAggregateTarget "NumerKompilacji" */;
+			buildPhases = (
+				D254DA035440DB16117F592A /* Przygotuj wspólny numer kompilacji */,
+			);
+			dependencies = (
+			);
+			name = NumerKompilacji;
+			packageProductDependencies = (
+			);
+			productName = NumerKompilacji;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0136469A3EBA6012B8DE4376 /* BookStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C8E9D39253B8E00655D8AB /* BookStyle.swift */; };
 		0DADC0E28B0DD317C69BB760 /* ReadingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0714B2A396FB304A05913D1C /* ReadingsTests.swift */; };
@@ -29,6 +45,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4CD30D9559F32AA63B58755D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A85A396BBB3FF19BDDE97975 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D8FF70135032085D86E3999;
+			remoteInfo = NumerKompilacji;
+		};
+		7CDFE468CE2F64B8743F7615 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A85A396BBB3FF19BDDE97975 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D8FF70135032085D86E3999;
+			remoteInfo = NumerKompilacji;
+		};
+		9ED00E71F67171244FC0D848 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A85A396BBB3FF19BDDE97975 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D8FF70135032085D86E3999;
+			remoteInfo = NumerKompilacji;
+		};
 		C94631EA495FFB9AD20FA5CB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A85A396BBB3FF19BDDE97975 /* Project object */;
@@ -59,6 +96,7 @@
 		B1C8E9D39253B8E00655D8AB /* BookStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookStyle.swift; sourceTree = "<group>"; };
 		B8E5D62199153E278BB69C8E /* Readings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readings.swift; sourceTree = "<group>"; };
 		BD6FB73280C805925A56C53C /* Licencja-SwiftSoup.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Licencja-SwiftSoup.txt"; sourceTree = "<group>"; };
+		C9105E72DEE275C99706F624 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		CCD5292FBDB3820773F61900 /* VisualTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualTests.swift; sourceTree = "<group>"; };
 		D8A11CFFEFD2A596EE1431F9 /* AppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceTests.swift; sourceTree = "<group>"; };
 		DCFFC85196DA47248978BE51 /* BibliaTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BibliaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +119,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0926AC66EA1935488FD4CAB7 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				C9105E72DEE275C99706F624 /* Build.xcconfig */,
+			);
+			name = ios;
+			path = .;
+			sourceTree = "<group>";
+		};
 		1C90A5E46FB31AC1D76B0810 /* UITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				658171650A58E9B770D77F99 /* App */,
+				0926AC66EA1935488FD4CAB7 /* ios */,
 				D2FECBDAEB819B474E973D17 /* Tests */,
 				1C90A5E46FB31AC1D76B0810 /* UITests */,
 				4D716EF4EEAD5A7B08E26EC2 /* Products */,
@@ -152,6 +200,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B472CBA4CAA76850D1391E5A /* PBXTargetDependency */,
 				E213A4BD0BF0E9A99E84EE29 /* PBXTargetDependency */,
 			);
 			name = BibliaUITests;
@@ -172,6 +221,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C8FA64EEC6C547553F4DC7FF /* PBXTargetDependency */,
 			);
 			name = Biblia;
 			packageProductDependencies = (
@@ -190,6 +240,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				EF6B119CE90885849BF40CE8 /* PBXTargetDependency */,
 				CA0AEA3347370A5121F4C8FB /* PBXTargetDependency */,
 			);
 			name = BibliaTests;
@@ -212,6 +263,10 @@
 						DevelopmentTeam = 9N975WV782;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 9C90971DA5ED436986250A9E;
+					};
+					8D8FF70135032085D86E3999 = {
+						DevelopmentTeam = 9N975WV782;
+						ProvisioningStyle = Automatic;
 					};
 					9C90971DA5ED436986250A9E = {
 						DevelopmentTeam = 9N975WV782;
@@ -243,6 +298,7 @@
 				9C90971DA5ED436986250A9E /* Biblia */,
 				EA4841040C9AD61E0E105793 /* BibliaTests */,
 				058CD2EC490C0B24D13DF093 /* BibliaUITests */,
+				8D8FF70135032085D86E3999 /* NumerKompilacji */,
 			);
 		};
 /* End PBXProject section */
@@ -259,6 +315,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D254DA035440DB16117F592A /* Przygotuj wspólny numer kompilacji */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Przygotuj wspólny numer kompilacji";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(INFOPLIST_PREFIX_HEADER)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\nif [ \"$ACTION\" = install ]; then\n  numer=$(\"$SRCROOT/../podbij_build.sh\")\nelse\n  numer=$(\"$SRCROOT/../podbij_build.sh\" --obecny)\nfi\nprintf '#define NUMER_KOMPILACJI %s\\n' \"$numer\" > \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		095E1307F273F24323AFF8CE /* Sources */ = {
@@ -300,6 +379,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B472CBA4CAA76850D1391E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D8FF70135032085D86E3999 /* NumerKompilacji */;
+			targetProxy = 7CDFE468CE2F64B8743F7615 /* PBXContainerItemProxy */;
+		};
+		C8FA64EEC6C547553F4DC7FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D8FF70135032085D86E3999 /* NumerKompilacji */;
+			targetProxy = 4CD30D9559F32AA63B58755D /* PBXContainerItemProxy */;
+		};
 		CA0AEA3347370A5121F4C8FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9C90971DA5ED436986250A9E /* Biblia */;
@@ -310,11 +399,17 @@
 			target = 9C90971DA5ED436986250A9E /* Biblia */;
 			targetProxy = C94631EA495FFB9AD20FA5CB /* PBXContainerItemProxy */;
 		};
+		EF6B119CE90885849BF40CE8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D8FF70135032085D86E3999 /* NumerKompilacji */;
+			targetProxy = 9ED00E71F67171244FC0D848 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4FAA305F2541735F76A66974 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9105E72DEE275C99706F624 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -348,7 +443,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9N975WV782;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -361,9 +455,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InfoTests.plist;
+				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NumerKompilacji.h";
+				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -372,6 +469,13 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		786A306A7A86D1D42123B8EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 			};
 			name = Release;
 		};
@@ -396,12 +500,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -446,6 +545,7 @@
 		};
 		941B31B16DFA16F514279105 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9105E72DEE275C99706F624 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -479,7 +579,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9N975WV782;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -498,9 +597,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InfoTests.plist;
+				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NumerKompilacji.h";
+				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -518,12 +620,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -549,6 +646,13 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Biblia.app/Biblia";
 			};
 			name = Release;
+		};
+		F05E011B6B748CC45F829FDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -576,6 +680,15 @@
 			buildConfigurations = (
 				8E8A8830EED0417408127928 /* Debug */,
 				B51DE2F41D47AC8F90D8AF1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DB161D3FAA49980A3FBA1242 /* Build configuration list for PBXAggregateTarget "NumerKompilacji" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F05E011B6B748CC45F829FDA /* Debug */,
+				786A306A7A86D1D42123B8EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
