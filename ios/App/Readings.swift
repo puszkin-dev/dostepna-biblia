@@ -10,6 +10,13 @@ struct ReaderError: LocalizedError {
 struct Reading: Equatable {
     let name: String
     let text: String
+
+    func writeTXT(in directory: URL) throws -> URL {
+        let filename = name.replacingOccurrences(of: "/", with: "-") + ".txt"
+        let url = directory.appendingPathComponent(filename)
+        try Data(text.utf8).write(to: url, options: .atomic)
+        return url
+    }
 }
 
 struct ReadingDate: Equatable {
@@ -65,12 +72,24 @@ struct BibleService {
 
     static func download(_ url: URL) async throws -> Data {
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+        for attempt in 0...1 {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse,
               http.url?.scheme == "https", http.url?.host == "twojabiblia.pl" else {
-            throw ReaderError("Serwis TwojaBiblia.pl nie zwrócił treści. Spróbuj ponownie.")
+                throw ReaderError("Niepoprawna odpowiedź serwisu TwojaBiblia.pl.")
+            }
+            if (200..<300).contains(http.statusCode) { return data }
+            if http.statusCode == 429 {
+                if attempt == 0, let value = http.value(forHTTPHeaderField: "Retry-After"),
+                   let seconds = Int(value), (1...5).contains(seconds) {
+                    try await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
+                    continue
+                }
+                throw ReaderError("TwojaBiblia.pl chwilowo ogranicza liczbę pobrań. Spróbuj ponownie za chwilę.")
+            }
+            throw ReaderError("TwojaBiblia.pl zwróciła błąd \(http.statusCode). Spróbuj ponownie.")
         }
-        return data
+        throw ReaderError("Serwis jest chwilowo niedostępny.")
     }
 
     private func address(_ path: String, _ query: [URLQueryItem] = []) throws -> URL {

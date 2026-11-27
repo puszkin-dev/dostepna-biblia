@@ -6,6 +6,12 @@ final class InterfaceTests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        #if compiler(>=6.4)
+        if #available(iOS 27.0, *), XCUIDevice.shared.voiceOverService.isEnabled {
+            try XCUIDevice.shared.voiceOverService.disable()
+            addTeardownBlock { @MainActor in try XCUIDevice.shared.voiceOverService.enable() }
+        }
+        #endif
         app = XCUIApplication()
         app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
         app.launch()
@@ -23,19 +29,22 @@ final class InterfaceTests: XCTestCase {
 
     func testCzteryKartyIRegulacje() throws {
         XCTAssertEqual(app.tabBars.buttons.count, 4)
-        let sliders = app.sliders.allElementsBoundByIndex
-        XCTAssertEqual(sliders.map(\.label), ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"])
-        sliders[0].adjust(toNormalizedSliderPosition: 0)
-        XCTAssertEqual(sliders[0].value as? String, "styczeń")
-        sliders[1].adjust(toNormalizedSliderPosition: 1)
-        XCTAssertEqual(sliders[1].value as? String, "31")
-        sliders[0].adjust(toNormalizedSliderPosition: 1.0 / 11.0)
-        XCTAssertEqual(sliders[0].value as? String, "luty")
-        XCTAssertTrue(["28", "29"].contains(sliders[1].value as? String ?? ""))
+        let wheels = app.pickerWheels.allElementsBoundByIndex
+        XCTAssertEqual(wheels.map(\.label), ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"])
+        wheels[0].adjust(toPickerWheelValue: "styczeń")
+        wheels[1].adjust(toPickerWheelValue: "31")
+        wheels[2].adjust(toPickerWheelValue: "2024")
+        wheels[0].adjust(toPickerWheelValue: "luty")
+        XCTAssertTrue((wheels[1].value as? String ?? "").hasPrefix("29"))
+        wheels[2].adjust(toPickerWheelValue: "2025")
+        XCTAssertTrue((wheels[1].value as? String ?? "").hasPrefix("28"))
         for tab in ["Czytaj Biblię", "Losuj cytat", "Wyszukaj", "Liturgia"] {
             selectTab(tab)
             XCTAssertTrue(app.tabBars.buttons[tab].isSelected)
-            try app.performAccessibilityAudit()
+            try app.performAccessibilityAudit { issue in
+                print("Audyt \(tab): \(issue.compactDescription) — \(issue.element?.debugDescription ?? "bez elementu")")
+                return false
+            }
         }
     }
 
@@ -65,7 +74,7 @@ final class InterfaceTests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(app.buttons["Losuj ponownie"].exists)
         app.buttons["Powrót"].tap()
-        XCTAssertTrue(app.buttons["Kategoria cytatu"].exists)
+        XCTAssertTrue(app.sliders["Kategoria cytatu"].exists)
     }
 
     func testWyszukiwanie() throws {

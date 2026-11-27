@@ -26,6 +26,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia
+        TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_KEY_CFBundleDisplayName: dostępna biblia
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO

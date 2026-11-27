@@ -8,13 +8,29 @@ final class BibleScreen: FormScreen {
     private var chapters: [Int] = []
     private var selectedChapter = 0
     private var cache: [Book: [Int]] = [:]
-    private var scopeButton = UIButton(), bookButton = UIButton(), chapterButton = UIButton()
+    private let scopeSlider = ChoiceSlider("Co chcesz czytać")
+    private let bookSlider = ChoiceSlider("Wybierz księgę")
+    private let chapterSlider = ChoiceSlider("Wybierz rozdział")
+    private var chapterTask: Task<Void, Never>?
     private var read = UIButton(), save = UIButton(), retry = UIButton()
 
     override func configure() {
-        scopeButton = button("Co chcesz czytać") {}
-        bookButton = button("Wybierz księgę") {}
-        chapterButton = button("Wybierz rozdział") {}
+        addChoice(scopeSlider) { [weak self] i in
+            guard let self else { return }
+            scope = i
+            books = Book.all.filter { i == 0 || $0.newTestament == (i == 2) }
+            selectedBook = 0
+            loadChapters()
+        }
+        addChoice(bookSlider) { [weak self] i in
+            self?.selectedBook = i
+            self?.loadChapters()
+        }
+        addChoice(chapterSlider) { [weak self] i in
+            self?.selectedChapter = i
+            self?.clearResult()
+            self?.refresh()
+        }
         read = button("Czytaj") { [weak self] in self?.load(save: false) }
         save = button("Zapisz do TXT") { [weak self] in self?.load(save: true) }
         retry = button("Pobierz listę rozdziałów ponownie") { [weak self] in self?.loadChapters() }
@@ -22,43 +38,45 @@ final class BibleScreen: FormScreen {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if chapters.isEmpty { loadChapters() }
+        if chapters.isEmpty && chapterTask == nil { loadChapters() }
     }
     override func refresh() {
-        menu(scopeButton, label: "Co chcesz czytać", names: scopes, index: scope) { [weak self] i in
-            guard let self else { return }
-            scope = i
-            books = Book.all.filter { i == 0 || $0.newTestament == (i == 2) }
-            selectedBook = 0
-            loadChapters()
-        }
-        menu(bookButton, label: "Wybierz księgę", names: books.map(\.name), index: selectedBook) { [weak self] i in
-            self?.selectedBook = i
-            self?.loadChapters()
-        }
-        menu(chapterButton, label: "Wybierz rozdział", names: chapters.map { $0 == 0 ? "0 — Wstęp" : String($0) },
-             index: selectedChapter) { [weak self] i in
-            self?.selectedChapter = i
-            self?.clearResult()
-            self?.refresh()
-        }
-        for control in [chapterButton, read, save] { control.isEnabled = !chapters.isEmpty }
-        retry.isHidden = !chapters.isEmpty
+        scopeSlider.show(scopes, index: scope)
+        bookSlider.show(books.map(\.name), index: selectedBook)
+        chapterSlider.show(chapters.map { $0 == 0 ? "0 — Wstęp" : String($0) }, index: selectedChapter)
+        read.isEnabled = !chapters.isEmpty
+        save.isEnabled = !chapters.isEmpty
+        retry.isHidden = !chapters.isEmpty || chapterTask != nil
     }
 
     private func loadChapters() {
         let book = books[selectedBook]
+        chapterTask?.cancel()
+        chapterTask = nil
         clearResult()
         selectedChapter = 0
         chapters = cache[book] ?? []
         refresh()
         guard chapters.isEmpty else { return }
-        perform("Pobieranie listy rozdziałów…") { [self] in
-            let numbers = try await service.chapters(book)
-            cache[book] = numbers
-            chapters = numbers
-            status.text = "Wybierz księgę i rozdział."
+        status.text = "Pobieranie listy rozdziałów…"
+        chapterTask = Task {
+            do {
+                try await Task.sleep(nanoseconds: 300_000_000)
+                let numbers = try await service.chapters(book)
+                try Task.checkCancellation()
+                cache[book] = numbers
+                chapters = numbers
+                status.text = "Wybierz księgę i rozdział."
+            } catch {
+                guard !Task.isCancelled else { return }
+                let message = (error as? ReaderError)?.message ?? "Nie udało się pobrać rozdziałów. Sprawdź połączenie."
+                status.text = message
+                if visible { UIAccessibility.post(notification: .announcement, argument: message) }
+            }
+            chapterTask = nil
+            refresh()
         }
+        retry.isHidden = true
     }
     private func load(save: Bool) {
         guard chapters.indices.contains(selectedChapter) else { return }
@@ -72,10 +90,16 @@ final class BibleScreen: FormScreen {
 
 final class QuoteScreen: FormScreen {
     private var index = 0
-    private var category = UIButton(), draw = UIButton(), save = UIButton(), back = UIButton()
+    private let category = ChoiceSlider("Kategoria cytatu")
+    private var draw = UIButton(), save = UIButton(), back = UIButton()
+    private var reopen = UIButton()
     override func configure() {
-        category = button("Kategoria cytatu") {}
+        addChoice(category) { [weak self] i in
+            self?.index = i
+            self?.refresh()
+        }
         draw = button("Losuj cytat") { [weak self] in self?.load() }
+        reopen = button("Otwórz wylosowany cytat") { [weak self] in self?.openReading() }
         save = button("Zapisz do TXT") { [weak self] in
             if let self, let reading { export(reading) }
         }
@@ -87,13 +111,12 @@ final class QuoteScreen: FormScreen {
         }
     }
     override func refresh() {
-        menu(category, label: "Kategoria cytatu", names: BibleService.categories, index: index) { [weak self] i in
-            self?.index = i
-            self?.refresh()
-        }
+        category.show(BibleService.categories, index: index)
         category.isHidden = reading != nil
+        category.caption.isHidden = category.isHidden
         draw.configuration?.title = reading == nil ? "Losuj cytat" : "Losuj ponownie"
         back.isHidden = reading == nil
+        reopen.isHidden = reading == nil
         save.isHidden = reading == nil
     }
     private func load() {
@@ -107,12 +130,20 @@ final class QuoteScreen: FormScreen {
 final class SearchScreen: FormScreen, UITextFieldDelegate {
     private let query = UITextField()
     private var previous = UIButton(), nextButton = UIButton(), save = UIButton()
+    private var reopen = UIButton()
     private var phrase = ""
     private var number = 0
     private var page: SearchPage?
 
     override func configure() {
-        query.placeholder = "Słowa kluczowe"
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
+        label.text = "Słowa kluczowe"
+        label.isAccessibilityElement = false
+        label.accessibilityElementsHidden = true
+        fields.addArrangedSubview(label)
         query.accessibilityLabel = "Słowa kluczowe"
         query.font = .preferredFont(forTextStyle: .body)
         query.adjustsFontForContentSizeCategory = true
@@ -122,6 +153,7 @@ final class SearchScreen: FormScreen, UITextFieldDelegate {
         query.delegate = self
         addControl(query)
         button("Szukaj") { [weak self] in self?.firstPage() }
+        reopen = button("Otwórz wyniki") { [weak self] in self?.openReading() }
         previous = button("Poprzednia strona") { [weak self] in
             guard let self, let url = page?.previous else { return }
             load(phrase, url, number - 1)
@@ -138,6 +170,7 @@ final class SearchScreen: FormScreen, UITextFieldDelegate {
         previous.isEnabled = page?.previous != nil
         nextButton.isEnabled = page?.next != nil
         save.isEnabled = reading != nil
+        reopen.isHidden = reading == nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool { firstPage(); return false }
     private func firstPage() {

@@ -36,6 +36,13 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
         status.font = .preferredFont(forTextStyle: .body)
         status.adjustsFontForContentSizeCategory = true
         status.numberOfLines = 0
+        let heading = UILabel()
+        heading.font = .preferredFont(forTextStyle: .title1)
+        heading.adjustsFontForContentSizeCategory = true
+        heading.numberOfLines = 0
+        heading.text = title
+        heading.accessibilityTraits.insert(.header)
+        fields.addArrangedSubview(heading)
         configure()
         fields.addArrangedSubview(status)
         refresh()
@@ -43,6 +50,11 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
 
     func configure() {}
     func refresh() {}
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
 
     func addControl(_ control: UIControl) {
         controls.append(control)
@@ -62,15 +74,10 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
         return button
     }
 
-    func menu(_ button: UIButton, label: String, names: [String], index: Int, select: @escaping (Int) -> Void) {
-        let current = names.indices.contains(index) ? names[index] : "Brak"
-        button.configuration?.title = "\(label): \(current)"
-        button.accessibilityLabel = label
-        button.accessibilityValue = current
-        button.showsMenuAsPrimaryAction = true
-        button.menu = UIMenu(children: names.enumerated().map { i, name in
-            UIAction(title: name, state: i == index ? .on : .off) { _ in select(i) }
-        })
+    func addChoice(_ slider: ChoiceSlider, select: @escaping (Int) -> Void) {
+        fields.addArrangedSubview(slider.caption)
+        addControl(slider)
+        slider.onSelect = select
     }
 
     var visible: Bool {
@@ -123,11 +130,9 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
         let presenter = navigationController?.topViewController ?? self
         guard presenter.viewIfLoaded?.window != nil, presenter.presentedViewController == nil else { return }
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
-        let name = value.name.replacingOccurrences(of: "/", with: "-") + ".txt"
-        let url = directory.appendingPathComponent(name)
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try Data(value.text.utf8).write(to: url, options: .atomic)
+            let url = try value.writeTXT(in: directory)
             temporaryDirectory = directory
             let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
             picker.delegate = self
@@ -196,4 +201,9 @@ final class TextScreen: UIViewController {
     }
 
     @objc private func save() { onSave?() }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 }

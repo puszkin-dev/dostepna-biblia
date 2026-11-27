@@ -45,3 +45,5 @@ R-019 — Sprawdzić zasoby, uprawnienia, wersję, Release, archiwum i możliwo�
 R-020 — Po większych etapach testować, commitować i aktualizować ten sam checkpoint z dopiskami.
 
 R-021 — Odbiór na podstawie używalności, dostępności i parytetu, nie samej kompilacji.
+
+R-022 — Dopisek właściciela: Wszystkie wybory listowe, w szczególności część liturgii, bez menu kontekstowych: bezpośrednia regulacja VO; akcje pozostają przyciskami.

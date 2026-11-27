@@ -15,7 +15,7 @@ final class BibleScene: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
-        let tabs = UITabBarController()
+        let tabs = BibleTabs()
         let screens: [(FormScreen, String, String)] = [
             (LiturgyScreen(), "Liturgia", "calendar"),
             (BibleScreen(), "Czytaj Biblię", "book"),
@@ -33,5 +33,30 @@ final class BibleScene: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = tabs
         self.window = window
         window.makeKeyAndVisible()
+    }
+}
+
+final class BibleTabs: UITabBarController {
+    private var firstAppearance = true
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard firstAppearance else { return }
+        firstAppearance = false
+        if UIAccessibility.isVoiceOverRunning, let first = tabBar.accessibilityElement(at: 0) {
+            UIAccessibility.post(notification: .screenChanged, argument: first)
+        }
+    }
+    override var keyCommands: [UIKeyCommand]? {
+        let forward = UIKeyCommand(input: "\t", modifierFlags: .control, action: #selector(nextCard))
+        let backward = UIKeyCommand(input: "\t", modifierFlags: [.control, .shift], action: #selector(previousCard))
+        forward.discoverabilityTitle = "Następna karta"
+        backward.discoverabilityTitle = "Poprzednia karta"
+        return [forward, backward]
+    }
+    @objc private func nextCard() { changeCard(1) }
+    @objc private func previousCard() { changeCard(-1) }
+    private func changeCard(_ offset: Int) {
+        guard let count = viewControllers?.count, count > 0 else { return }
+        selectedIndex = (selectedIndex + count + offset) % count
     }
 }

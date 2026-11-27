@@ -1,78 +1,98 @@
 import UIKit
 
-/// Jeden gest regulacji ma zmieniać dokładnie jedną pozycję, nie dziesięć procent zakresu.
-final class DateSlider: UISlider {
-    var format: (Int) -> String = { String($0) }
-    override var accessibilityValue: String? {
-        get { format(Int(value.rounded())) }
-        set { super.accessibilityValue = newValue }
-    }
-    override func accessibilityIncrement() { move(1) }
-    override func accessibilityDecrement() { move(-1) }
+/// Systemowe koło daty. Każda kolumna jest osobną regulacją VoiceOver.
+final class CalendarWheels: UIPickerView, UIPickerViewDataSource, UIPickerViewAccessibilityDelegate {
+    private(set) var date: ReadingDate
+    private let years: ClosedRange<Int>
+    private let names = ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"]
+    var changed: (() -> Void)?
 
-    private func move(_ step: Int) {
-        value = min(maximumValue, max(minimumValue, value.rounded() + Float(step)))
-        sendActions(for: .valueChanged)
+    init(today: ReadingDate = ReadingDate()) {
+        date = today
+        years = 2000...max(2000, today.year + 1)
+        super.init(frame: .zero)
+        dataSource = self
+        delegate = self
+        selectRow(date.month - 1, inComponent: 0, animated: false)
+        selectRow(date.day - 1, inComponent: 1, animated: false)
+        selectRow(date.year - years.lowerBound, inComponent: 2, animated: false)
+    }
+    required init?(coder: NSCoder) { nil }
+
+    func numberOfComponents(in pickerView: UIPickerView) -> Int { names.count }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch component {
+        case 0: return 12
+        case 1: return date.lastDay
+        default: return years.count
+        }
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        switch component {
+        case 0: return ReadingDate.months[row]
+        case 1: return String(row + 1)
+        default: return String(years.lowerBound + row)
+        }
+    }
+    func pickerView(_ pickerView: UIPickerView, accessibilityLabelForComponent component: Int) -> String? {
+        names[component]
+    }
+    func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
+        pickerView.bounds.width * [0.45, 0.18, 0.32][component]
+    }
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let oldLimit = date.lastDay
+        switch component {
+        case 0: date.month = row + 1
+        case 1: date.day = row + 1
+        default: date.year = years.lowerBound + row
+        }
+        date.clampDay()
+        if oldLimit != date.lastDay {
+            reloadComponent(1)
+            selectRow(date.day - 1, inComponent: 1, animated: false)
+        }
+        changed?()
     }
 }
 
 final class LiturgyScreen: FormScreen {
-    private var date = ReadingDate()
+    private let wheels = CalendarWheels()
     private var part = Part.all
-    private let month = DateSlider(), day = DateSlider(), year = DateSlider()
-    private let monthLabel = UILabel(), dayLabel = UILabel(), yearLabel = UILabel()
-    private var partButton = UIButton()
+    private let partSlider = ChoiceSlider("Część liturgii")
     private var reopen = UIButton()
 
     override func configure() {
-        month.format = { ReadingDate.months[$0 - 1] }
-        addSlider(month, monthLabel, "Wybierz miesiąc", 1...12) { [weak self] in self?.date.month = $0 }
-        addSlider(day, dayLabel, "Wybierz dzień", 1...date.lastDay) { [weak self] in self?.date.day = $0 }
-        addSlider(year, yearLabel, "Wybierz rok", 2000...max(2000, date.year + 1)) { [weak self] in self?.date.year = $0 }
-        partButton = button("Część liturgii") {}
+        wheels.changed = { [weak self] in
+            self?.clearResult()
+            self?.refresh()
+        }
+        fields.addArrangedSubview(wheels)
+        addChoice(partSlider) { [weak self] i in
+            self?.part = Part.allCases[i]
+            self?.clearResult()
+            self?.refresh()
+        }
         button("Czytaj") { [weak self] in self?.load(save: false) }
         button("Zapisz do TXT") { [weak self] in self?.load(save: true) }
         reopen = button("Otwórz pobrany tekst") { [weak self] in self?.openReading() }
     }
 
-    private func addSlider(_ slider: DateSlider, _ label: UILabel, _ name: String, _ range: ClosedRange<Int>,
-                           changed: @escaping (Int) -> Void) {
-        label.font = .preferredFont(forTextStyle: .body)
-        label.adjustsFontForContentSizeCategory = true
-        label.numberOfLines = 0
-        label.isAccessibilityElement = false
-        fields.addArrangedSubview(label)
-        slider.accessibilityLabel = name
-        slider.minimumValue = Float(range.lowerBound)
-        slider.maximumValue = Float(range.upperBound)
-        slider.addAction(UIAction { [weak self, weak slider] _ in
-            guard let self, let slider else { return }
-            changed(Int(slider.value.rounded()))
-            date.clampDay()
-            clearResult()
-            refresh()
-        }, for: .valueChanged)
-        addControl(slider)
-    }
-
     override func refresh() {
-        day.maximumValue = Float(date.lastDay)
-        for (slider, label, value) in [(month, monthLabel, date.month), (day, dayLabel, date.day), (year, yearLabel, date.year)] {
-            slider.value = Float(value)
-            label.text = (slider.accessibilityLabel ?? "") + ": " + slider.format(value)
-        }
-        menu(partButton, label: "Część liturgii", names: Part.allCases.map(\.rawValue),
-             index: Part.allCases.firstIndex(of: part) ?? 0) { [weak self] i in
-            self?.part = Part.allCases[i]
-            self?.clearResult()
-            self?.refresh()
-        }
+        partSlider.show(Part.allCases.map(\.rawValue), index: Part.allCases.firstIndex(of: part) ?? 0)
         reopen.isHidden = reading == nil
     }
 
     private func load(save: Bool) {
         if save, let reading { export(reading); return }
+        let date = wheels.date
+        wheels.isUserInteractionEnabled = false
+        wheels.accessibilityElementsHidden = true
         perform("Pobieranie czytań…") { [self] in
+            defer {
+                wheels.isUserInteractionEnabled = true
+                wheels.accessibilityElementsHidden = false
+            }
             let value = try await service.liturgy(date, part)
             display(value, save: save)
         }

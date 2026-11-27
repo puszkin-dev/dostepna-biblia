@@ -2,6 +2,35 @@ import XCTest
 @testable import Biblia
 
 final class ReadingsTests: XCTestCase {
+    func testPlikTXT() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let value = Reading(name: "Rozdział 1/2", text: "Miłość\n\nŹródło: TwojaBiblia.pl")
+        let file = try value.writeTXT(in: directory)
+        XCTAssertEqual(file.lastPathComponent, "Rozdział 1-2.txt")
+        XCTAssertEqual(try Data(contentsOf: file), Data(value.text.utf8))
+        XCTAssertThrowsError(try value.writeTXT(in: file))
+    }
+
+    @MainActor func testSuwakBezMenu() {
+        let field = ChoiceSlider("Część liturgii")
+        let parts = Part.allCases.map(\.rawValue)
+        var selections: [Int] = []
+        field.onSelect = { selections.append($0) }
+        field.show(parts, index: 0)
+        field.accessibilityDecrement()
+        field.accessibilityIncrement()
+        XCTAssertEqual(field.accessibilityValue, "Pierwsze czytanie")
+        field.accessibilityDecrement()
+        XCTAssertEqual(selections, [1, 0])
+        field.show(parts, index: parts.count - 1)
+        field.accessibilityIncrement()
+        XCTAssertEqual(field.accessibilityValue, "Ewangelia")
+        field.show([], index: 4)
+        XCTAssertFalse(field.isEnabled)
+        XCTAssertEqual(field.accessibilityValue, "Brak")
+    }
     func testKalendarz() {
         var date = ReadingDate()
         date.year = 2024
