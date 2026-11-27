@@ -2,6 +2,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDevelopmentRegion</key><string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleLocalizations</key><array><string>pl</string></array>
     <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
@@ -9,9 +10,9 @@
     <key>CFBundlePackageType</key><string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
     <key>CFBundleVersion</key><string>NUMER_KOMPILACJI</string>
-    <key>CFBundleDisplayName</key><string>dostępna biblia</string>
+    <key>CFBundleDisplayName</key><string>$(INFOPLIST_KEY_CFBundleDisplayName)</string>
     <key>ITSAppUsesNonExemptEncryption</key><false/>
-    <key>LSApplicationCategoryType</key><string>public.app-category.reference</string>
+    <key>LSApplicationCategoryType</key><string>$(INFOPLIST_KEY_LSApplicationCategoryType)</string>
     <key>LSRequiresIPhoneOS</key><true/>
     <key>UIApplicationSceneManifest</key>
     <dict>

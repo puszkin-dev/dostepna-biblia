@@ -85,7 +85,17 @@ def test_metadane_do_dystrybucji() -> None:
         "UIInterfaceOrientationLandscapeLeft",
         "UIInterfaceOrientationLandscapeRight",
     }
-    assert info["CFBundleDisplayName"] == "dostępna biblia"
+    projekt = (ROOT / "ios/project.yml").read_text(encoding="utf-8")
+    for klucz, wartosc in {
+        "CFBundleDisplayName": "dostępna biblia",
+        "LSApplicationCategoryType": "public.app-category.reference",
+    }.items():
+        assert info[klucz] == f"$(INFOPLIST_KEY_{klucz})"
+        assert any(
+            linia.strip() == f"INFOPLIST_KEY_{klucz}: {wartosc}"
+            for linia in projekt.splitlines()
+        )
+    assert info["CFBundleLocalizations"] == ["pl"]
     katalog = ROOT / "ios/App/Assets.xcassets/AppIcon.appiconset"
     ikony = json.loads((katalog / "Contents.json").read_bytes())["images"]
     obraz = next(ikona for ikona in ikony if ikona["size"] == "1024x1024")

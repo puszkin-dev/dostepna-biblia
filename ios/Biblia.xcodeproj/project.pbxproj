@@ -88,10 +88,12 @@
 		1F5B7F27D314144BB747A814 /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		204B1709A60D61F80DA87BF7 /* InterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceTests.swift; sourceTree = "<group>"; };
 		27CABF1C1AC7A08B8128DA1E /* OtherScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherScreens.swift; sourceTree = "<group>"; };
+		2ED14C37B51C0AC029B14288 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4A59E251B3E295A93FB3EE15 /* ChoiceSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceSlider.swift; sourceTree = "<group>"; };
 		573B52558682568A651923E5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		57B6AC711F0F36350CFE61AE /* BibliaUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BibliaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		67ECCFE17411DE091D06C646 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
+		6BDFE9DF223A7BC8573B2E74 /* InfoTests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = InfoTests.plist; sourceTree = "<group>"; };
 		79B8A7B9513A640FB4BF0AD2 /* FormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormScreen.swift; sourceTree = "<group>"; };
 		B1C8E9D39253B8E00655D8AB /* BookStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookStyle.swift; sourceTree = "<group>"; };
 		B8E5D62199153E278BB69C8E /* Readings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readings.swift; sourceTree = "<group>"; };
@@ -170,6 +172,8 @@
 		C4489CDC25242A700936B0D6 = {
 			isa = PBXGroup;
 			children = (
+				2ED14C37B51C0AC029B14288 /* Info.plist */,
+				6BDFE9DF223A7BC8573B2E74 /* InfoTests.plist */,
 				658171650A58E9B770D77F99 /* App */,
 				0926AC66EA1935488FD4CAB7 /* ios */,
 				D2FECBDAEB819B474E973D17 /* Tests */,
@@ -501,6 +505,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -508,6 +514,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -621,6 +628,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

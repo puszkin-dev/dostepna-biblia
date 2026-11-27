@@ -2,7 +2,9 @@
 
 **Nazwa:** dostępna biblia  
 **Podtytuł:** Biblia i liturgia z VoiceOver  
-**Kategoria:** Reference (aplikacja do korzystania z tekstów źródłowych)  
+**Kategoria główna:** Reference (religia, wyszukiwanie tekstów i cytatów)
+
+**Kategoria dodatkowa do karty sklepu:** Books (Książki) — aplikacja ma też czytnik ksiąg, rozdziałów i wersetów.
 **Słowa kluczowe:** czytania,ewangelia,pismo święte,wersety,cytat,kalendarz,liturgia dnia  
 **Wersja:** 1.0
 
@@ -32,3 +34,24 @@ Nie trzeba się logować. Z internetem: w karcie Liturgia wybierz datę i użyj 
 Sześć nowych plików PNG, 1206 × 2622 piksele, pion, bez kanału alfa. Pokazują kolejno liturgię, wybór księgi, czytanie rozdziału, listę wersetów, ustawienia wielkości tekstu i losowanie. W podglądzie sprawdzono wszystkie kadry: bez prywatnych powiadomień, klawiatury i alertów testowych. Zachowano oryginalne piksele i pasek stanu telefonu. To materiały z polskiego interfejsu, nie wersja angielska.
 
 Sprawdzenie lokalne wydania 1.0 (7): trzy pakiety projektu — aplikacja, testy logiki i testy interfejsu — otrzymały 1.0 (7). Archiwa o kolejnych numerach 5, 6 i 7; numer 7 pozostał niezmieniony po budowaniu do testów. W IPA potwierdzono identyfikator, zespół, deklarację szyfrowania, ekran startowy, orientacje, rodzinę iPhone i manifest prywatności. Ikona źródłowa PNG i ikona sklepowa w skompilowanym katalogu mają 1024 × 1024 piksele i są nieprzezroczyste. Po wykonaniu zrzutów ponownie zainstalowano i uruchomiono na fizycznym iPhonie aplikację z archiwum. Eksport podpisany Apple Distribution, lokalny; nie przeprowadzano walidacji serwerowej ani wysyłki do App Store Connect.
+
+## Audyt ustawień Xcode — 1.0 (8)
+
+Sprawdzono wygenerowany projekt, ustawienia wszystkich targetów dla Debug i Release w Xcode 27.2 oraz produkt po archiwizacji i eksporcie. Poniższe pozycje opisują konfigurację lokalną, nie stan konta sklepowego.
+
+| Sekcja | Konfiguracja i uzasadnienie |
+|---|---|
+| General — Identity | Kategoria **Reference**, nazwa „dostępna biblia”, identyfikator `com.dostepna.biblia`, wersja 1.0, build z jednego licznika. Nazwa i kategoria są jawnymi ustawieniami targetu aplikacji i z nich powstają wartości w IPA. |
+| General — Supported Destinations i Minimum Deployments | Natywnie iPhone od iOS 17.0; kompilacja na urządzenie i symulator. Brak natywnego targetu iPad, Mac Catalyst, watchOS lub visionOS. Domyślnych ustawień zgodności „Designed for iPhone/iPad” nie zmieniano; to nie jest deklaracja przetestowania wersji na Maca lub Vision Pro. |
+| General — Deployment Info | Pion i oba poziomy. Brak pionu do góry nogami jest zgodny z kontrolerem kart. Sceny tworzy delegat aplikacji. Brak głównego storyboardu jest zamierzony: aplikacja buduje interfejs w UIKit w kodzie. Nie wpisuje się tutaj szerokości ani wysokości ekranu w pikselach. |
+| General — App Icons and Launch Screen | Katalog `AppIcon` z nieprzezroczystą ikoną 1024 × 1024; systemowy ekran startowy `UILaunchScreen`. Nie wskazuje się nieistniejącego storyboardu startowego. |
+| General — Frameworks, Libraries, and Embedded Content | SwiftSoup 2.8.8 z przypiętej zależności pakietowej. Produkt nie wymaga osobnego osadzanego frameworka SwiftSoup ani rozszerzenia aplikacji. |
+| Signing & Capabilities | Podpis automatyczny, zespół `9N975WV782`. Eksport: Apple Distribution, aktywne raporty beta, brak uprawnienia debuggera. Aplikacja nie wymaga iCloud, zakupów, powiadomień push, grup aplikacji ani pracy w tle. |
+| Info oraz lokalizacje projektu | Polski język bazowy i jawna lokalizacja `pl`. Brak własnych schematów URL, typów importowanych/eksportowanych i obsługiwanych dokumentów: aplikacja **zapisuje** zwykły TXT przez systemowe Pliki, nie rejestruje się jako aplikacja do otwierania plików. |
+| Prywatność i szyfrowanie | W IPA jest manifest prywatności z powodem użycia UserDefaults `CA92.1`. Systemowe HTTPS; `ITSAppUsesNonExemptEncryption = NO`. Nie dodano komunikatów o dostępie do mikrofonu, zdjęć, kontaktów ani lokalizacji — aplikacja nie prosi o te uprawnienia. |
+| Build Settings, Build Phases, Build Rules | Aplikacja i obie paczki testowe dziedziczą wersję i licznik. Osobny target rezerwuje numer. Fazy kompilują źródła, łączą zależność i kopiują katalog zasobów, manifest oraz licencję. Reguły systemowe wystarczają. W Release włączono jawną walidację produktu; Xcode wykonał krok Validate na archiwalnej aplikacji. |
+| Zasoby na żądanie, skróty systemowe i rozszerzenia | Nie ma paczek zasobów na żądanie, osobnego targetu rozszerzenia, funkcji Siri ani App Intents. Komunikat Xcode o pominięciu ekstrakcji App Intents odpowiada brakowi tej funkcji, nie brakującej deklaracji do wysyłki. |
+
+W podpisanym IPA 1.0 (8) potwierdzono kategorię, nazwę, język, wersję, identyfikator, urządzenie, orientacje, ekran startowy, ikonę, manifest i uprawnienia podpisu. Podpis przeszedł kontrolę `codesign --verify --deep --strict`. Ekran Maca był zablokowany: odczyt ustawień pochodzi z narzędzi tego Xcode i z podpisanej paczki, nie z oględzin odblokowanego panelu General.
+
+**Oddzielnie w App Store Connect:** Apple umieszcza religię w kategorii Reference, nie udostępnia osobnej kategorii Religion dla aplikacji iOS. Główną Reference i dodatkową Books należy wybrać w karcie aplikacji. Kwestionariusze wieku, prywatności, deklaracje dostępności, dane kontaktowe i adresy publikacji również należą do konta; nie zostały wysłane. [Definicje kategorii Apple](https://developer.apple.com/app-store/categories/) · [Przygotowanie projektu Xcode](https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution).
