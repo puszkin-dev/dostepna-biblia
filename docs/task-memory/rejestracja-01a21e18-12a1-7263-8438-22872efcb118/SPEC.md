@@ -43,3 +43,5 @@ R-016 — Wypełnić potwierdzony kontakt w obu formularzach, prawa do programu 
 R-017 — Numer kompilacji zmienia wyłącznie jawne uruchomienie podbij_build.sh. Przywrócono 1.0 (10); Archive nie zwiększa licznika. Nazwa projektu Xcode, schematu, targetu aplikacji, produktu i nowych archiwów: „dostępna biblia”. Alias na biurku prowadzi do przemianowanego projektu. Dopisek zastępuje wcześniejszy automatyczny przyrost przy archiwizacji. Nie zmienia identyfikatora pakietu ani historii starych archiwów.
 
 Aktualizacja R-017: numer początkowy pierwszego wydania to 1 (zastępuje 10); bez zmian w zasadzie ręcznego podbijania, nazwie i wersji 1.0.
+
+R-018 — Korekta R-017: techniczne nazwy w Xcode, ścieżki .app/.ipa i nowe archiwa bez „ę” („dostepna biblia”). Pod ikoną oraz w sklepie nadal „dostępna biblia”. Bez zmiany numeru i identyfikatora.

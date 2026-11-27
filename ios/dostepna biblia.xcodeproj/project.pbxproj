@@ -1,0 +1,644 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0F3B31A913DD7E59643433EC /* InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */; };
+		11DF973EFDFA98B58FD9C3B0 /* VoiceOverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */; };
+		244A037A65C201CEBD53EA2F /* ChoiceSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */; };
+		2C1FE00F2C89418FBE95730E /* SourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4516FBED7020A57D26A0BB5 /* SourceTests.swift */; };
+		35157854EB109657016F7A61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05BBDE0A44DA6151E1A9C0B0 /* Assets.xcassets */; };
+		36F11E6BED29A7C928F67056 /* FormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D580C67E3BDD0D8488BA38 /* FormScreen.swift */; };
+		3B1AD0056BCFC3820956A73B /* SpeechTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C24907DC051BAD20FE8153C /* SpeechTests.swift */; };
+		3DE8BD1728B558EC9FA761B7 /* OtherScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF81A2D174F10B9695C604F /* OtherScreens.swift */; };
+		4634318FB1C34D2F30ED644A /* VerseList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5933E88BE0D2B5A475DB4FDC /* VerseList.swift */; };
+		4956E85D7EC549ADB590DE2E /* LiturgyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB691050DBCF48D9B973E8F /* LiturgyScreen.swift */; };
+		51FF71F20C26CB4D5A4512ED /* BookStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD7746FCAD08C3AC09D38B /* BookStyle.swift */; };
+		6D2E1C3A1B2E0FD9E1156C4E /* AppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63376A0E1274BCFD3BA2A5F2 /* AppearanceTests.swift */; };
+		7D905B77F45FEBF50FCB53BE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA0B59F5E4BAD923BCC440F /* Application.swift */; };
+		8A3F51E46792B69E77BF5738 /* SpeechReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6503EEB0411B46E7ECD36815 /* SpeechReader.swift */; };
+		8A63528ADAF38C724F561B11 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = EFEE0B22918E4B7277EC56FB /* SwiftSoup */; };
+		95E0021A2B212E171331574B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4A1316139FECFEF26EE18F46 /* PrivacyInfo.xcprivacy */; };
+		A26B2B9EF9C35D9DF3158527 /* Readings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB6E8B92C2A2D615939D82F /* Readings.swift */; };
+		A26C80B938D7A31A08F8DA28 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */; };
+		A5D8C8DD5DE3A34907D678B4 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3D99FA2F82B1FABD77DA6C /* Book.swift */; };
+		B14AC5B9F03EA097F2BE19F8 /* VisualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB40FEB9993A07192B1552D /* VisualTests.swift */; };
+		D03C747B491597CA616E9A80 /* Licencja-SwiftSoup.txt in Resources */ = {isa = PBXBuildFile; fileRef = 11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */; };
+		E4CD7A78E9ECF5E4D8E63C82 /* ReadingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F770651A374EF7F987008A0C /* ReadingsTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7238CFBA5D7BAB96831914CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD760867EDB281DBA26414D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B72080B1BC9950D3A01D7B88;
+			remoteInfo = "dostepna biblia";
+		};
+		AB4B46778AED4E9680E1E38B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFD760867EDB281DBA26414D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B72080B1BC9950D3A01D7B88;
+			remoteInfo = "dostepna biblia";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05BBDE0A44DA6151E1A9C0B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceSlider.swift; sourceTree = "<group>"; };
+		11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Licencja-SwiftSoup.txt"; sourceTree = "<group>"; };
+		19D580C67E3BDD0D8488BA38 /* FormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormScreen.swift; sourceTree = "<group>"; };
+		2C24907DC051BAD20FE8153C /* SpeechTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTests.swift; sourceTree = "<group>"; };
+		2C401C1BB004347808B5CB08 /* dostepna biblia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "dostepna biblia.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FB691050DBCF48D9B973E8F /* LiturgyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgyScreen.swift; sourceTree = "<group>"; };
+		4A1316139FECFEF26EE18F46 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5933E88BE0D2B5A475DB4FDC /* VerseList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseList.swift; sourceTree = "<group>"; };
+		63376A0E1274BCFD3BA2A5F2 /* AppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceTests.swift; sourceTree = "<group>"; };
+		6503EEB0411B46E7ECD36815 /* SpeechReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechReader.swift; sourceTree = "<group>"; };
+		6C384B8701F7BBB9332FC54C /* InfoTests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = InfoTests.plist; sourceTree = "<group>"; };
+		6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOverTests.swift; sourceTree = "<group>"; };
+		78EB6EFAF58ED2DF642FB99C /* dostepna biblia - testy interfejsu.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "dostepna biblia - testy interfejsu.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CBD7746FCAD08C3AC09D38B /* BookStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookStyle.swift; sourceTree = "<group>"; };
+		8AB6E8B92C2A2D615939D82F /* Readings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readings.swift; sourceTree = "<group>"; };
+		93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceTests.swift; sourceTree = "<group>"; };
+		9CF81A2D174F10B9695C604F /* OtherScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherScreens.swift; sourceTree = "<group>"; };
+		ADA0B59F5E4BAD923BCC440F /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
+		B7C122E2A55A0DA384DB2BDE /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
+		C4516FBED7020A57D26A0BB5 /* SourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTests.swift; sourceTree = "<group>"; };
+		C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		E4D2F0FDD0180478D22A2944 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EC89737AD70DA3FDDD9BED5B /* dostepna biblia - testy.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "dostepna biblia - testy.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F770651A374EF7F987008A0C /* ReadingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsTests.swift; sourceTree = "<group>"; };
+		FEB40FEB9993A07192B1552D /* VisualTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualTests.swift; sourceTree = "<group>"; };
+		FF3D99FA2F82B1FABD77DA6C /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9904530A3DA7CE94E9858DB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A63528ADAF38C724F561B11 /* SwiftSoup in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		25A229AAEA5879AA79197570 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				63376A0E1274BCFD3BA2A5F2 /* AppearanceTests.swift */,
+				F770651A374EF7F987008A0C /* ReadingsTests.swift */,
+				C4516FBED7020A57D26A0BB5 /* SourceTests.swift */,
+				2C24907DC051BAD20FE8153C /* SpeechTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		44AEBED6508357EA347CF4E7 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				B7C122E2A55A0DA384DB2BDE /* Build.xcconfig */,
+			);
+			name = ios;
+			path = .;
+			sourceTree = "<group>";
+		};
+		4CBDC46BD1690555025219EF /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */,
+				FEB40FEB9993A07192B1552D /* VisualTests.swift */,
+				6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		5414681993F261961B616F2F = {
+			isa = PBXGroup;
+			children = (
+				E4D2F0FDD0180478D22A2944 /* Info.plist */,
+				6C384B8701F7BBB9332FC54C /* InfoTests.plist */,
+				E54DF1F5453EA05F4C979952 /* App */,
+				44AEBED6508357EA347CF4E7 /* ios */,
+				25A229AAEA5879AA79197570 /* Tests */,
+				4CBDC46BD1690555025219EF /* UITests */,
+				E54C4F6819C7CCF627E46487 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E54C4F6819C7CCF627E46487 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				78EB6EFAF58ED2DF642FB99C /* dostepna biblia - testy interfejsu.xctest */,
+				EC89737AD70DA3FDDD9BED5B /* dostepna biblia - testy.xctest */,
+				2C401C1BB004347808B5CB08 /* dostepna biblia.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E54DF1F5453EA05F4C979952 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				ADA0B59F5E4BAD923BCC440F /* Application.swift */,
+				05BBDE0A44DA6151E1A9C0B0 /* Assets.xcassets */,
+				FF3D99FA2F82B1FABD77DA6C /* Book.swift */,
+				7CBD7746FCAD08C3AC09D38B /* BookStyle.swift */,
+				088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */,
+				19D580C67E3BDD0D8488BA38 /* FormScreen.swift */,
+				11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */,
+				2FB691050DBCF48D9B973E8F /* LiturgyScreen.swift */,
+				9CF81A2D174F10B9695C604F /* OtherScreens.swift */,
+				4A1316139FECFEF26EE18F46 /* PrivacyInfo.xcprivacy */,
+				8AB6E8B92C2A2D615939D82F /* Readings.swift */,
+				C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */,
+				6503EEB0411B46E7ECD36815 /* SpeechReader.swift */,
+				5933E88BE0D2B5A475DB4FDC /* VerseList.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		06ACB685B822CC3862A974BB /* dostepna biblia - testy interfejsu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B109BD6703DB365E94A0374 /* Build configuration list for PBXNativeTarget "dostepna biblia - testy interfejsu" */;
+			buildPhases = (
+				F86D9098F7534F0A76F846E7 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E82ABC451FC42D625135F12A /* PBXTargetDependency */,
+			);
+			name = "dostepna biblia - testy interfejsu";
+			packageProductDependencies = (
+			);
+			productName = "dostepna biblia - testy interfejsu";
+			productReference = 78EB6EFAF58ED2DF642FB99C /* dostepna biblia - testy interfejsu.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		B6A290E38331622EB5DD9A99 /* dostepna biblia - testy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DDEEB2A554522395DAAD80F4 /* Build configuration list for PBXNativeTarget "dostepna biblia - testy" */;
+			buildPhases = (
+				02BECC0703EA6ED2C1617C01 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5745BC17F4E3134798A393AE /* PBXTargetDependency */,
+			);
+			name = "dostepna biblia - testy";
+			packageProductDependencies = (
+			);
+			productName = "dostepna biblia - testy";
+			productReference = EC89737AD70DA3FDDD9BED5B /* dostepna biblia - testy.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B72080B1BC9950D3A01D7B88 /* dostepna biblia */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 924D1375B26C165F1686E3C6 /* Build configuration list for PBXNativeTarget "dostepna biblia" */;
+			buildPhases = (
+				98027DD6782B89260F584673 /* Sources */,
+				55B91D4FB080C566218731F6 /* Resources */,
+				9904530A3DA7CE94E9858DB5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "dostepna biblia";
+			packageProductDependencies = (
+				EFEE0B22918E4B7277EC56FB /* SwiftSoup */,
+			);
+			productName = "dostepna biblia";
+			productReference = 2C401C1BB004347808B5CB08 /* dostepna biblia.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFD760867EDB281DBA26414D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					06ACB685B822CC3862A974BB = {
+						DevelopmentTeam = 9N975WV782;
+						ProvisioningStyle = Automatic;
+						TestTargetID = B72080B1BC9950D3A01D7B88;
+					};
+					B6A290E38331622EB5DD9A99 = {
+						DevelopmentTeam = 9N975WV782;
+						ProvisioningStyle = Automatic;
+					};
+					B72080B1BC9950D3A01D7B88 = {
+						DevelopmentTeam = 9N975WV782;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3CAA803DF3D5905272B92D56 /* Build configuration list for PBXProject "dostepna biblia" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = pl;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				pl,
+			);
+			mainGroup = 5414681993F261961B616F2F;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				708E39C16141E46F69F09748 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B72080B1BC9950D3A01D7B88 /* dostepna biblia */,
+				B6A290E38331622EB5DD9A99 /* dostepna biblia - testy */,
+				06ACB685B822CC3862A974BB /* dostepna biblia - testy interfejsu */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		55B91D4FB080C566218731F6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35157854EB109657016F7A61 /* Assets.xcassets in Resources */,
+				D03C747B491597CA616E9A80 /* Licencja-SwiftSoup.txt in Resources */,
+				95E0021A2B212E171331574B /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		02BECC0703EA6ED2C1617C01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D2E1C3A1B2E0FD9E1156C4E /* AppearanceTests.swift in Sources */,
+				E4CD7A78E9ECF5E4D8E63C82 /* ReadingsTests.swift in Sources */,
+				2C1FE00F2C89418FBE95730E /* SourceTests.swift in Sources */,
+				3B1AD0056BCFC3820956A73B /* SpeechTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98027DD6782B89260F584673 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D905B77F45FEBF50FCB53BE /* Application.swift in Sources */,
+				A5D8C8DD5DE3A34907D678B4 /* Book.swift in Sources */,
+				51FF71F20C26CB4D5A4512ED /* BookStyle.swift in Sources */,
+				244A037A65C201CEBD53EA2F /* ChoiceSlider.swift in Sources */,
+				36F11E6BED29A7C928F67056 /* FormScreen.swift in Sources */,
+				4956E85D7EC549ADB590DE2E /* LiturgyScreen.swift in Sources */,
+				3DE8BD1728B558EC9FA761B7 /* OtherScreens.swift in Sources */,
+				A26B2B9EF9C35D9DF3158527 /* Readings.swift in Sources */,
+				A26C80B938D7A31A08F8DA28 /* SettingsScreen.swift in Sources */,
+				8A3F51E46792B69E77BF5738 /* SpeechReader.swift in Sources */,
+				4634318FB1C34D2F30ED644A /* VerseList.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F86D9098F7534F0A76F846E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F3B31A913DD7E59643433EC /* InterfaceTests.swift in Sources */,
+				B14AC5B9F03EA097F2BE19F8 /* VisualTests.swift in Sources */,
+				11DF973EFDFA98B58FD9C3B0 /* VoiceOverTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5745BC17F4E3134798A393AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B72080B1BC9950D3A01D7B88 /* dostepna biblia */;
+			targetProxy = AB4B46778AED4E9680E1E38B /* PBXContainerItemProxy */;
+		};
+		E82ABC451FC42D625135F12A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B72080B1BC9950D3A01D7B88 /* dostepna biblia */;
+			targetProxy = 7238CFBA5D7BAB96831914CF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0328F344B0B52B780379DC6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.uitests;
+				PRODUCT_MODULE_NAME = DostepnaBibliaUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "dostepna biblia";
+			};
+			name = Debug;
+		};
+		06C10BD0806419DD3E49C8CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7C122E2A55A0DA384DB2BDE /* Build.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9N975WV782;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InfoTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		1FE3A8009C708B26EA6AEA80 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia;
+				PRODUCT_MODULE_NAME = DostepnaBiblia;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		291C92700EF4813A577AC31F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.tests;
+				PRODUCT_MODULE_NAME = DostepnaBibliaTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dostepna biblia.app/dostepna biblia";
+			};
+			name = Debug;
+		};
+		471B76928FE54B54113C5EBD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7C122E2A55A0DA384DB2BDE /* Build.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9N975WV782;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InfoTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		993D10953E6E3D95AB80613E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.uitests;
+				PRODUCT_MODULE_NAME = DostepnaBibliaUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "dostepna biblia";
+			};
+			name = Release;
+		};
+		B78B069F46DBE94742333C98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.tests;
+				PRODUCT_MODULE_NAME = DostepnaBibliaTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dostepna biblia.app/dostepna biblia";
+			};
+			name = Release;
+		};
+		EE001EAAF0B7351685C8A5AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "dostępna biblia";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia;
+				PRODUCT_MODULE_NAME = DostepnaBiblia;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3B109BD6703DB365E94A0374 /* Build configuration list for PBXNativeTarget "dostepna biblia - testy interfejsu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0328F344B0B52B780379DC6A /* Debug */,
+				993D10953E6E3D95AB80613E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3CAA803DF3D5905272B92D56 /* Build configuration list for PBXProject "dostepna biblia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				471B76928FE54B54113C5EBD /* Debug */,
+				06C10BD0806419DD3E49C8CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		924D1375B26C165F1686E3C6 /* Build configuration list for PBXNativeTarget "dostepna biblia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE001EAAF0B7351685C8A5AA /* Debug */,
+				1FE3A8009C708B26EA6AEA80 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DDEEB2A554522395DAAD80F4 /* Build configuration list for PBXNativeTarget "dostepna biblia - testy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				291C92700EF4813A577AC31F /* Debug */,
+				B78B069F46DBE94742333C98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		708E39C16141E46F69F09748 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.8.8;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EFEE0B22918E4B7277EC56FB /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 708E39C16141E46F69F09748 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BFD760867EDB281DBA26414D /* Project object */;
+}

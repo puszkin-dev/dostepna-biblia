@@ -1,4 +1,4 @@
-name: dostępna biblia
+name: dostepna biblia
 options:
   developmentLanguage: pl
   deploymentTarget:
@@ -23,7 +23,7 @@ settings:
     GENERATE_INFOPLIST_FILE: NO
     INFOPLIST_FILE: InfoTests.plist
 targets:
-  dostępna biblia:
+  dostepna biblia:
     type: application
     platform: iOS
     sources: [App]
@@ -41,28 +41,28 @@ targets:
       configs:
         Release:
           VALIDATE_PRODUCT: YES
-  dostępna biblia – testy:
+  dostepna biblia - testy:
     type: bundle.unit-test
     platform: iOS
     sources: [Tests]
     dependencies:
-      - target: dostępna biblia
+      - target: dostepna biblia
     settings:
       PRODUCT_MODULE_NAME: DostepnaBibliaTests
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.tests
-  dostępna biblia – testy interfejsu:
+  dostepna biblia - testy interfejsu:
     type: bundle.ui-testing
     platform: iOS
     sources: [UITests]
     dependencies:
-      - target: dostępna biblia
+      - target: dostepna biblia
     settings:
       PRODUCT_MODULE_NAME: DostepnaBibliaUITests
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.uitests
 schemes:
-  dostępna biblia:
+  dostepna biblia:
     build:
       targets:
-        dostępna biblia: all
+        dostepna biblia: all
     test:
-      targets: [dostępna biblia – testy, dostępna biblia – testy interfejsu]
+      targets: [dostepna biblia - testy, dostepna biblia - testy interfejsu]

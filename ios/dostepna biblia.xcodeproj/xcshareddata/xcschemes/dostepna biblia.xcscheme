@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1430"
-   version = "1.3">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "YES"
+      runPostActionsOnFailure = "NO">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "071940D50BC2B87B48C957B5"
-               BuildableName = "doste&#x328;pna biblia.app"
-               BlueprintName = "dost&#x119;pna biblia"
-               ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+               BlueprintIdentifier = "B72080B1BC9950D3A01D7B88"
+               BuildableName = "dostepna biblia.app"
+               BlueprintName = "dostepna biblia"
+               ReferencedContainer = "container:dostepna biblia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -26,14 +27,15 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      onlyGenerateCoverageForSpecifiedTargets = "NO">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "071940D50BC2B87B48C957B5"
-            BuildableName = "doste&#x328;pna biblia.app"
-            BlueprintName = "dost&#x119;pna biblia"
-            ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+            BlueprintIdentifier = "B72080B1BC9950D3A01D7B88"
+            BuildableName = "dostepna biblia.app"
+            BlueprintName = "dostepna biblia"
+            ReferencedContainer = "container:dostepna biblia.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -42,23 +44,26 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "35FA0CC12D75E5B6E708512B"
-               BuildableName = "doste&#x328;pna biblia &#x2013; testy.xctest"
-               BlueprintName = "dost&#x119;pna biblia &#x2013; testy"
-               ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+               BlueprintIdentifier = "B6A290E38331622EB5DD9A99"
+               BuildableName = "dostepna biblia - testy.xctest"
+               BlueprintName = "dostepna biblia - testy"
+               ReferencedContainer = "container:dostepna biblia.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2723D249653DC54BF41C5F98"
-               BuildableName = "doste&#x328;pna biblia &#x2013; testy interfejsu.xctest"
-               BlueprintName = "dost&#x119;pna biblia &#x2013; testy interfejsu"
-               ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+               BlueprintIdentifier = "06ACB685B822CC3862A974BB"
+               BuildableName = "dostepna biblia - testy interfejsu.xctest"
+               BlueprintName = "dostepna biblia - testy interfejsu"
+               ReferencedContainer = "container:dostepna biblia.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -74,10 +79,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "071940D50BC2B87B48C957B5"
-            BuildableName = "doste&#x328;pna biblia.app"
-            BlueprintName = "dost&#x119;pna biblia"
-            ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+            BlueprintIdentifier = "B72080B1BC9950D3A01D7B88"
+            BuildableName = "dostepna biblia.app"
+            BlueprintName = "dostepna biblia"
+            ReferencedContainer = "container:dostepna biblia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -91,10 +96,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "071940D50BC2B87B48C957B5"
-            BuildableName = "doste&#x328;pna biblia.app"
-            BlueprintName = "dost&#x119;pna biblia"
-            ReferencedContainer = "container:doste&#x328;pna biblia.xcodeproj">
+            BlueprintIdentifier = "B72080B1BC9950D3A01D7B88"
+            BuildableName = "dostepna biblia.app"
+            BlueprintName = "dostepna biblia"
+            ReferencedContainer = "container:dostepna biblia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

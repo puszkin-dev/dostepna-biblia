@@ -4,6 +4,7 @@ import os
 import plistlib
 import shutil
 import subprocess
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -74,13 +75,27 @@ def test_wersja_i_eksport() -> None:
 
 def test_xcode_tylko_odczytuje_numer() -> None:
     """Archiwizacja nie uruchamia skryptu, a wszystkie pakiety czytają wspólny licznik."""
-    for nazwa in ("project.yml", "dostępna biblia.xcodeproj/project.pbxproj"):
+    for nazwa in ("project.yml", "dostepna biblia.xcodeproj/project.pbxproj"):
         konfiguracja = (ROOT / "ios" / nazwa).read_text(encoding="utf-8")
         assert "podbij_build.sh" not in konfiguracja
         assert "Build.xcconfig" in konfiguracja
     for nazwa in ("Info.plist", "InfoTests.plist"):
         info = plistlib.loads((ROOT / "ios" / nazwa).read_bytes())
         assert info["CFBundleVersion"] == "$(CURRENT_PROJECT_VERSION)"
+
+
+def test_nazwy_techniczne_schematu_bez_polskich_znakow() -> None:
+    """Nazwy umieszczane w ścieżkach paczki muszą dać się odczytać bez UTF-8."""
+    projekt = ROOT / "ios/dostepna biblia.xcodeproj"
+    schemat = projekt / "xcshareddata/xcschemes/dostepna biblia.xcscheme"
+    elementy = ET.parse(schemat).findall(".//BuildableReference")
+    assert elementy
+    assert {e.attrib["ReferencedContainer"] for e in elementy} == {
+        "container:dostepna biblia.xcodeproj"
+    }
+    produkty = {e.attrib["BuildableName"] for e in elementy}
+    assert "dostepna biblia.app" in produkty
+    assert all(nazwa.isascii() for nazwa in produkty)
 
 
 def test_metadane_do_dystrybucji() -> None:
