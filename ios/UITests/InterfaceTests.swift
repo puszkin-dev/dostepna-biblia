@@ -1,0 +1,83 @@
+import XCTest
+
+@MainActor
+final class InterfaceTests: XCTestCase {
+    private var app: XCUIApplication!
+
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+        app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        app.launch()
+    }
+
+    private func selectTab(_ name: String) {
+        app.tabBars.buttons[name].tap()
+    }
+
+    private func result() throws -> XCUIElement {
+        let field = app.textViews["tekstWyniku"]
+        XCTAssertTrue(field.waitForExistence(timeout: 40), app.debugDescription)
+        return field
+    }
+
+    func testCzteryKartyIRegulacje() throws {
+        XCTAssertEqual(app.tabBars.buttons.count, 4)
+        let sliders = app.sliders.allElementsBoundByIndex
+        XCTAssertEqual(sliders.map(\.label), ["Wybierz miesiąc", "Wybierz dzień", "Wybierz rok"])
+        sliders[0].adjust(toNormalizedSliderPosition: 0)
+        XCTAssertEqual(sliders[0].value as? String, "styczeń")
+        sliders[1].adjust(toNormalizedSliderPosition: 1)
+        XCTAssertEqual(sliders[1].value as? String, "31")
+        sliders[0].adjust(toNormalizedSliderPosition: 1.0 / 11.0)
+        XCTAssertEqual(sliders[0].value as? String, "luty")
+        XCTAssertTrue(["28", "29"].contains(sliders[1].value as? String ?? ""))
+        for tab in ["Czytaj Biblię", "Losuj cytat", "Wyszukaj", "Liturgia"] {
+            selectTab(tab)
+            XCTAssertTrue(app.tabBars.buttons[tab].isSelected)
+            try app.performAccessibilityAudit()
+        }
+    }
+
+    func testCzytanieIZapisLiturgii() throws {
+        app.buttons["Czytaj"].tap()
+        let field = try result()
+        XCTAssertTrue((field.value as? String ?? "").contains("Źródło: TwojaBiblia.pl"))
+        app.navigationBars.buttons["Zapisz do TXT"].tap()
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "DOCSaveButton").firstMatch.waitForExistence(timeout: 5)
+            || app.buttons["Zachowaj"].exists || app.buttons["Zapisz"].exists || app.buttons["Save"].exists, app.debugDescription)
+    }
+
+    func testBiblia() throws {
+        selectTab("Czytaj Biblię")
+        let read = app.buttons["Czytaj"]
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: read)
+        waitForExpectations(timeout: 35)
+        read.tap()
+        let field = try result()
+        XCTAssertTrue((field.value as? String ?? "").contains("Księga Rodzaju"))
+    }
+
+    func testLosowanieIPowrot() throws {
+        selectTab("Losuj cytat")
+        app.scrollViews.buttons["Losuj cytat"].tap()
+        _ = try result()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.buttons["Losuj ponownie"].exists)
+        app.buttons["Powrót"].tap()
+        XCTAssertTrue(app.buttons["Kategoria cytatu"].exists)
+    }
+
+    func testWyszukiwanie() throws {
+        selectTab("Wyszukaj")
+        let field = app.textFields["Słowa kluczowe"]
+        field.tap()
+        field.typeText("chleb\n")
+        let text = try result()
+        XCTAssertTrue((text.value as? String ?? "").contains("Wyniki dla: „chleb” — strona 1"))
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Następna strona"].tap()
+        let next = try result()
+        XCTAssertTrue((next.value as? String ?? "").contains("strona 2"))
+    }
+}

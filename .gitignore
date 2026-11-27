@@ -1,3 +1,9 @@
 /bin/
 /obj/
 /wydanie/
+
+/.codex/task-memory/
+/ios/build/
+**/xcuserdata/
+.DS_Store
+._*
