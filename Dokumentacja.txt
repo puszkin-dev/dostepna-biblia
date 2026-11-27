@@ -1,5 +1,5 @@
 ﻿Dostępna Biblia
-Wersja 1.1
+Wersja 1.1.1
 Dokumentacja użytkownika i kompilacji
 
 1. Do czego służy program
@@ -133,6 +133,8 @@ zawierającym DostepnaBiblia.cs i Kompiluj.ps1, a następnie uruchom:
 Skrypt tworzy gotowy do spakowania folder wydanie\win-x64,
 z plikiem EXE, dokumentacją i dołączonym środowiskiem .NET.
 Dla ARM64 użyj .\Kompiluj.ps1 -Platforma win-arm64.
+Dodaj -Spakuj, aby utworzyć obok folderu archiwum ZIP z nazwami plików
+zapisanymi w UTF-8.
 
 Program pobiera kalendarz miesięczny z TwojaBiblia.pl, wyszukuje wybrany
 dzień, a następnie pobiera stronę z czytaniami. Po wyborze pojedynczej

@@ -2,7 +2,8 @@
     [string]$Dotnet = 'dotnet',
     [ValidateSet('win-x64', 'win-arm64', 'win-x86')]
     [string]$Platforma = 'win-x64',
-    [string]$Wyjscie
+    [string]$Wyjscie,
+    [switch]$Spakuj
 )
 
 $ErrorActionPreference = 'Stop'
@@ -32,4 +33,13 @@ foreach ($framework in $runtimeConfig.runtimeOptions.includedFrameworks) {
     $files | Copy-Item -Destination $destination
 }
 
-Write-Output $Wyjscie
+if ($Spakuj) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $folder = (Resolve-Path -LiteralPath $Wyjscie).Path.TrimEnd('\', '/')
+    $archive = "$folder.zip"
+    [IO.Compression.ZipFile]::CreateFromDirectory(
+        $folder, $archive, [IO.Compression.CompressionLevel]::Optimal, $false, [Text.Encoding]::UTF8)
+    Write-Output $archive
+} else {
+    Write-Output $Wyjscie
+}
