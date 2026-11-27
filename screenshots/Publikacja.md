@@ -10,7 +10,7 @@
 
 ## Opis aplikacji
 
-Przeczytaj liturgię wybranego dnia, otwórz rozdział Biblii albo odszukaj zapamiętaną frazę. Cztery karty na dole ekranu prowadzą prosto do czytań, ksiąg, losowania cytatu i wyszukiwarki.
+Przeczytaj liturgię wybranego dnia, otwórz rozdział Biblii albo odszukaj zapamiętaną frazę. Otwarty tekst możesz odsłuchać wybranym głosem iPhone’a, także bez VoiceOver. Pięć kart na dole prowadzi do liturgii, ksiąg, losowania cytatu, wyszukiwarki i ustawień.
 
 W kalendarzu osobno wybierasz miesiąc, dzień i rok. Możesz przeczytać całą liturgię lub tylko jedną z jej części. W Biblii wybierasz testament, księgę i rozdział. W rozdziałach z numerowanymi wersetami możesz przejść bezpośrednio do wybranego wersetu.
 
@@ -23,6 +23,10 @@ Do pobrania tekstów z serwisu TwojaBiblia.pl potrzebny jest internet. Wybrany t
 Nie trzeba się logować. Z internetem: w karcie Liturgia wybierz datę i użyj przycisku Czytaj. W karcie Czytaj Biblię wybierz księgę i rozdział. W ustawieniach czytania można zmienić wielkość liter. VoiceOver jest obsługiwany, ale nie jest wymagany do korzystania z aplikacji.
 
 ## Co jest w paczce, a co należy do karty sklepu
+
+Stan po dodaniu mowy: aplikacja nie pobiera głosów z chmury ani nie nagrywa mikrofonu. Tryb tła `audio` służy wyłącznie słuchaniu rozpoczętego tekstu. Poniższy audyt IPA 1.0 (8) i sześć sklepowych zdjęć dotyczą poprzedniej wersji z czterema kartami.
+
+**Prawa do treści przed dystrybucją.** Dokumentacja Windows i stopka [TwojaBiblia.pl](https://twojabiblia.pl/) wskazują V wydanie Biblii Tysiąclecia. Serwis podaje, że korzysta z tekstu za zgodą Pallottinum. [Wydawca o prawach do opracowania](https://biblia.pl/informacje-o-wydaniu/) wskazuje ochronę i potrzebę uzyskania zgody. W projekcie nie znaleziono dokumentu rozszerzającego zgodę serwisu na dystrybucję tej aplikacji, odczyt głosowy i eksport tekstów. Sama atrybucja i publiczne repozytorium nie potwierdzają takich uprawnień. Przed udostępnieniem również w TestFlight trzeba wyjaśnić z uprawnionymi zakres korzystania z przekładu i pozostałych tekstów liturgicznych.
 
 - W podpisanym IPA aplikacji dla iPhone’a są: ikona AppIcon, systemowy ekran startowy, trzy orientacje (pion i oba poziomy), manifest prywatności i deklaracja braku szyfrowania wymagającego dokumentacji eksportowej. Połączenia HTTPS obsługuje systemowy URLSession; SwiftSoup parsuje HTML.
 - Zdjęcia ekranu w tym katalogu służą do karty sklepu, a **nie** do umieszczania w IPA. Pochodzą z aplikacji na fizycznym iPhonie 17 Pro. Zachowują oryginalny pionowy rozmiar urządzenia. Nie są makietami ani obrazami przeskalowanymi z innego modelu.

@@ -1,0 +1,295 @@
+# DOSTĘPNA BIBLIA iOS — natywne czytanie na głos, karta Ustawienia i informacje o autorach
+
+Rozpocznij nowe zadanie rozwojowe w istniejącym projekcie „dostępna biblia” na iOS.
+
+Zastosuj nasz globalny system pamięci zadań, checkpointów, lokalnych commitów i raportów. Zachowaj dotychczasową architekturę, funkcjonalność, dostępność VoiceOver i wygląd aplikacji.
+
+Pracuj na istniejącej gałęzi `ios`, zachowując spójność projektu na Windowsie i Macu.
+
+## 1. Główny cel
+
+Dodaj do aplikacji wbudowaną funkcję „Czytaj na głos”, pozwalającą odsłuchiwać teksty Biblii, czytania liturgiczne, psalmy i inne dostępne teksty.
+
+Syntezator ma działać niezależnie od VoiceOver, także gdy czytnik ekranowy jest wyłączony.
+
+Wykorzystaj natywny mechanizm Apple `AVSpeechSynthesizer`, `AVSpeechUtterance` i `AVSpeechSynthesisVoice` z frameworka AVFoundation/AVFAudio.
+
+Nie korzystaj z płatnych usług syntezy w chmurze. Odczyt powinien działać lokalnie na urządzeniu, z wykorzystaniem zainstalowanych głosów systemowych.
+
+## 2. Przycisk czytania
+
+W widokach zawierających tekst przeznaczony do czytania dodaj łatwo dostępny przycisk „Czytaj na głos”.
+
+Po jego aktywacji aplikacja ma odczytywać aktualnie otwarte czytanie, psalm, fragment Biblii lub inny właściwy tekst.
+
+Nie odczytuj przypadkowo całego interfejsu, nazw przycisków czy elementów nawigacyjnych.
+
+Zadbaj o odpowiednią kolejność tekstu, zachowanie akapitów i naturalne przerwy między fragmentami.
+
+Podczas odczytu użytkownik powinien móc:
+
+- Wstrzymać czytanie.
+- Wznowić od miejsca zatrzymania.
+- Całkowicie zatrzymać czytanie.
+- Ponownie rozpocząć aktualny fragment.
+
+Stan przycisków powinien odpowiadać rzeczywistemu stanowi syntezatora.
+
+Po zakończeniu czytania aplikacja powinna sama powrócić do stanu gotowości.
+
+Unikaj przypadkowego wielokrotnego uruchomienia tego samego tekstu.
+
+## 3. Nowa karta Ustawienia
+
+Dodaj natywną piątą kartę „Ustawienia” do dolnego paska kart iOS.
+
+Zachowaj wszystkie cztery dotychczasowe karty oraz ich zawartość.
+
+W nowej karcie przygotuj trzy przejrzyste sekcje:
+
+### Czytanie na głos
+
+- Wybór głosu.
+- Szybkość mowy.
+- Głośność.
+- Odsłuch próbki.
+- Przywrócenie domyślnych ustawień syntezy.
+
+### Wygląd i dostępność
+
+- Istniejące preferencje wyglądu i powiększania tekstu.
+- Zachowanie obsługi Dynamic Type i VoiceOver.
+- Bez dublowania już istniejących ustawień aplikacji.
+
+### O programie
+
+- Nazwa aplikacji.
+- Numer wersji i kompilacji.
+- Informacje o autorach wersji Windows i projektu iOS.
+- Link do oryginalnego repozytorium Windows.
+- Informacje o źródłach treści i odpowiednie wymagane informacje prawne, jeżeli są potrzebne.
+
+Wszystkie trzy sekcje mają być naturalne dla iOS, estetyczne i w pełni dostępne dla VoiceOver.
+
+## 4. NOWE WYMAGANIE: sekcja O programie
+
+To ważna część zadania.
+
+W karcie „Ustawienia” utwórz sekcję „O programie” albo osobny ekran otwierany przyciskiem „O programie”. Wybierz rozwiązanie zgodne z dobrymi praktykami projektowania iOS.
+
+Sekcja ma wyraźnie wskazywać, że aplikacja na iOS powstała na podstawie oryginalnej wersji na Windows.
+
+### Obowiązkowe informacje o autorach
+
+Umieść następujące dane, zachowując dokładną pisownię imion i nazwisk:
+
+**Pomysłodawca i autor wersji Windows: Grzegorz Przystupa**
+
+**Projektant wersji iOS: Mieczysław Bąk**
+
+Nie pomijaj żadnego nazwiska i nie zastępuj ich nazwą firmy, pseudonimem ani ogólnym określeniem „zespół”.
+
+Przedstaw je z szacunkiem dla wkładu obu osób.
+
+Nie przypisuj autorowi wersji iOS stworzenia pierwotnego programu Windows.
+
+Nie przypisuj autorowi Windows automatycznie autorstwa nowego kodu Swift.
+
+Rozdziel informacje o oryginalnym pomyśle i aplikacji Windows od informacji o projekcie wersji iOS.
+
+### Oryginalne repozytorium Windows
+
+Dodaj widoczny i dostępny link:
+
+`https://github.com/puszkin-dev/dostepna-biblia/`
+
+Przykładowa etykieta:
+
+„Kod źródłowy oryginalnej wersji Windows na GitHubie”.
+
+Po aktywacji link powinien otworzyć właściwą stronę GitHub w systemowej przeglądarce.
+
+VoiceOver musi rozpoznawać go jako element możliwy do otwarcia, z jasną etykietą wskazującą cel odnośnika.
+
+Nie wyświetlaj wyłącznie surowego adresu bez zrozumiałego opisu.
+
+### Dodatkowe informacje
+
+Wyświetl:
+
+- Nazwę „dostępna biblia”.
+- Rzeczywisty numer wersji aplikacji iOS.
+- Rzeczywisty numer kompilacji, jeżeli jest dostępny.
+- Krótki, naturalny opis przeznaczenia aplikacji.
+
+Wersję i numer kompilacji pobieraj z faktycznej konfiguracji aplikacji, zamiast wpisywać na sztywno.
+
+Możesz zastosować krótki opis w rodzaju:
+
+„Dostępna biblia to aplikacja umożliwiająca wygodne korzystanie z Pisma Świętego i czytań liturgicznych, zaprojektowana z myślą o dostępności dla osób niewidomych, słabowidzących i widzących”.
+
+Nie dodawaj fikcyjnych danych kontaktowych, adresów e-mail ani stron internetowych.
+
+### Źródła tekstów i prawa do treści
+
+Sprawdź dokumentację oryginalnej aplikacji i ustal faktyczne źródła tekstów oraz warunki ich wykorzystania.
+
+Oryginalny program korzysta z serwisu TwojaBiblia.pl i tekstów biblijnych, dlatego nie pomijaj kwestii właściwego wskazania źródeł i praw do przekładu.
+
+Jeżeli wymagane są atrybucje, informacje licencyjne lub inne wzmianki, przedstaw je w odpowiednim miejscu w aplikacji.
+
+Nie zakładaj, że publiczna dostępność kodu źródłowego albo tekstów w internecie automatycznie oznacza zgodę na wszystkie formy ich redystrybucji.
+
+W razie wątpliwości udokumentuj ustalenia i ograniczenia przed przygotowaniem publikacji w TestFlight.
+
+### Dostępność i estetyka
+
+Sekcja „O programie” ma:
+
+- Mieć prawidłowe nagłówki.
+- Być czytelna w jasnym i ciemnym motywie.
+- Dostosowywać się do Dynamic Type.
+- Pokazywać pełne imiona i nazwiska.
+- Mieć logiczną kolejność fokusu VoiceOver.
+- Oferować łatwy powrót do Ustawień.
+- Działać prawidłowo na małych ekranach iPhone'a.
+- Wyglądać estetycznie również dla osób widzących.
+
+Nie twórz niepotrzebnie rozbudowanego ekranu z masą dekoracji.
+
+## 5. Wybór głosu
+
+Pobierz rzeczywistą listę głosów dostępnych dla `AVSpeechSynthesizer` na danym urządzeniu.
+
+Priorytetowo prezentuj głosy polskie.
+
+Każdy głos powinien mieć zrozumiałą nazwę, a wybór ma być obsługiwany przez VoiceOver.
+
+Nie zakładaj, że wszystkie głosy dostępne w ustawieniach VoiceOver będą automatycznie dostępne również dla `AVSpeechSynthesizer`.
+
+Nie wpisuj na sztywno nazw głosów, które mogą nie być zainstalowane.
+
+Jeżeli wcześniej wybrany głos nie jest już dostępny, zastosuj rozsądny głos zastępczy i poinformuj użytkownika.
+
+## 6. Regulacja parametrów syntezy
+
+Udostępnij:
+
+- Szybkość mowy.
+- Głośność.
+- Wybór głosu.
+
+Regulacje powinny być natywnymi kontrolkami, prawidłowo rozpoznawanymi przez VoiceOver jako regulacje.
+
+Użytkownik powinien móc zmieniać wartości gestami przesunięcia w górę lub w dół.
+
+Zadbaj o czytelne etykiety, wartości i sensowne kroki regulacji.
+
+Wykorzystaj prawidłowe zakresy parametrów `AVSpeechUtterance`. Nie zakładaj, że szybkość mowy odpowiada bezpośrednio wartościom procentowym VoiceOver.
+
+Wszystkie preferencje mają być trwale zapisywane i przywracane po ponownym uruchomieniu aplikacji.
+
+## 7. Próbka głosu
+
+Obok ustawień syntezy dodaj przycisk „Odsłuchaj próbkę”.
+
+Po jego naciśnięciu odczytaj krótkie polskie zdanie testowe aktualnie wybranym głosem, z aktualną prędkością i głośnością.
+
+Próbka powinna korzystać z tego samego silnika i ustawień, co właściwe czytanie.
+
+Jeśli trwa inne czytanie, nie dopuszczaj do nakładania się dwóch odczytów. Wybierz przewidywalne zachowanie i odpowiednio je obsłuż.
+
+## 8. VoiceOver i odtwarzanie audio
+
+Syntezator aplikacji musi działać niezależnie od VoiceOver.
+
+Nie wyłączaj ani nie zmieniaj systemowych ustawień czytnika ekranowego.
+
+Sprawdź, jak aplikacja zachowuje się, kiedy VoiceOver jest włączony i użytkownik porusza się po ekranie podczas czytania.
+
+Zadbaj o właściwą konfigurację `AVAudioSession`.
+
+Przetestuj zachowanie podczas:
+
+- Połączeń telefonicznych i innych przerwań audio.
+- Podłączania oraz odłączania słuchawek.
+- Korzystania z Bluetooth.
+- Przełączania się między aplikacjami.
+- Zablokowania ekranu.
+
+Jeżeli to technicznie uzasadnione, dodaj odtwarzanie przy zablokowanym ekranie i w tle wraz z odpowiednimi kontrolkami systemowymi. Nie deklaruj tej funkcji jako gotowej bez testów na fizycznym iPhonie.
+
+Zadbaj, aby zamknięcie widoku, przejście do innego fragmentu albo ponowny wybór czytania nie powodowały niekontrolowanego nakładania się wypowiedzi.
+
+## 9. Wygląd i dostępność
+
+Zachowaj profesjonalny wygląd aplikacji.
+
+Przyciski czytania mają być estetyczne, czytelne i wygodne zarówno dla użytkowników VoiceOver, jak i osób widzących.
+
+Wspieraj jasny i ciemny motyw oraz duże rozmiary tekstu.
+
+Nie pogarszaj nawigacji, kolejności fokusu ani dostępności istniejących ekranów.
+
+Wykorzystaj istniejącą globalną zasadę dbania jednocześnie o estetykę i dostępność interfejsów.
+
+## 10. Testy na fizycznym iPhonie
+
+Pracuj przez istniejące połączenie z Maciem wykorzystujące `maczek.cmd`.
+
+Nie ograniczaj się do testów jednostkowych lub symulatora.
+
+Zainstaluj aplikację na podłączonym fizycznym iPhonie i sprawdź:
+
+1. Odczyt czytania liturgicznego.
+2. Odczyt psalmu.
+3. Odczyt fragmentu Biblii.
+4. Wybór dostępnych polskich głosów.
+5. Odsłuch próbki.
+6. Zmianę szybkości mowy.
+7. Zmianę głośności.
+8. Pauzę, wznowienie i zatrzymanie.
+9. Zapis i odczyt ustawień.
+10. Obsługę z włączonym VoiceOver.
+11. Obsługę z wyłączonym VoiceOver.
+12. Zachowanie przy przerwaniach audio.
+13. Poprawność działania nowej karty Ustawienia.
+14. Poprawność sekcji „O programie”.
+15. Odczyt obu nazwisk przez VoiceOver.
+16. Otwieranie repozytorium Windows przez link GitHub.
+17. Poprawny numer wersji i kompilacji.
+18. Wygląd sekcji w jasnym i ciemnym motywie.
+19. Dostępność przy dużym tekście.
+20. Brak regresji dotychczasowych funkcji.
+
+Nie twierdź, że przeprowadziłeś testy, których rzeczywiście nie udało się wykonać.
+
+## 11. Organizacja pracy i Git
+
+Pracuj na istniejącej gałęzi `ios`.
+
+Zachowaj zgodność repozytorium i dokumentacji na Macu i Windowsie.
+
+Wykorzystaj globalny mechanizm zarządzania zadaniami, checkpointami, Git i raportami.
+
+Nie przepisuj całej aplikacji od nowa.
+
+Nie publikuj automatycznie w TestFlight bez osobnej zgody.
+
+Wykonaj odpowiednie lokalne commity po przetestowanych etapach.
+
+Repozytorium `puszkin-dev/dostepna-biblia` traktuj jako źródło oryginalnej aplikacji Windows i materiał referencyjny. Nie modyfikuj go ani nie wysyłaj tam zmian portu iOS.
+
+Nie przenoś automatycznie instrukcji publikowania i wypychania commitów z repozytorium oryginalnej wersji Windows do projektu iOS.
+
+Po zakończeniu przedstaw raport opisujący implementację, dostępne głosy, obsługę czytania, preferencje, informacje o autorach i wyniki testów na fizycznym iPhonie.
+
+## Ostateczny cel
+
+Użytkownik otwiera czytanie, naciska „Czytaj na głos” i może wygodnie słuchać całego tekstu, bez konieczności ręcznego przesuwania fokusu VoiceOver po kolejnych akapitach.
+
+Dodatkowo użytkownik otrzymuje czytelną kartę Ustawienia z syntezą mowy, ustawieniami wyglądu oraz informacjami o oryginalnej aplikacji i autorach.
+
+**Obowiązkowo zachowaj wskazanie Grzegorza Przystupy jako pomysłodawcy i autora wersji Windows oraz Mieczysława Bąka jako projektanta wersji iOS.**
+
+Przeprowadź pełną implementację, rzeczywiste testy i końcowy audyt dostępności.

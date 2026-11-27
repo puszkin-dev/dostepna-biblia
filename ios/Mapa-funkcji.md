@@ -4,10 +4,10 @@ Punkt odniesienia: DostepnaBiblia.cs, Dokumentacja.txt i projekt Windows 1.1.1. 
 
 | Funkcja lub zachowanie Windows | Odpowiednik iOS | Stan | Sprawdzenie |
 |---|---|---|---|
-| Start na liturgii; data lokalna, cała liturgia | Pierwsza z czterech kart; kalendarz gregoriański; polskie nazwy | Przeniesione | Telefon: mowa na otwarciu, próba gestów |
+| Start na liturgii; data lokalna, cała liturgia | Pierwsza z pięciu kart; kalendarz gregoriański; polskie nazwy | Przeniesione | Telefon: mowa na otwarciu, próba gestów |
 | Pasek zakładek; Ctrl+Tab, strzałki, Tab/Shift+Tab | UITabBarController, gesty VO, systemowa nawigacja klawiatury, Ctrl+Tab i Ctrl+Shift+Tab | Dostosowane, nie emulujemy WinForms ani NVDA | Stan zaznaczenia i liczba kart: test UI i mowy. Fizycznej klawiatury nie użyto |
 | Alt+strzałka, Enter, Spacja na liście Windows | Bez rozwijania — gest góra/dół zmienia wartość, dwukrotne stuknięcie uruchamia akcję | Dostosowane na życzenie | Test regulacji na urządzeniu |
-| Dzień, miesiąc i rok, zakres od 2000 do następnego roku; skrócenie 31. dnia | Trzy natywne kolumny: miesiąc, dzień, rok; dostosowanie do 28, 29, 30, 31 dni | Przeniesione | testKalendarz, testCzteryKartyIRegulacje, mowa VO |
+| Dzień, miesiąc i rok, zakres od 2000 do następnego roku; skrócenie 31. dnia | Trzy natywne kolumny: miesiąc, dzień, rok; dostosowanie do 28, 29, 30, 31 dni | Przeniesione | testKalendarz, testPiecKartIRegulacje, mowa VO |
 | Sześć części, kilka czytań tego samego rodzaju, nagłówki wariantów i Mszy | Suwak części; czytania dzielone według nagłówków | Przeniesione | testCzesci, testWszystkieCzesciLiturgii |
 | Kalendarz miesięczny, weryfikacja adresu, brak daty/sekcji lub zmiana układu | HTTPS, sprawdzanie ścieżki dnia, komunikaty po polsku | Przeniesione | testBrakiIDaneBledne, testCzesci |
 | Czytania na żądanie; domyślny przycisk Czytaj | Systemowy przycisk i osobny ekran czytania | Przeniesione z inną prezentacją | testCzytanieIZapisLiturgii |
@@ -20,10 +20,10 @@ Punkt odniesienia: DostepnaBiblia.cs, Dokumentacja.txt i projekt Windows 1.1.1. 
 | Pole tekstowe tylko do odczytu, kursor na początku, zaznaczanie, kopiowanie | UITextView z selekcją; pokrętło VoiceOver zamiast komend NVDA; systemowy powrót | Przeniesione z inną nawigacją | Wejście w tekst: testy UI. Kopiowanie: zachowanie UIKit, nie test schowka |
 | TXT: polskie znaki, proponowana nazwa, wybór folderu, anulowanie, komunikat, źródło | UIDocumentPicker, UTF-8; liturgia i rozdział także bez Czytaj; cytat i wyniki po pobraniu | Przeniesione | Próba UI eksportu; skład treści potwierdzają testy źródła |
 | Sieć, błędy pobrania i zapisu, stan oczekiwania, blokada podwójnej akcji, brak kradzieży fokusu z innej karty | Stan na ekranie, komunikat VO lub alert; blokada akcji, kontrola widoczności | Przeniesione | Próby błędnych danych; osobny komunikat dla HTTP 429 |
-| Ustawienia, konta, zakładki użytkownika, lokalna pełna Biblia, hurtowy eksport | W oryginale ich nie ma. Na osobne życzenie dodano tylko ustawienia czytania | Rozszerzenie zakresu | Test ustawień, resetu i ponownego uruchomienia |
+| Ustawienia, konta, zakładki użytkownika, lokalna pełna Biblia, hurtowy eksport | W oryginale ich nie ma. Na iOS jest karta ustawień syntezy, wielkości tekstu i informacji o programie. Pozostałych wymienionych funkcji nie dodawano | Rozszerzenie zakresu | Test ustawień, resetu i ponownego uruchomienia |
 | Paczka Windows zawiera środowisko .NET | Natywna aplikacja iOS; biblioteka parsera w produkcie, bez instalowania zależności przez użytkownika | Dostosowane | Archiwum Release i eksport IPA |
 
-## Wynik weryfikacji poszczególnych ścieżek
+## Wynik pierwotnego audytu portu (przed dodaniem piątej karty i syntezy)
 
 | Ścieżka | Wynik i zakres potwierdzenia |
 |---|---|

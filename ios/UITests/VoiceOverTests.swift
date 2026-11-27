@@ -4,6 +4,48 @@ import XCTest
 @available(iOS 27.0, *)
 @MainActor
 final class VoiceOverTests: XCTestCase {
+    func testSyntezaINazwiskaZVoiceOver() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        app.launch()
+        let voice = XCUIDevice.shared.voiceOverService
+        let wasEnabled = voice.isEnabled
+        if !wasEnabled { try voice.enable() }
+        defer { if !wasEnabled { try? voice.disable() } }
+        let center = CGVector(dx: 0.5, dy: 0.5)
+        func focus(_ element: XCUIElement, _ label: String) throws {
+            element.coordinate(withNormalizedOffset: center).tap()
+            let said = try voice.currentSpeech().utterance
+            print("VoiceOver podczas próby syntezy: " + said)
+            XCTAssertTrue(said.contains(label), said)
+        }
+        func activate() { app.coordinate(withNormalizedOffset: center).doubleTap() }
+        try focus(app.tabBars.buttons["Ustawienia"], "Ustawienia")
+        activate()
+        let slider = app.sliders["Głos"]
+        try focus(slider, "regulacja")
+        let original = try XCTUnwrap(slider.value as? String)
+        app.swipeUp()
+        XCTAssertNotEqual(slider.value as? String, original)
+        app.swipeDown()
+        XCTAssertEqual(slider.value as? String, original)
+        try focus(app.buttons["Odsłuchaj próbkę"], "Odsłuchaj próbkę")
+        activate()
+        XCTAssertTrue(app.buttons["Zatrzymaj próbkę"].waitForExistence(timeout: 3))
+        try focus(app.sliders["Głośność"], "regulacja")
+        var said = ""
+        for _ in 0..<10 {
+            said = try voice.moveForward().utterance
+            if said.contains("Autorzy i źródła") { break }
+        }
+        XCTAssertTrue(said.contains("Autorzy i źródła"), said)
+        activate()
+        try focus(app.staticTexts["Pomysłodawca i autor wersji Windows: Grzegorz Przystupa"], "Grzegorz Przystupa")
+        XCTAssertTrue(try voice.moveForward().utterance.contains("Mieczysław Bąk"))
+        XCTAssertTrue(try voice.moveForward().utterance.localizedCaseInsensitiveContains("GitHub"))
+    }
+
     func testUstawieniaCzytaniaZMowa() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -61,14 +103,16 @@ final class VoiceOverTests: XCTestCase {
         XCTAssertTrue(app.textViews["tekstWyniku"].waitForExistence(timeout: 30))
         let result = try voice.currentSpeech().utterance
         print("Fokus po pobraniu: \(result.prefix(120))")
-        XCTAssertTrue(result.localizedCaseInsensitiveContains("czytanie") || result.contains("20"), String(result.prefix(120)))
+        XCTAssertTrue(result.contains("Czytaj na głos"), String(result.prefix(120)))
+        let text = try voice.moveForward().utterance
+        XCTAssertTrue(text.localizedCaseInsensitiveContains("czytanie") || text.contains("20"), String(text.prefix(120)))
         let back = app.navigationBars.buttons.firstMatch
         back.coordinate(withNormalizedOffset: center).tap()
         app.coordinate(withNormalizedOffset: center).doubleTap()
         XCTAssertTrue(app.pickerWheels.firstMatch.waitForExistence(timeout: 5))
     }
 
-    func testMowaNaCzterechKartach() throws {
+    func testMowaNaPieciuKartach() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
@@ -103,13 +147,13 @@ final class VoiceOverTests: XCTestCase {
         record(try voice.currentSpeech().utterance, contains: "Pierwsze czytanie")
         app.swipeDown()
         record(try voice.currentSpeech().utterance, contains: "Cała liturgia")
-        let tabTitles = ["Liturgia", "Czytaj Biblię", "Losuj cytat", "Wyszukaj"]
+        let tabTitles = ["Liturgia", "Czytaj Biblię", "Losuj cytat", "Wyszukaj", "Ustawienia"]
         for (index, title) in tabTitles.enumerated() {
             let tab = app.tabBars.buttons[title]
             try focus(tab, title)
             let output = (transcript.last ?? "").components(separatedBy: .whitespacesAndNewlines)
                 .filter { !$0.isEmpty }.joined(separator: " ")
-            XCTAssertTrue(output.contains("\(index + 1) z 4") || output.contains("\(index + 1) of 4"), output)
+            XCTAssertTrue(output.contains("\(index + 1) z 5") || output.contains("\(index + 1) of 5"), output)
             if index > 0 {
                 app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).doubleTap()
                 XCTAssertTrue(tab.isSelected, title)
@@ -118,7 +162,8 @@ final class VoiceOverTests: XCTestCase {
                 switch index {
                 case 1: first = app.sliders["Co chcesz czytać"]; value = "Cała Biblia"
                 case 2: first = app.sliders["Kategoria cytatu"]; value = "Losowo"
-                default: first = app.textFields["Słowa kluczowe"]; value = "Słowa kluczowe"
+                case 3: first = app.textFields["Słowa kluczowe"]; value = "Słowa kluczowe"
+                default: first = app.sliders["Głos"]; value = "Głos"
                 }
                 try focus(first, value)
             }

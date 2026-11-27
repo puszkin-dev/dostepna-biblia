@@ -20,7 +20,8 @@ final class BibleScene: UIResponder, UIWindowSceneDelegate {
             (LiturgyScreen(), "Liturgia", "calendar"),
             (BibleScreen(), "Czytaj Biblię", "book"),
             (QuoteScreen(), "Losuj cytat", "quote.bubble"),
-            (SearchScreen(), "Wyszukaj", "magnifyingglass")
+            (SearchScreen(), "Wyszukaj", "magnifyingglass"),
+            (SettingsScreen(), "Ustawienia", "gearshape")
         ]
         tabs.viewControllers = screens.enumerated().map { index, item in
             let (screen, title, symbol) = item

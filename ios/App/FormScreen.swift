@@ -49,7 +49,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
         let header = UIStackView(arrangedSubviews: [heading])
         header.alignment = .center
         header.spacing = 8
-        if !(self is ReadingSettings) {
+        if !(self is ReadingSettings || self is SettingsScreen || self is AboutScreen) {
             var icon = UIButton.Configuration.gray()
             icon.image = UIImage(systemName: "textformat.size")
             icon.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 21, weight: .medium)
@@ -85,6 +85,16 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
 
     func configure() {}
     func refresh() {}
+    func heading(_ text: String, in stack: UIStackView) {
+        let label = UILabel()
+        label.text = text
+        label.numberOfLines = 0
+        label.font = .preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = BookStyle.ink
+        label.accessibilityTraits.insert(.header)
+        stack.addArrangedSubview(label)
+    }
 
     @objc func openSettings() {
         let settings = ReadingSettings()
@@ -94,7 +104,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(!(self is ReadingSettings), animated: animated)
+        navigationController?.setNavigationBarHidden(!(self is ReadingSettings || self is AboutScreen), animated: animated)
     }
 
     func addControl(_ control: UIControl, to stack: UIStackView? = nil) {
@@ -218,6 +228,11 @@ final class TextScreen: UIViewController {
     private let textView = UITextView()
     private var firstOpen = true
     private var destination: Reading.Verse?
+    private let playback = UIStackView()
+    private let play = UIButton(type: .system)
+    private let rewind = UIButton(type: .system)
+    private let halt = UIButton(type: .system)
+    private var transportWidths: [NSLayoutConstraint] = []
     var onSave: (() -> Void)?
 
     init(reading: Reading) {
@@ -251,12 +266,98 @@ final class TextScreen: UIViewController {
         textView.accessibilityIdentifier = "tekstWyniku"
         textView.selectedRange = NSRange(location: 0, length: 0)
         view.addSubview(textView)
+        configurePlayback()
         NSLayoutConstraint.activate([
             textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            textView.topAnchor.constraint(equalTo: playback.bottomAnchor, constant: 4),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+
+    private func configurePlayback() {
+        playback.spacing = 8
+        playback.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(playback)
+        for (control, label, symbol, action) in [
+            (play, "Czytaj na głos", "play.fill", #selector(toggleSpeech)),
+            (rewind, "Czytaj od początku", "arrow.counterclockwise", #selector(startSpeech)),
+            (halt, "Zatrzymaj czytanie", "stop.fill", #selector(stopSpeech))
+        ] {
+            var config = UIButton.Configuration.tinted()
+            config.image = UIImage(systemName: symbol)
+            config.imagePadding = 8
+            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 21, weight: .semibold)
+            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6)
+            config.titleLineBreakMode = .byWordWrapping
+            control.configuration = config
+            control.accessibilityLabel = label
+            control.showsLargeContentViewer = true
+            control.largeContentTitle = label
+            control.largeContentImage = config.image
+            control.addTarget(self, action: action, for: .touchUpInside)
+            playback.addArrangedSubview(control)
+            control.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+            if control !== play { transportWidths.append(control.widthAnchor.constraint(equalToConstant: 46)) }
+        }
+        NSLayoutConstraint.activate([
+            playback.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            playback.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            playback.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4)
+        ])
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePlayback), name: SpeechReader.changed, object: nil)
+        playback.addInteraction(UILargeContentViewerInteraction())
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) {
+            (screen: TextScreen, _: UITraitCollection) in screen.updatePlayback()
+        }
+        updatePlayback()
+    }
+    @objc private func updatePlayback() {
+        let state = SpeechReader.shared.state
+        let label: String
+        switch state {
+        case .idle: label = "Czytaj na głos"
+        case .preparing: label = "Przygotowywanie mowy…"
+        case .paused: label = "Wznów czytanie"
+        case .speaking: label = "Wstrzymaj czytanie"
+        }
+        let largeControls = traitCollection.preferredContentSizeCategory.isAccessibilityCategory && state != .idle
+        transportWidths.forEach { $0.isActive = !largeControls && state != .idle }
+        playback.distribution = largeControls ? .fillEqually : .fill
+        play.configuration?.title = largeControls ? nil : label
+        play.configuration?.image = UIImage(systemName: state == .speaking ? "pause.fill" : "play.fill")
+        play.accessibilityLabel = label
+        play.largeContentTitle = label
+        play.largeContentImage = play.configuration?.image
+        play.isEnabled = state != .preparing
+        rewind.isHidden = state == .idle
+        halt.isHidden = state == .idle
+    }
+    @objc private func toggleSpeech() {
+        switch SpeechReader.shared.state {
+        case .idle: startSpeech()
+        case .preparing: break
+        case .speaking: SpeechReader.shared.pause()
+        case .paused: SpeechReader.shared.resume()
+        }
+    }
+    @objc private func startSpeech() {
+        do {
+            if let message = try SpeechReader.shared.start(reading.text, title: reading.name) {
+                let alert = UIAlertController(title: "Zmieniono głos", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+            }
+        } catch {
+            let alert = UIAlertController(title: "Czytanie na głos", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+    @objc private func stopSpeech() { SpeechReader.shared.stop() }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopSpeech()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -270,7 +371,7 @@ final class TextScreen: UIViewController {
         } else if firstOpen {
             firstOpen = false
             textView.scrollRangeToVisible(NSRange(location: 0, length: 0))
-            UIAccessibility.post(notification: .screenChanged, argument: textView)
+            UIAccessibility.post(notification: .screenChanged, argument: play)
         }
     }
 

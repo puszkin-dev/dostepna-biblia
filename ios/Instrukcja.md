@@ -1,6 +1,6 @@
 # dostępna biblia — iPhone
 
-Na dole są cztery karty: Liturgia, Czytaj Biblię, Losuj cytat i Wyszukaj. Przesunięciem jednym palcem w prawo lub lewo znajdź kartę, a dwukrotnym stuknięciem otwórz ją. Po powrocie na kartę pozostajesz w miejscu, w którym ją opuszczono.
+Na dole jest pięć kart: Liturgia, Czytaj Biblię, Losuj cytat, Wyszukaj i Ustawienia. Przesunięciem jednym palcem w prawo lub lewo znajdź kartę, a dwukrotnym stuknięciem otwórz ją. Po powrocie na kartę pozostajesz w miejscu, w którym ją opuszczono.
 
 **Liturgia.** Miesiąc, dzień i rok to trzy osobne systemowe koła. Przesuwaj jednym palcem w górę lub w dół, aby zmienić wartość, a w prawo, aby przejść do następnej regulacji. Krótszy miesiąc skraca listę dni. Kolejny suwak wybiera część liturgii bez otwierania menu. „Czytaj” otwiera tekst. „Zapisz do TXT” działa również bez wcześniejszego czytania.
 
@@ -10,7 +10,11 @@ Przy systemowych rozmiarach tekstu z kategorii dostępności zamiast trzech kó�
 
 Gdy źródło podaje numery wersetów, w czytniku działa przycisk „Przejdź do wersetu”. Otwiera listę numerów z początkiem tekstu; wybranie wiersza przenosi do wskazanego miejsca bez ponownego pobierania. Wstępy bez numerowanych wersetów nie pokazują tego przycisku.
 
-**Ustawienia czytania.** Przycisk z literami znajduje się przy nagłówku każdej karty oraz na pasku czytnika. Suwak „Wielkość tekstu Biblii” ma pięć pozycji i podgląd. Standard to druga pozycja. Przycisk „Przywróć domyślny rozmiar” cofa zmianę. Ustawienie pozostaje po zamknięciu aplikacji. Rozmiar wybrany tutaj określa bazową czcionkę czytania, a iOS skaluje ją zgodnie z Dynamic Type tylko raz. Kolorystyka zmienia się razem z systemem; nie trzeba przełączać jej osobno.
+**Czytaj na głos.** Otwórz tekst, a następnie wybierz „Czytaj na głos” nad treścią. Ten sam przycisk pozwala wstrzymać mowę i wznowić ją od miejsca zatrzymania. Obok niego pojawiają się „Czytaj od początku” i „Zatrzymaj czytanie”. Liturgia, psalm, rozdział, wstęp, wylosowany cytat i wyniki korzystają z tego samego czytnika. Tekst jest pobierany z internetu, ale mowa powstaje na iPhonie. VoiceOver nie musi być włączony. Zmiana karty lub zamknięcie tekstu kończy odczyt; samo przejście na ekran początkowy nie zamyka czytnika. Po przerwaniu przez system lub odłączeniu aktywnych słuchawek aplikacja nie wznawia mowy samoczynnie na głośniku.
+
+**Ustawienia.** Na piątej karcie wybierz głos, szybkość (11 kroków, domyślny jest szósty) i głośność (co 10 procent). Wszystkie trzy suwaki zmieniasz jednym palcem w górę lub w dół z VoiceOver. Polskie głosy są na początku; dostępność zależy od tego, co system udostępnił syntezatorowi. „Odsłuchaj próbkę” pozwala sprawdzić wybór, a reset syntezy nie zmienia wyglądu. W „O programie” są autorzy, wersja, kompilacja, źródła i odnośniki.
+
+**Wielkość tekstu.** Na karcie Ustawienia wybierz sekcję „Wygląd i dostępność”. Skrót z literami przy nagłówkach czterech kart treści oraz w czytniku prowadzi do tej samej regulacji. Suwak „Wielkość tekstu Biblii” ma pięć pozycji i podgląd. Standard to druga pozycja. „Przywróć domyślny rozmiar” cofa zmianę. Ustawienie pozostaje po zamknięciu aplikacji. iOS skaluje tekst zgodnie z Dynamic Type tylko raz. Kolorystyka zmienia się razem z systemem.
 
 **Losuj cytat.** Suwakiem wybierz kategorię i użyj przycisku „Losuj cytat”. Wróć z tekstu przyciskiem systemowym lub gestem cofnięcia. „Losuj ponownie” zachowuje kategorię, „Powrót” przywraca jej wybór.
 

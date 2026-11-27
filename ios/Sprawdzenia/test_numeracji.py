@@ -79,6 +79,9 @@ def test_metadane_do_dystrybucji() -> None:
 
     info = plistlib.loads((ROOT / "ios/Info.plist").read_bytes())
     assert info["ITSAppUsesNonExemptEncryption"] is False
+    assert info["UIBackgroundModes"] == ["audio"]
+    assert "NSMicrophoneUsageDescription" not in info
+    assert "NSSpeechRecognitionUsageDescription" not in info
     assert isinstance(info["UILaunchScreen"], dict)
     assert set(info["UISupportedInterfaceOrientations"]) == {
         "UIInterfaceOrientationPortrait",

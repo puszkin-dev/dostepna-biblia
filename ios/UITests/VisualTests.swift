@@ -127,6 +127,46 @@ final class VisualTests: XCTestCase {
         defer { XCUIDevice.shared.orientation = .portrait }
         capture("13-ustawienia-poziomo")
     }
+
+    func testNoweUstawieniaIAutorzy() throws {
+        app.tabBars.buttons["Ustawienia"].tap()
+        capture("14-synteza")
+        try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
+        let about = app.buttons["Autorzy i źródła"]
+        reveal(about)
+        about.tap()
+        let designer = app.staticTexts["Projektant wersji iOS: Mieczysław Bąk"]
+        XCTAssertTrue(designer.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Pomysłodawca i autor wersji Windows: Grzegorz Przystupa"].exists)
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label BEGINSWITH %@", "Wersja 1.0, kompilacja ")).firstMatch.exists)
+        reveal(designer)
+        capture("15-autorzy")
+        try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
+        let link = app.descendants(matching: .any).matching(identifier: "Kod źródłowy oryginalnej wersji Windows na GitHubie").firstMatch
+        reveal(link)
+        link.tap()
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 10) || app.state == .runningBackgroundSuspended)
+        app.activate()
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.tabBars.buttons["Ustawienia"].isSelected)
+    }
+
+    func testWygladCzytnikaPodczasMowy() throws {
+        let read = app.buttons["Czytaj"]
+        reveal(read)
+        read.tap()
+        let text = app.textViews["tekstWyniku"]
+        XCTAssertTrue(text.waitForExistence(timeout: 35))
+        app.buttons["Czytaj na głos"].tap()
+        let pause = app.buttons["Wstrzymaj czytanie"]
+        XCTAssertTrue(pause.waitForExistence(timeout: 8))
+        capture("16-mowa-w-czytniku")
+        XCTAssertGreaterThanOrEqual(text.frame.height, 44)
+        XCTAssertLessThanOrEqual(pause.frame.maxY, text.frame.minY)
+        XCTAssertTrue(app.buttons["Zatrzymaj czytanie"].isHittable)
+        try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
+        app.buttons["Zatrzymaj czytanie"].tap()
+    }
 }
 
 private extension CGRect {
