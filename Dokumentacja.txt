@@ -1,4 +1,5 @@
 ﻿Dostępna Biblia
+Wersja 1.0
 Dokumentacja użytkownika i kompilacji
 
 1. Do czego służy program
