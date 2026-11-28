@@ -5,8 +5,9 @@ Dokumentacja użytkownika i kompilacji
 1. Do czego służy program
 
 Dostępna Biblia to aplikacja dla Windows do czytania Biblii i liturgii słowa na
-wybrany dzień. Pobiera teksty z TwojaBiblia.pl. Tekst biblijny
-pochodzi z Biblii Tysiąclecia, wydanie V.
+wybrany dzień. Pobiera teksty z TwojaBiblia.pl, a 25 grudnia
+także z liturgia.wiara.pl. Tekst biblijny pochodzi z Biblii
+Tysiąclecia, wydanie V.
 
 Pobierz paczkę Windows, rozpakuj wszystkie pliki do jednego folderu
 i uruchom „Dostępna Biblia.exe”. Program korzysta z systemowego
@@ -35,6 +36,12 @@ Pole jest tylko do odczytu, ale możesz zaznaczyć i skopiować treść.
 
 Jeśli zmienisz miesiąc lub rok, lista dni dopasuje się do nowej daty.
 Na przykład po zmianie stycznia na luty dzień 31 zmieni się na 28 lub 29.
+
+25 grudnia program pokazuje czytania trzech Mszy Narodzenia Pańskiego
+w kolejności ich sprawowania: Mszy w nocy (Pasterki), Mszy o świcie
+i Mszy w dzień. Każdą poprzedza jej nazwa, np. „MSZA O ŚWICIE”.
+Gdy wybierzesz jedną część, na przykład Ewangelię, zobaczysz ją
+z każdej z tych Mszy, również poprzedzoną nazwą Mszy.
 
 3. Zapisywanie do pliku TXT
 
@@ -141,5 +148,13 @@ dzień, a następnie pobiera stronę z czytaniami. Po wyborze pojedynczej
 części program wydziela ją na podstawie nagłówków lekcjonarza.
 Aplikacja nie zawiera wbudowanej bazy tekstów liturgicznych ani Biblii.
 
+TwojaBiblia.pl publikuje na 25 grudnia tylko Mszę w nocy. Dlatego
+czytania Mszy o świcie i Mszy w dzień program pobiera z liturgia.wiara.pl
+(Liturgia Słowa według lekcjonarza z 2015 roku). Pomija też umieszczony
+na TwojaBiblia.pl komunikat o Mszy wigilijnej z nieaktywnym odnośnikiem.
+
 Źródło czytań i informacja o przekładzie
 https://twojabiblia.pl/czytania-z-dnia/
+
+Źródło czytań Mszy o świcie i Mszy w dzień 25 grudnia
+https://liturgia.wiara.pl/kalendarz/67b53.Czytania-mszalne/

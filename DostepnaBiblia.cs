@@ -22,8 +22,18 @@ internal static class Liturgia
 {
     private static readonly CultureInfo Polish = CultureInfo.GetCultureInfo("pl-PL");
     private static readonly Uri Site = new Uri("https://twojabiblia.pl/");
+    private static readonly Uri Lectionary = new Uri("https://liturgia.wiara.pl/");
     private static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
     private const string Missing = "TwojaBiblia.pl nie udostępnia czytań dla tej daty.";
+    private const string Source = "Źródło: TwojaBiblia.pl. Biblia Tysiąclecia, wydanie V.";
+    // TwojaBiblia.pl publishes only the Mass during the Night on 25 December.
+    private static readonly string[] ChristmasMasses = { "Msza o świcie", "Msza w dzień" };
+    private const string ChristmasSource =
+        "Źródło Mszy w nocy: TwojaBiblia.pl. Biblia Tysiąclecia, wydanie V.\r\n" +
+        "Źródło Mszy o świcie i Mszy w dzień: liturgia.wiara.pl, lekcjonarz z 2015 roku.";
+    private const string ChristmasMissing =
+        "Nie udało się pobrać czytań Mszy o świcie i Mszy w dzień z liturgia.wiara.pl. " +
+        "Sprawdź połączenie i spróbuj ponownie.";
 
     [STAThread]
     private static void Main()
@@ -37,10 +47,15 @@ internal static class Liturgia
     internal enum Part { All, First, Second, Psalm, Acclamation, Gospel }
 
     private static readonly Regex SectionHeadings = new Regex(
-        @"^(?:(?<First>PIERWSZE CZYTANIE|I CZYTANIE)|(?<Second>DRUGIE CZYTANIE|II CZYTANIE)|" +
+        @"^(?:(?:(?<First>PIERWSZE CZYTANIE|I CZYTANIE)|(?<Second>DRUGIE CZYTANIE|II CZYTANIE)|" +
         @"(?<Psalm>PSALM RESPONSORYJNY|PSALM)|(?<Acclamation>ŚPIEW PRZED EWANGELIĄ|AKLAMACJA)|" +
-        @"(?<Gospel>EWANGELIA)|MSZA)(?=[ \t]*(?:\(|\r?$|[–:])|[ \t]+(?:W CZASIE|DŁUŻSZA|KRÓTSZA|WERSJA)\b)",
+        @"(?<Gospel>EWANGELIA)|(?<Mass>MSZA))(?=[ \t]*(?:\(|\r?$|[–:])|[ \t]+(?:W CZASIE|DŁUŻSZA|KRÓTSZA|WERSJA)\b)|" +
+        // Mass titles such as "MSZA W NOCY (PASTERKA)" are written in capitals on their own line.
+        @"(?<Mass>(?-i:MSZA[ \t][^\r\n\p{Ll}]*))(?=\r?$))",
         RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    private static readonly Regex VigilNotice = new Regex(
+        @"(?is)<p\b[^>]*>(?:(?!</p>).)*?kliknij\s*(?:</span>\s*)?<a\b[^>]*>\s*TUTAJ\s*</a>(?:(?!</p>).)*</p>");
 
     internal static async Task<string> ReadDay(DateTime date, Part part = Part.All)
     {
@@ -63,11 +78,74 @@ internal static class Liturgia
             throw new FormatException("Adres czytań nie zgadza się z wybraną datą.");
 
         string html = await Http.GetStringAsync(readingUrl).ConfigureAwait(false);
-        string content = ExtractReadings(html);
+        bool christmas = date.Month == 12 && date.Day == 25;
+        // The Christmas page points to the Vigil Mass with a link that no longer works.
+        string content = ExtractReadings(christmas ? VigilNotice.Replace(html, "") : html);
+        if (christmas)
+        {
+            string masses = await ReadChristmasMasses(date, content).ConfigureAwait(false);
+            if (masses.Length != 0)
+                content += "\r\n\r\n" + masses;
+        }
         if (part != Part.All)
             content = SelectPart(content, part);
         return date.ToString("dddd, d MMMM yyyy", Polish) + "\r\n\r\n" +
-            content + "\r\n\r\nŹródło: TwojaBiblia.pl. Biblia Tysiąclecia, wydanie V.";
+            content + "\r\n\r\n" + (christmas ? ChristmasSource : Source);
+    }
+
+    private static async Task<string> ReadChristmasMasses(DateTime date, string published)
+    {
+        string datePath = "/kalendarz/67b53.Czytania-mszalne/" +
+            date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var masses = new List<string>();
+        try
+        {
+            string index = null;
+            foreach (string mass in ChristmasMasses)
+            {
+                string title = mass.ToUpper(Polish);
+                if (Regex.IsMatch(published, "(?m)^" + Regex.Escape(title) + @"[ \t]*\r?$"))
+                    continue;
+                if (index == null)
+                    index = await Http.GetStringAsync(new Uri(Lectionary, datePath)).ConfigureAwait(false);
+                var link = Regex.Match(index, @"<a\s+href=""(" + Regex.Escape(datePath) +
+                    @"/(\d+))#Par\d+"">[^<]*?-\s*" + Regex.Escape(mass) + @"\s*</a>", RegexOptions.IgnoreCase);
+                if (!link.Success)
+                    throw new FormatException("Strona liturgia.wiara.pl nie zawiera czytań: " + mass + ".");
+                string html = await Http.GetStringAsync(new Uri(Lectionary, link.Groups[1].Value)).ConfigureAwait(false);
+                masses.Add(title + "\r\n\r\n" + ExtractLectionaryPart(html, link.Groups[2].Value));
+            }
+        }
+        catch (HttpRequestException)
+        {
+            throw new FormatException(ChristmasMissing);
+        }
+        catch (TaskCanceledException)
+        {
+            throw new FormatException(ChristmasMissing);
+        }
+        return string.Join("\r\n\r\n", masses);
+    }
+
+    private static string ExtractLectionaryPart(string html, string number)
+    {
+        int anchor = html.IndexOf("name=\"Par" + number + "\"", StringComparison.Ordinal);
+        int start = anchor < 0 ? -1 : html.LastIndexOf("<div class=\"txt__rich-area\">", anchor, StringComparison.Ordinal);
+        string block = start < 0 ? null : DivContent(html, start);
+        if (block != null)
+        {
+            // Drop the part title and put each siglum next to its heading, as on TwojaBiblia.pl.
+            block = Regex.Replace(block,
+                @"(?is)<p\b[^>]*>(?:(?!</p>).)*?content_index_elemenet(?:(?!</p>).)*</p>", "");
+            block = Regex.Replace(block,
+                @"(?is)<p\b[^>]*\bclass=""block-title""[^>]*>(.*?)</p>\s*<p\b[^>]*\bclass=""bible-verse""[^>]*>(.*?)</p>",
+                "<p>$1 ($2)</p>");
+            string text = ToPlainText(block);
+            if (text.IndexOf("PSALM", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                text.IndexOf("EWANGELIA", StringComparison.OrdinalIgnoreCase) >= 0)
+                return text;
+        }
+        throw new FormatException("Strona liturgia.wiara.pl zmieniła układ lub nie zawiera pełnego tekstu czytań.");
     }
 
     private static string SelectPart(string text, Part part)
@@ -75,12 +153,33 @@ internal static class Liturgia
         MatchCollection headings = SectionHeadings.Matches(text);
         var sections = new List<string>();
         string group = part.ToString();
+        int masses = 0;
+        foreach (Match heading in headings)
+        {
+            if (heading.Groups["Mass"].Success)
+                masses++;
+        }
+        // On days with several Masses each selected part is preceded by the title of its Mass.
+        string mass = null;
+        bool labelled = false;
         for (int index = 0; index < headings.Count; index++)
         {
             Match heading = headings[index];
+            int end = index + 1 < headings.Count ? headings[index + 1].Index : text.Length;
+            if (heading.Groups["Mass"].Success)
+            {
+                int lineEnd = text.IndexOf('\r', heading.Index, end - heading.Index);
+                mass = text.Substring(heading.Index, (lineEnd < 0 ? end : lineEnd) - heading.Index).Trim();
+                labelled = false;
+                continue;
+            }
             if (!heading.Groups[group].Success)
                 continue;
-            int end = index + 1 < headings.Count ? headings[index + 1].Index : text.Length;
+            if (masses > 1 && mass != null && !labelled)
+            {
+                sections.Add(mass);
+                labelled = true;
+            }
             sections.Add(text.Substring(heading.Index, end - heading.Index).Trim());
         }
         if (sections.Count == 0)
@@ -99,26 +198,32 @@ internal static class Liturgia
         var startPattern = new Regex(
             @"<div\b[^>]*style=""\s*text-align\s*:\s*justify\s*;?\s*""[^>]*>",
             RegexOptions.IgnoreCase);
-        var divPattern = new Regex(@"</?div\b[^>]*>", RegexOptions.IgnoreCase);
         foreach (Match start in startPattern.Matches(html))
         {
-            int begin = html.IndexOf('>', start.Index) + 1;
-            int depth = 1;
-            for (Match tag = divPattern.Match(html, begin); tag.Success; tag = tag.NextMatch())
-            {
-                depth += tag.Value[1] == '/' ? -1 : 1;
-                if (depth != 0)
-                    continue;
-
-                string block = html.Substring(begin, tag.Index - begin);
-                string text = ToPlainText(block);
-                if (text.IndexOf("PSALM", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                    text.IndexOf("EWANGELIA", StringComparison.OrdinalIgnoreCase) >= 0)
-                    return text;
-                break;
-            }
+            string block = DivContent(html, start.Index);
+            if (block == null)
+                continue;
+            string text = ToPlainText(block);
+            if (text.IndexOf("PSALM", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                text.IndexOf("EWANGELIA", StringComparison.OrdinalIgnoreCase) >= 0)
+                return text;
         }
         throw new FormatException("Strona zmieniła układ lub nie zawiera pełnego tekstu czytań.");
+    }
+
+    // Returns the markup inside the div that opens at the given index, or null if the div is not closed.
+    private static string DivContent(string html, int start)
+    {
+        var divPattern = new Regex(@"</?div\b[^>]*>", RegexOptions.IgnoreCase);
+        int begin = html.IndexOf('>', start) + 1;
+        int depth = 1;
+        for (Match tag = divPattern.Match(html, begin); tag.Success; tag = tag.NextMatch())
+        {
+            depth += tag.Value[1] == '/' ? -1 : 1;
+            if (depth == 0)
+                return html.Substring(begin, tag.Index - begin);
+        }
+        return null;
     }
 
     private static string ToPlainText(string html)
