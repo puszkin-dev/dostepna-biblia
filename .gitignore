@@ -8,3 +8,4 @@
 .DS_Store
 ._*
 __pycache__/
+/ios/eleven_api.txt

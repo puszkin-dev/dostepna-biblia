@@ -53,3 +53,5 @@ R-018 — Korekta R-017: techniczne nazwy w Xcode, ścieżki .app/.ipa i nowe ar
 ## ElevenLabs — rozszerzenie odczytu iOS
 
 Pełne źródło prywatne: `ios/elevenlabs.txt`. R-022: wybór silnika, bezpieczny klucz użytkownika, sprawdzenie bez generacji, głosy konta i polska próbka wybranego głosu. R-023: polski eleven_v4, strumieniowy MP3, oczyszczenie bez utraty treści i podział najwyżej po 10 000 znaków. R-024: odtwarzanie przy napływie danych, najwyżej jeden następny fragment, brak równoległych duplikatów, anulowanie, atomowy cache. R-025: zachowanie sesji, wznowienie z pozycją, rozłączne polskie błędy i brak automatycznych płatnych ponowień. R-026: odbiór na telefonie, VoiceOver i API odroczony na wyraźne polecenie do otrzymania klucza; przygotować przypadki, nie uruchamiać testów.
+
+Aktualizacja odbioru R-022–026: właściciel przekazał klucz do prób, odwołał wstrzymanie i wymaga rzeczywistej generacji w ElevenLabs, nie zastępowania jej sztucznym dźwiękiem. Używać bardzo krótkich fraz ze względu na niewielki limit. Nie włączać pliku z kluczem do repozytorium ani artefaktów testowych.

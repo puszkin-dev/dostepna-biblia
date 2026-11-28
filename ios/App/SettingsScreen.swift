@@ -18,6 +18,7 @@ final class SettingsScreen: FormScreen {
     private var selectedGroup = 0
     private var sample = UIButton()
     private let notice = UILabel()
+    static let cloudSampleText = "Pokój wam."
     static let sampleText = "Tak brzmi wybrany głos. Możesz nim słuchać Pisma Świętego i czytań liturgicznych."
 
     override func configure() {
@@ -119,7 +120,12 @@ final class SettingsScreen: FormScreen {
         group.show(localNames + ["ElevenLabs"], index: cloud ? localNames.count : index)
         selectedGroup = cloud ? localNames.count : index
         cloudBox.isHidden = !cloud
-        continueBook.isHidden = !cloud || ElevenBookmark.load() == nil
+        let bookmark = cloud ? ElevenBookmark.load()?.0 : nil
+        continueBook.isHidden = bookmark == nil
+        continueBook.configuration?.subtitle = bookmark?.title
+        continueBook.accessibilityIdentifier = "wznowOstatniaSesje"
+        continueBook.accessibilityLabel = "Wznów ostatnie czytanie ElevenLabs"
+        continueBook.accessibilityValue = bookmark?.title
         if cloud {
             let catalog = preferences.cloudVoices
             let position = catalog.firstIndex { $0.voice_id == preferences.cloudVoice } ?? 0
@@ -185,7 +191,13 @@ final class SettingsScreen: FormScreen {
         cloudBox.addArrangedSubview(hint)
         apiKey.borderStyle = .roundedRect
         apiKey.isSecureTextEntry = true
-        apiKey.placeholder = "Klucz API ElevenLabs"
+        let keyLabel = UILabel()
+        keyLabel.text = "Klucz API ElevenLabs"
+        keyLabel.font = .preferredFont(forTextStyle: .headline)
+        keyLabel.adjustsFontForContentSizeCategory = true
+        keyLabel.numberOfLines = 0
+        keyLabel.isAccessibilityElement = false
+        cloudBox.addArrangedSubview(keyLabel)
         apiKey.accessibilityLabel = "Klucz API ElevenLabs"
         apiKey.font = .preferredFont(forTextStyle: .body)
         apiKey.adjustsFontForContentSizeCategory = true
@@ -269,7 +281,7 @@ final class SettingsScreen: FormScreen {
     private func toggleSample() {
         let player = SpeechReader.shared
         if player.state != .idle { player.stop(); return }
-        do { if let message = try player.start(Self.sampleText) { notice.text = message } }
+        do { if let message = try player.start(preferences.cloudSelected ? Self.cloudSampleText : Self.sampleText) { notice.text = message } }
         catch {
             notice.text = error.localizedDescription
             UIAccessibility.post(notification: .announcement, argument: notice.text)

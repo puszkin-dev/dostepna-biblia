@@ -3,7 +3,7 @@ import AudioToolbox
 
 /// Parser dostaje kolejne porcje tego samego MP3; dekoder zachowuje stan między pakietami.
 final class ElevenAudio {
-    private let engine = AVAudioEngine()
+    private let engine: AVAudioEngine
     private let player = AVAudioPlayerNode()
     private let pitch = AVAudioUnitTimePitch()
     private var parser: AudioFileStreamID?
@@ -16,13 +16,15 @@ final class ElevenAudio {
     private var closed = false
     private var failure: Error?
     private var decodedFrames: Int64 = 0
-    private var resumeTime: Double
+    private var pausedPosition: Double?
+    private let resumeTime: Double
     private var skipFrames: Int64 = 0
     private let preferences: SpeechPreferences
     var onStart: (() -> Void)?
     var onEnd: (() -> Void)?
 
-    init(offset: Double, preferences: SpeechPreferences) throws {
+    init(offset: Double, preferences: SpeechPreferences, engine: AVAudioEngine = AVAudioEngine()) throws {
+        self.engine = engine
         resumeTime = max(0, offset)
         self.preferences = preferences
         let status = AudioFileStreamOpen(Unmanaged.passUnretained(self).toOpaque(), { _, _, _, _ in }, {
@@ -139,14 +141,21 @@ final class ElevenAudio {
     }
     private func completeIfReady() { if ended && pending == 0 && !closed { onEnd?() } }
     var position: Double {
+        if let pausedPosition { return pausedPosition }
         guard let render = player.lastRenderTime, let time = player.playerTime(forNodeTime: render),
               time.sampleRate > 0 else { return resumeTime }
-        return resumeTime + max(0, Double(time.sampleTime) / time.sampleRate)
+        let rendered = resumeTime + max(0, Double(time.sampleTime) / time.sampleRate)
+        return min(rendered, Double(decodedFrames) / time.sampleRate)
     }
-    func pause() { player.pause() }
+    func pause() {
+        // Po wstrzymaniu węzeł może już nie udostępniać zegara odtwarzania.
+        pausedPosition = position
+        player.pause()
+    }
     func resume() throws {
         if !engine.isRunning { try engine.start() }
         player.play()
+        pausedPosition = nil
     }
     func close() {
         guard !closed else { return }

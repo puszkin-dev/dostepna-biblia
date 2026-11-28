@@ -4,6 +4,60 @@ import XCTest
 @available(iOS 27.0, *)
 @MainActor
 final class VoiceOverTests: XCTestCase {
+    func testElevenPoRestarcieZVoiceOver() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        let vo = XCUIDevice.shared.voiceOverService
+        let previous = vo.isEnabled
+        if previous { try vo.disable() }
+        defer {
+            if previous && !vo.isEnabled { try? vo.enable() }
+            if !previous && vo.isEnabled { try? vo.disable() }
+        }
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        let resume = app.buttons["wznowOstatniaSesje"]
+        try XCTSkipUnless(resume.exists && (resume.value as? String) == "Próba krótkiego czytania ElevenLabs", "Brak przygotowanej sesji odbiorowej.")
+        let engine = app.sliders["Silnik mowy"]
+        XCTAssertEqual(engine.value as? String, "ElevenLabs")
+        let secret = app.secureTextFields["Klucz API ElevenLabs"]
+        XCTAssertTrue(secret.exists)
+        let image = XCTAttachment(screenshot: app.screenshot())
+        image.name = "ElevenLabs-ustawienia"
+        image.lifetime = .keepAlways
+        add(image)
+        try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
+        try vo.enable()
+        let center = CGVector(dx: 0.5, dy: 0.5)
+        func focus(_ item: XCUIElement, _ name: String) throws {
+            item.coordinate(withNormalizedOffset: center).tap()
+            let spoken = try vo.currentSpeech().utterance
+            XCTAssertTrue(spoken.localizedCaseInsensitiveContains(name), spoken)
+            print("Fokus VoiceOver: \(spoken)")
+        }
+        try focus(secret, "Klucz API")
+        let slider = app.sliders["Głos"]
+        let original = try XCTUnwrap(slider.value as? String)
+        try focus(slider, "regulacja")
+        app.swipeUp()
+        let changed = try XCTUnwrap(slider.value as? String)
+        XCTAssertNotEqual(original, changed)
+        XCTAssertTrue(try vo.currentSpeech().utterance.contains(changed))
+        app.swipeDown()
+        XCTAssertEqual(slider.value as? String, original)
+        try vo.disable()
+        // Przycisk jest pod regulacjami; XCTest przewija do niego przed aktywacją.
+        resume.tap()
+        let text = app.textViews["tekstWyniku"]
+        XCTAssertTrue(text.waitForExistence(timeout: 6))
+        XCTAssertTrue((text.value as? String)?.contains("Amen.") == true)
+        XCTAssertTrue(app.buttons["Czytaj na głos"].waitForExistence(timeout: 12))
+        XCTAssertFalse(app.alerts.firstMatch.exists)
+        app.tabBars.buttons["Ustawienia"].tap()
+        XCTAssertFalse(resume.exists)
+    }
+
     func testSyntezaINazwiskaZVoiceOver() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

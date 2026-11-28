@@ -90,7 +90,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
         var seen = Set<String>()
         var voices: [ElevenVoice] = []
         repeat {
-            var query = [URLQueryItem(name: "page_size", value: "100"), URLQueryItem(name: "voice_type", value: "saved")]
+            var query = [URLQueryItem(name: "page_size", value: "100")]
             if let token { query.append(URLQueryItem(name: "next_page_token", value: token)) }
             let request = try request(path: "/v2/voices", query: query, key: key)
             let (data, response) = try await session.data(for: request)

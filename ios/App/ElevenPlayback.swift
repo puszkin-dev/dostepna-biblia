@@ -84,7 +84,7 @@ enum ElevenMP3 {
 }
 
 /// Jeden POST i jeden plik tymczasowy. Obsługa danych i przejęcie bufora przez czytnik są na tej samej kolejce.
-private final class ElevenTransfer: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+final class ElevenTransfer: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     let final: URL
     let partial: URL
     private var file: FileHandle?

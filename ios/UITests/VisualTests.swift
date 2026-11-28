@@ -51,6 +51,23 @@ final class VisualTests: XCTestCase {
         wait(for: [rotated], timeout: 8)
     }
 
+    func testElevenDuzeLitery() throws {
+        app.terminate()
+        let original = XCUIDevice.shared.appearance
+        defer { XCUIDevice.shared.appearance = original }
+        XCUIDevice.shared.appearance = .dark
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        try XCTSkipUnless(app.sliders["Silnik mowy"].value as? String == "ElevenLabs", "Brak skonfigurowanej próby ElevenLabs.")
+        capture("Eleven-duze-litery")
+        let field = app.secureTextFields["Klucz API ElevenLabs"]
+        reveal(field)
+        XCTAssertTrue(field.isHittable)
+        capture("Eleven-duze-pole")
+        try app.performAccessibilityAudit(for: [.contrast, .dynamicType, .textClipped])
+    }
+
     func testEkranyFormularzy() throws {
         capture("01-liturgia")
         openSettings()
