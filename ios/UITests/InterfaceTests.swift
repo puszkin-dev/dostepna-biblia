@@ -172,23 +172,44 @@ final class InterfaceTests: XCTestCase {
         let rate = app.sliders["Szybkość mowy"], volume = app.sliders["Głośność"]
         app.buttons["Przywróć domyślną syntezę"].tap()
         defer { app.buttons["Przywróć domyślną syntezę"].tap() }
-        XCTAssertEqual(rate.value as? String, "6 z 11, domyślna")
+        XCTAssertEqual(rate.value as? String, "50 procent")
         rate.adjust(toNormalizedSliderPosition: 0.7)
         volume.adjust(toNormalizedSliderPosition: 0.6)
         let chosenRate = try XCTUnwrap(rate.value as? String)
         let chosenVolume = try XCTUnwrap(volume.value as? String)
-        XCTAssertNotEqual(chosenRate, "6 z 11, domyślna")
+        XCTAssertNotEqual(chosenRate, "50 procent")
         XCTAssertNotEqual(chosenVolume, "100 procent")
-        let voice = app.sliders["Głos"]
-        voice.adjust(toNormalizedSliderPosition: 0.02)
+        let engine = app.sliders["Silnik mowy"]
+        if engine.isEnabled { engine.adjust(toNormalizedSliderPosition: 1) }
+        let chosenEngine = try XCTUnwrap(engine.value as? String)
+        let slider = app.sliders["Głos"]
+        if slider.exists { slider.adjust(toNormalizedSliderPosition: 1) }
+        let voice = slider.exists ? slider : app.staticTexts["Głos"]
         let chosen = try XCTUnwrap(voice.value as? String)
+        XCTAssertNotEqual(chosen, "Automatyczny")
         app.terminate()
         app.launch()
         selectTab("Ustawienia")
         XCTAssertEqual(rate.value as? String, chosenRate)
         XCTAssertEqual(volume.value as? String, chosenVolume)
         XCTAssertEqual(voice.value as? String, chosen)
-        app.buttons["Przywróć domyślną syntezę"].tap()
+        XCTAssertEqual(engine.value as? String, chosenEngine)
+        #if compiler(>=6.4)
+        if #available(iOS 27.0, *) {
+            let reader = XCUIDevice.shared.voiceOverService
+            try reader.enable()
+            defer { try? reader.disable() }
+            voice.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            let spoken = try reader.currentSpeech().utterance
+            XCTAssertTrue(spoken.localizedCaseInsensitiveContains(chosen), spoken)
+            XCTAssertFalse(spoken.localizedCaseInsensitiveContains("wygaszony"), spoken)
+            print("Zapisany wybór: \(chosenEngine); VoiceOver: \(spoken)")
+        }
+        #endif
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Polskie głosy w ustawieniach"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
         app.buttons["Odsłuchaj próbkę"].tap()
         XCTAssertTrue(app.buttons["Zatrzymaj próbkę"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Odsłuchaj próbkę"].waitForExistence(timeout: 35))

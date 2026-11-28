@@ -3,24 +3,37 @@ import UIKit
 
 final class SettingsScreen: FormScreen {
     private let preferences = SpeechPreferences()
+    private let group = ChoiceSlider("Silnik mowy")
     private let voice = ChoiceSlider("Głos")
     private let rate = ChoiceSlider("Szybkość mowy")
     private let volume = ChoiceSlider("Głośność")
-    private var voices: [AVSpeechSynthesisVoice] = []
+    private var groups: [VoiceGroup] = []
+    private var automaticGroup = 0
+    private var selectedGroup = 0
     private var sample = UIButton()
     private let notice = UILabel()
     static let sampleText = "Tak brzmi wybrany głos. Możesz nim słuchać Pisma Świętego i czytań liturgicznych."
 
     override func configure() {
         heading("Czytanie na głos", in: choices)
+        addChoice(group) { [weak self] index in
+            guard let self, groups.indices.contains(index), index != selectedGroup else { return }
+            selectVoice(index == automaticGroup ? nil : groups[index].voices.first?.identifier)
+            showGroup(index)
+        }
         addChoice(voice) { [weak self] index in
-            guard let self else { return }
-            preferences.voiceID = index == 0 ? nil : voices[index - 1].identifier
-            notice.text = nil
+            guard let self, groups.indices.contains(selectedGroup) else { return }
+            let offset = selectedGroup == automaticGroup ? 1 : 0
+            selectVoice(index < offset ? nil : groups[selectedGroup].voices[index - offset].identifier)
+        }
+        addChoice(rate) { [weak self] index in
+            self?.preferences.speed = SpeechPreferences.percentages[index]
             SpeechReader.shared.stop()
         }
-        addChoice(rate) { [weak self] index in self?.preferences.speed = index; SpeechReader.shared.stop() }
-        addChoice(volume) { [weak self] index in self?.preferences.volume = index; SpeechReader.shared.stop() }
+        addChoice(volume) { [weak self] index in
+            self?.preferences.volume = SpeechPreferences.percentages[index]
+            SpeechReader.shared.stop()
+        }
         notice.numberOfLines = 0
         notice.font = .preferredFont(forTextStyle: .body)
         notice.adjustsFontForContentSizeCategory = true
@@ -58,21 +71,62 @@ final class SettingsScreen: FormScreen {
     }
     @objc private func reloadVoices() { refresh() }
     override func refresh() {
-        voices = SpeechPreferences.voices()
-        let current = voices.firstIndex { $0.identifier == preferences.voiceID }
-        if preferences.voiceID != nil && current == nil {
+        groups = VoiceGroup.catalog(AVSpeechSynthesisVoice.speechVoices())
+        let automatic = VoiceGroup.automatic(in: groups)?.identifier
+        automaticGroup = groupIndex(for: automatic) ?? 0
+        let current = groupIndex(for: preferences.voiceID)
+        if preferences.voiceID != nil && current == nil && !groups.isEmpty {
             preferences.voiceID = nil
-            let message = "Wybrany głos nie jest już dostępny. Zastosowano głos domyślny."
+            let message = "Poprzedni głos nie jest dostępny wśród polskich głosów. Zastosowano głos domyślny."
             notice.text = message
             if visible { UIAccessibility.post(notification: .announcement, argument: message) }
         }
-        let automatic = AVSpeechSynthesisVoice(language: "pl-PL") ?? voices.first
-        let defaultName = automatic.map { "Automatyczny: " + SpeechPreferences.label($0) } ?? "Brak dostępnego głosu"
-        voice.show([defaultName] + voices.map(SpeechPreferences.label), index: current.map { $0 + 1 } ?? 0)
-        rate.show((0...10).map { $0 == 5 ? "6 z 11, domyślna" : "\($0 + 1) z 11" }, index: preferences.speed)
-        volume.show((0...10).map { "\($0 * 10) procent" }, index: preferences.volume)
+        let index = current ?? automaticGroup
+        group.show(groups.map(\.name), index: index)
+        showGroup(index)
+        let percentages = SpeechPreferences.percentages
+        let labels = percentages.map { "\($0) procent" }
+        rate.show(labels, index: preferences.speed / SpeechPreferences.step)
+        volume.show(labels, index: preferences.volume / SpeechPreferences.step)
         updateSample()
     }
+
+    private func groupIndex(for identifier: String?) -> Int? {
+        guard let identifier else { return nil }
+        return groups.firstIndex { $0.voices.contains { $0.identifier == identifier } }
+    }
+
+    private func showGroup(_ index: Int) {
+        selectedGroup = index
+        guard groups.indices.contains(index) else {
+            showVoices(["Brak polskiego głosu"], index: 0)
+            return
+        }
+        let entry = groups[index]
+        let extra = index == automaticGroup ? ["Automatyczny"] : []
+        let position = entry.voices.firstIndex { $0.identifier == preferences.voiceID }
+        showVoices(extra + entry.labels, index: position.map { $0 + extra.count } ?? 0)
+    }
+
+    private func showVoices(_ names: [String], index: Int) {
+        voice.show(names, index: index)
+        // Jedyny głos jest już wybrany, a nie niedostępny.
+        let single = names.count == 1
+        voice.isHidden = single
+        voice.caption.accessibilityElementsHidden = !single
+        voice.caption.isAccessibilityElement = single
+        voice.caption.accessibilityLabel = "Głos"
+        if single {
+            voice.caption.accessibilityValue = groups.isEmpty ? "Brak polskiego głosu" : "\(names[index]), jedyny głos tego silnika"
+        }
+    }
+
+    private func selectVoice(_ identifier: String?) {
+        preferences.voiceID = identifier
+        notice.text = nil
+        SpeechReader.shared.stop()
+    }
+
     @objc private func updateSample() {
         sample.configuration?.title = SpeechReader.shared.state == .idle ? "Odsłuchaj próbkę" : "Zatrzymaj próbkę"
     }

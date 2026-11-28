@@ -3,48 +3,106 @@ import MediaPlayer
 import UIKit
 
 struct SpeechPreferences {
-    static let rates: [Float] = (0...10).map { step in
-        let normal = AVSpeechUtteranceDefaultSpeechRate
-        if step <= 5 { return normal - (normal - AVSpeechUtteranceMinimumSpeechRate) * Float(5 - step) / 5 }
-        return normal + (AVSpeechUtteranceMaximumSpeechRate - normal) * Float(step - 5) / 5
-    }
+    static let step = 5
+    static let percentages = Array(stride(from: 0, through: 100, by: step))
     let defaults: UserDefaults
     init(_ defaults: UserDefaults = .standard) { self.defaults = defaults }
-    private func index(_ key: String, standard: Int) -> Int {
-        guard let value = defaults.object(forKey: key) as? Int, (0...10).contains(value) else { return standard }
-        return value
+
+    private func percentage(_ key: String, legacy: String, standard: Int) -> Int {
+        if let saved = defaults.object(forKey: key) {
+            guard let value = saved as? Int, Self.percentages.contains(value) else { return standard }
+            return value
+        }
+        // Poprzednie wydanie zapisywało indeks 0…10, a nie liczbę procentów.
+        guard let index = defaults.object(forKey: legacy) as? Int, (0...10).contains(index) else { return standard }
+        return index * 10
     }
+
     var speed: Int {
-        get { index("tempoMowy", standard: 5) }
-        nonmutating set { defaults.set(min(10, max(0, newValue)), forKey: "tempoMowy") }
+        get { percentage("tempoProcent", legacy: "tempoMowy", standard: 50) }
+        nonmutating set { defaults.set(Self.nearestPercent(newValue), forKey: "tempoProcent") }
     }
     var volume: Int {
-        get { index("glosnoscMowy", standard: 10) }
-        nonmutating set { defaults.set(min(10, max(0, newValue)), forKey: "glosnoscMowy") }
+        get { percentage("glosnoscProcent", legacy: "glosnoscMowy", standard: 100) }
+        nonmutating set { defaults.set(Self.nearestPercent(newValue), forKey: "glosnoscProcent") }
+    }
+    private static func nearestPercent(_ value: Int) -> Int {
+        ((min(100, max(0, value)) + step / 2) / step) * step
+    }
+
+    func utterance(_ text: String, voice: AVSpeechSynthesisVoice) -> AVSpeechUtterance {
+        let item = AVSpeechUtterance(string: text)
+        item.voice = voice
+        item.prefersAssistiveTechnologySettings = false
+        let range = AVSpeechUtteranceMaximumSpeechRate - AVSpeechUtteranceMinimumSpeechRate
+        item.rate = AVSpeechUtteranceMinimumSpeechRate + range * Float(speed) / 100
+        item.volume = Float(volume) / 100
+        item.postUtteranceDelay = 0.16
+        return item
     }
     var voiceID: String? {
         get { defaults.string(forKey: "glosMowy") }
         nonmutating set { defaults.set(newValue, forKey: "glosMowy") }
     }
     func reset() {
-        for key in ["tempoMowy", "glosnoscMowy", "glosMowy"] { defaults.removeObject(forKey: key) }
+        for key in ["tempoProcent", "glosnoscProcent", "tempoMowy", "glosnoscMowy", "glosMowy"] { defaults.removeObject(forKey: key) }
     }
-    static func voices() -> [AVSpeechSynthesisVoice] {
-        AVSpeechSynthesisVoice.speechVoices().sorted {
-            let a = $0.language.hasPrefix("pl"), b = $1.language.hasPrefix("pl")
-            if a != b { return a }
-            if $0.language != $1.language { return $0.language < $1.language }
-            if $0.quality != $1.quality { return $0.quality.rawValue > $1.quality.rawValue }
-            return ($0.name, $0.identifier) < ($1.name, $1.identifier)
-        }
+}
+
+/// Katalog AVFoundation obejmuje różne silniki, języki i jakości tego samego głosu.
+struct VoiceGroup {
+    let name: String
+    let voices: [AVSpeechSynthesisVoice]
+    let labels: [String]
+
+    private static func engine(_ id: String) -> String {
+        let prefix = id.lowercased()
+        if prefix.hasPrefix("dj.phoenix.espeak-ng.") { return "eSpeak NG" }
+        if prefix.hasPrefix("pl.syntalk.research.") { return "SynTalk" }
+        if prefix.hasPrefix("com.axel.rhvoice-ee.") { return "RHVoice EE" }
+        if prefix.hasPrefix("pl.speak.ireadboard.") { return "IReadboard" }
+        if prefix.hasPrefix("com.apple.eloquence.") { return "Eloquence" }
+        if prefix.hasPrefix("com.apple.") { return "Apple" }
+        let domain = id.split(separator: ".").dropLast()
+        return domain.isEmpty ? id : domain.joined(separator: ".")
     }
-    static func label(_ voice: AVSpeechSynthesisVoice) -> String {
-        let locale = Locale(identifier: "pl")
-        let language = locale.localizedString(forIdentifier: voice.language)
-            ?? locale.localizedString(forLanguageCode: String(voice.language.prefix(2))) ?? voice.language
+
+    private static func label(_ voice: AVSpeechSynthesisVoice) -> String {
         let quality = voice.quality == .premium ? "premium" : voice.quality == .enhanced ? "rozszerzony" : ""
-        let suffix = quality.isEmpty || voice.name.localizedCaseInsensitiveContains(quality) ? "" : ", " + quality
-        return "\(voice.name), \(language)\(suffix)"
+        return quality.isEmpty || voice.name.localizedCaseInsensitiveContains(quality)
+            ? voice.name : "\(voice.name), \(quality)"
+    }
+
+    static func isPolish(_ language: String) -> Bool {
+        language.split(whereSeparator: { $0 == "-" || $0 == "_" }).first?.lowercased() == "pl"
+    }
+
+    static func automatic(in groups: [VoiceGroup]) -> AVSpeechSynthesisVoice? {
+        if let system = AVSpeechSynthesisVoice(language: "pl-PL"),
+           groups.contains(where: { $0.voices.contains { $0.identifier == system.identifier } }) {
+            return system
+        }
+        return groups.first?.voices.first
+    }
+
+    static func catalog(_ source: [AVSpeechSynthesisVoice]) -> [VoiceGroup] {
+        var identifiers = Set<String>()
+        let unique = source.filter { isPolish($0.language) && identifiers.insert($0.identifier).inserted }
+        let groups = Dictionary(grouping: unique) { engine($0.identifier) }
+        return groups.map { name, members in
+            let voices = members.sorted {
+                let order = $0.name.localizedStandardCompare($1.name)
+                return order == .orderedSame ? $0.identifier < $1.identifier : order == .orderedAscending
+            }
+            let names = voices.map(label)
+            let counts = Dictionary(grouping: names, by: { $0.lowercased() })
+            let labels = zip(voices, names).map { voice, name in
+                counts[name.lowercased()]?.count == 1 ? name : "\(name), \(voice.identifier)"
+            }
+            return VoiceGroup(name: name, voices: voices, labels: labels)
+        }.sorted {
+            $0.name.localizedStandardCompare($1.name) == .orderedAscending
+        }
     }
 }
 
@@ -87,30 +145,25 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
         stop()
         let parts = Self.paragraphs(text)
         guard !parts.isEmpty else { throw ReaderError("Brak tekstu do przeczytania.") }
-        let chosen = settings.voiceID.flatMap(AVSpeechSynthesisVoice.init(identifier:))
-        let fallback = chosen == nil && settings.voiceID != nil
-        guard let voice = chosen ?? AVSpeechSynthesisVoice(language: "pl-PL") ?? SpeechPreferences.voices().first else {
-            throw ReaderError("Brak dostępnego głosu. Pobierz głos w ustawieniach mowy iPhone’a.")
+        let identifier = settings.voiceID
+        let groups = VoiceGroup.catalog(AVSpeechSynthesisVoice.speechVoices())
+        let chosen = groups.lazy.flatMap(\.voices).first { $0.identifier == identifier }
+        let fallback = chosen == nil && identifier != nil
+        guard let voice = chosen ?? VoiceGroup.automatic(in: groups) else {
+            throw ReaderError("Brak polskiego głosu. Pobierz polski głos w ustawieniach mowy iPhone’a.")
         }
         do {
             try session.setCategory(.playback, mode: .spokenAudio, options: title == nil ? [.mixWithOthers] : [])
             try session.setActive(true)
         } catch { throw ReaderError("Nie można teraz odtwarzać mowy. Spróbuj po zakończeniu innego odtwarzania.") }
         if fallback { settings.voiceID = nil }
-        let queue = parts.map { part in
-            let item = AVSpeechUtterance(string: part)
-            item.voice = voice
-            item.rate = SpeechPreferences.rates[settings.speed]
-            item.volume = Float(settings.volume) / 10
-            item.postUtteranceDelay = 0.16
-            return item
-        }
+        let queue = parts.map { settings.utterance($0, voice: voice) }
         last = queue.last
         active = Set(queue.map(ObjectIdentifier.init))
         readingTitle = title
         state = .preparing
         queue.forEach(synth.speak)
-        return fallback ? "Wybrany głos nie jest już dostępny. Teraz czyta \(voice.name)." : nil
+        return fallback ? "Poprzedni głos nie jest dostępny wśród polskich głosów. Teraz czyta \(voice.name)." : nil
     }
     func pause() {
         guard state == .speaking, synth.pauseSpeaking(at: .immediate) else { return }

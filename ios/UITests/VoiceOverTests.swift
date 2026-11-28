@@ -34,11 +34,35 @@ final class VoiceOverTests: XCTestCase {
         func activate() { app.coordinate(withNormalizedOffset: center).doubleTap() }
         try focus(app.tabBars.buttons["Ustawienia"], "Ustawienia")
         activate()
+        let engine = app.sliders["Silnik mowy"]
+        try focus(engine, "Silnik mowy")
+        let engineName = try XCTUnwrap(engine.value as? String)
+        if engine.isEnabled {
+            app.swipeUp()
+            if engine.value as? String != engineName {
+                let selected = try XCTUnwrap(engine.value as? String)
+                XCTAssertTrue(try voice.currentSpeech().utterance.localizedCaseInsensitiveContains(selected))
+                app.swipeDown()
+                XCTAssertEqual(engine.value as? String, engineName)
+            }
+        }
+        let speed = app.sliders["Szybkość mowy"]
+        try focus(speed, "regulacja")
+        let initial = try XCTUnwrap(Int((speed.value as? String ?? "").prefix(while: \.isNumber)))
+        if initial == 100 { app.swipeDown() } else { app.swipeUp() }
+        let changed = initial == 100 ? initial - 5 : initial + 5
+        XCTAssertEqual(speed.value as? String, "\(changed) procent")
+        let spoken = try voice.currentSpeech().utterance
+        XCTAssertTrue(spoken.contains("\(changed)"), spoken)
+        if initial == 100 { app.swipeUp() } else { app.swipeDown() }
         let slider = app.sliders["Głos"]
         try focus(slider, "regulacja")
         let original = try XCTUnwrap(slider.value as? String)
         app.swipeUp()
-        XCTAssertNotEqual(slider.value as? String, original)
+        let selected = try XCTUnwrap(slider.value as? String)
+        XCTAssertNotEqual(selected, original)
+        let announcement = try voice.currentSpeech().utterance
+        XCTAssertTrue(announcement.localizedCaseInsensitiveContains(selected), announcement)
         app.swipeDown()
         XCTAssertEqual(slider.value as? String, original)
         try focus(app.buttons["Odsłuchaj próbkę"], "Odsłuchaj próbkę")

@@ -45,3 +45,7 @@ R-017 — Numer kompilacji zmienia wyłącznie jawne uruchomienie podbij_build.s
 Aktualizacja R-017: numer początkowy pierwszego wydania to 1 (zastępuje 10); bez zmian w zasadzie ręcznego podbijania, nazwie i wersji 1.0.
 
 R-018 — Korekta R-017: techniczne nazwy w Xcode, ścieżki .app/.ipa i nowe archiwa bez „ę” („dostepna biblia”). Pod ikoną oraz w sklepie nadal „dostępna biblia”. Bez zmiany numeru i identyfikatora.
+
+## 28.11.2026 — ustawienia mowy po testach
+
+Źródło: oba zgłoszenia z `ios/babcia.txt` oraz późniejsze polecenie właściciela dotyczące języka. R-019 — prześledzić skalę od regulacji do wypowiedzi, zapewnić krok 5 punktów, spójność i migrację starych ustawień. R-020 — zidentyfikować przyczynę pozornych duplikatów, rozróżnić silniki i ich warianty, zachować wybór po restarcie; po doprecyzowaniu widoczne i używane mają być wyłącznie głosy języka polskiego. R-021 — sprawdzić regulacje, komunikaty i wybór gestami rzeczywistego VoiceOver oraz udokumentować granice pomiaru.

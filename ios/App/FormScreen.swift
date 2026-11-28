@@ -110,7 +110,10 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
     func addControl(_ control: UIControl, to stack: UIStackView? = nil) {
         controls.append(control)
         (stack ?? fields).addArrangedSubview(control)
-        control.heightAnchor.constraint(greaterThanOrEqualToConstant: 48).isActive = true
+        let minimumHeight = control.heightAnchor.constraint(greaterThanOrEqualToConstant: 48)
+        // Ukryty element stosu musi móc zwinąć się do zera.
+        minimumHeight.priority = UILayoutPriority(999)
+        minimumHeight.isActive = true
     }
 
     @discardableResult
