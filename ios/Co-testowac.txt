@@ -1,0 +1,14 @@
+W tej wersji „dostępnej biblii” poprawiliśmy ustawienia głosu po uwagach Milki („Babci”) i dodaliśmy czytanie głosami Eleven Labs. Najbardziej zależy nam na tym, co słyszycie zaraz po zmianie silnika.
+
+1. Przełączanie głosów z VoiceOver
+Na karcie „Ustawienia” znajdźcie suwak „Silnik mowy”. Zmieńcie silnik gestem w górę lub w dół i od razu przesuńcie palcem w prawo. Już po tym jednym geście powinno być słychać głos nowego silnika. Gest w lewo powinien wrócić do wyboru silnika. Jeśli macie SynTalk, sprawdźcie Bogdana: VoiceOver powinien powiedzieć „Głos Bogdan, jedyny głos tego silnika”, bez „wygaszony” i bez „regulacja”.
+
+2. Lista głosów, szybkość i głośność
+Każdy silnik iPhone’a ma teraz osobną listę polskich głosów. Lista eSpeak nie powinna się powtarzać, a Bogdan nie powinien się na niej pojawiać. Wybierzcie głos, zmieńcie szybkość z 50 na 55 procent i odsłuchajcie próbkę. Szybkość i głośność zmieniają się co 5 punktów. Zamknijcie aplikację, otwórzcie ją ponownie i sprawdźcie, czy pamięta Wasz wybór.
+
+3. Eleven Labs — naturalne głosy neuronowe
+To opcja dla osób z własnym kluczem Eleven Labs. Jeśli lista jest pusta, jeden gest w prawo od suwaka silnika prowadzi do przycisku „Wpisz klucz API Eleven Labs”. Po zapisaniu klucza w tym miejscu znajdziecie wybór głosu. Dostępne są wszystkie głosy z Waszego konta, również dodane ręcznie i bez oznaczenia języka. Każdy czyta polski tekst, choć akcent może się różnić.
+
+Samo sprawdzenie klucza i przeglądanie listy nie zużywa kredytów na mowę. Nowa próbka lub czytanie może je zużyć, więc do próby wystarczy krótki fragment. Wstrzymajcie czytanie w połowie, a po ponownym otwarciu aplikacji wybierzcie w Ustawieniach „Wznów ostatnie czytanie Eleven Labs”. Sprawdźcie, czy lektura rusza od miejsca przerwania, zamiast od początku.
+
+Jeśli coś nie zagra, napiszcie, z którego silnika na który przeszliście, jaki gest wykonaliście i co dokładnie powiedział VoiceOver. Dzięki!
