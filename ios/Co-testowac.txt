@@ -1,20 +1,12 @@
-W tej wersji „dostępnej biblii” poprawiliśmy ustawienia głosu po uwagach Milki („Babci”) i dodaliśmy czytanie głosami Eleven Labs. Najbardziej zależy nam na tym, co słyszycie zaraz po zmianie silnika.
+W tej wersji poprawiliśmy świąteczne czytania na karcie „Liturgia”. Na Boże Narodzenie są teraz teksty trzech Mszy, a w Wielką Sobotę można przeczytać Wigilię Paschalną. Nie trzeba czekać do świąt — wystarczy ustawić datę.
 
-1. Przełączanie głosów z VoiceOver
-Na karcie „Ustawienia” znajdźcie suwak „Silnik mowy”. Zmieńcie silnik gestem w górę lub w dół i od razu przesuńcie palcem w prawo. Już po tym jednym geście powinno być słychać głos nowego silnika. Gest w lewo powinien wrócić do wyboru silnika. Jeśli macie SynTalk, sprawdźcie Bogdana: VoiceOver powinien powiedzieć „Głos Bogdan, jedyny głos tego silnika”, bez „wygaszony” i bez „regulacja”.
+1. Boże Narodzenie — 25 grudnia 2026
+Na suwaku „Część liturgii” wybierzcie „Ewangelia”, a potem naciśnijcie „Czytaj”. Powinny pojawić się kolejno Ewangelie z Pasterki, z Mszy o świcie i z Mszy w dzień. Jeśli korzystacie z VoiceOver, sprawdźcie, czy przed każdym tekstem słyszycie nazwę właściwej Mszy. Przy Mszy w dzień są dwie wersje Ewangelii: dłuższa i krótsza. To nie pomyłka. Jeśli nie uda się pobrać dodatkowych czytań, Pasterka powinna zostać, a po tekście znajdziecie informację, czego brakuje.
 
-2. Lista głosów, szybkość i głośność
-Każdy silnik iPhone’a ma teraz osobną listę polskich głosów. Lista eSpeak nie powinna się powtarzać, a Bogdan nie powinien się na niej pojawiać. Wybierzcie głos, zmieńcie szybkość z 50 na 55 procent i odsłuchajcie próbkę. Szybkość i głośność zmieniają się co 5 punktów. Zamknijcie aplikację, otwórzcie ją ponownie i sprawdźcie, czy pamięta Wasz wybór.
+2. Wielka Sobota — 4 kwietnia 2026
+Wybierzcie „Cała liturgia”. Na początku powinno być krótkie wyjaśnienie, dlaczego w ciągu dnia nie ma Mszy, a dalej czytania Wigilii Paschalnej. Wróćcie i wybierzcie „Drugie czytanie”: po wyjaśnieniu powinno być tylko to czytanie, bez kolejnego psalmu. Przy wyborze „Psalm” powinny być ponumerowane psalmy, bez wplecionych czytań.
 
-3. Eleven Labs — naturalne głosy neuronowe
-To opcja dla osób z własnym kluczem Eleven Labs. Jeśli lista jest pusta, jeden gest w prawo od suwaka silnika prowadzi do przycisku „Wpisz klucz API Eleven Labs”. Po zapisaniu klucza w tym miejscu znajdziecie wybór głosu. Dostępne są wszystkie głosy z Waszego konta, również dodane ręcznie i bez oznaczenia języka. Każdy czyta polski tekst, choć akcent może się różnić.
+3. Niedziałający odnośnik — 29 czerwca 2026
+Wybierzcie „Cała liturgia”. Na początku nie powinno już być wskazówki „kliknij TUTAJ”, ale uwaga o Mszach wotywnych ku czci świętych Piotra i Pawła powinna zostać.
 
-Samo sprawdzenie klucza i przeglądanie listy nie zużywa kredytów na mowę. Nowa próbka lub czytanie może je zużyć, więc do próby wystarczy krótki fragment. Wstrzymajcie czytanie w połowie, a po ponownym otwarciu aplikacji wybierzcie w Ustawieniach „Wznów ostatnie czytanie Eleven Labs”. Sprawdźcie, czy lektura rusza od miejsca przerwania, zamiast od początku.
-
-Jeśli coś nie zagra, napiszcie, z którego silnika na który przeszliście, jaki gest wykonaliście i co dokładnie powiedział VoiceOver. Dzięki!
-
-4. Wielkość tekstu Biblii
-Dawne „Ustawienia czytania” nazywają się teraz „Wielkość tekstu Biblii”. Na karcie Liturgia znajdźcie przycisk o tej nazwie i otwórzcie go. Sprawdźcie, czy VoiceOver tak samo odczytuje nagłówek ekranu. Przesuńcie suwak o jeden krok: litery w podglądzie powinny zmienić wielkość, a głos i tempo czytania pozostać bez zmian.
-
-5. Liturgia świąteczna
-Wybierzcie 25 grudnia 2026 i ustawcie „Ewangelia”. Czy przed tekstem słychać, czy to Pasterka, Msza o świcie, czy Msza w dzień? Przy ostatniej powinny być obie wersje Ewangelii. Następnie wybierzcie 4 kwietnia 2026 i „Drugie czytanie”: po wyjaśnieniu o Wielkiej Sobocie powinno być tylko to czytanie, bez kolejnego psalmu.
+Jeśli coś się nie zgadza, podajcie datę, wybraną część liturgii i fragment, którego brakuje albo który się powtarza. Przy problemie z VoiceOver dopiszcie, jaki gest wykonaliście i co usłyszeliście. Dzięki!
