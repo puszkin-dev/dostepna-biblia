@@ -40,7 +40,7 @@ final class VisualTests: XCTestCase {
             let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: banner)
             XCTAssertEqual(XCTWaiter.wait(for: [hidden], timeout: 15), .completed)
         }
-        app.buttons["Ustawienia czytania"].tap()
+        app.buttons["Wielkość tekstu Biblii"].tap()
         XCTAssertTrue(app.sliders["Wielkość tekstu Biblii"].waitForExistence(timeout: 5))
     }
 

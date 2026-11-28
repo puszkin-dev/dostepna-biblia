@@ -66,6 +66,8 @@ Pięć plików wprost w /home/axel/www/. Publiczne odpowiedzi HTTPS i treść sp
 | R-028 | gotowe | iPhone 17 Pro, zaprogramowany odstęp 80 ms między dotknięciami po zakończeniu pierwszego gestu, jedna sekwencja bez czekania na bezczynność. 10/10 przejść przez sześć silników z powrotem na silnik po jednym ruchu w lewo. IReadboard i Bogdan jako informacja, nie wygaszona regulacja. 30 rzeczywistych zmian: mediana obsługi, układu i zatwierdzenia 81,65 ms przed i 1,20 ms po zmianie. Bez klucza skrót otworzył bezpieczne pole z klawiaturą. |
 | R-029 | gotowe | Na suwaku i w podpisie „Eleven Labs — naturalne głosy neuronowe”. Na iPhonie sprawdzono mowę oraz ciemny motyw z tekstem AX5; nazwa zawija się bez obcięcia. |
 | R-030 | gotowe | Zapis poprzez formularz aplikacji i weryfikacja w pęku kluczy; 21 głosów rzeczywistego konta. Plik jednorazowy usunięty, testy nie zamawiały syntezy. |
+| R-031 | gotowe | Na iPhonie 17 Pro w Release sprawdzono skrót, nagłówek i suwak w VoiceOver, zmianę Standardowy → Większy i powrót; wspólna nazwa również w czytniku i karcie Ustawienia. Bez zmiany ustawień mowy. |
+| R-032 | gotowe | Projektowa zasada w Agent.md. Na żądanie naprawiono ustawienie prywatnego iPhone’a: systemowy VoiceOver przed i po stuknięciu odczytał „Zablokuj obrót” odpowiednio jako wyłączone i włączone. Obrót poziomy nie był potrzebny do sprawdzenia nazwy. |
 
 ### Dopisek 28 listopada — ustawienia mowy po testach
 

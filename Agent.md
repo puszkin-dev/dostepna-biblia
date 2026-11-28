@@ -12,6 +12,10 @@ Przed planowaniem lub implementacją kolejnej funkcji iOS, pozostając na `ios`,
 
 Punkt odniesienia na 28 listopada 2026: `4e113ab` (lżejsze wydanie Windows 1.1.2; bez nowej funkcji do przeniesienia).
 
+## Orientacja podczas testów iOS
+
+Nie przełączaj systemowej blokady orientacji na iPhonie właściciela w celu wykonania testu. Gdy potrzebny jest poziom, zadaj orientację w teście i potwierdź rzeczywisty układ okna. Jeśli iOS pozostaje w pionie, sprawdź poziom na symulatorze i rozróżnij w raporcie oba wyniki. Test niezwiązany z obrotem nie wymaga zmiany blokady.
+
 ## Wersjonowanie iOS
 
 Wersja widoczna dla użytkownika zawsze wynosi dokładnie `1.0`. Wszystkie targety iOS dziedziczą tę samą wersję i licznik z `ios/Build.xcconfig`. Dopiero jawne uruchomienie `./podbij_build.sh` na żądanie właściciela zwiększa wspólny numer. Archive nie zmienia licznika. Nie wysyłaj kompilacji do Apple bez polecenia właściciela.

@@ -91,7 +91,7 @@ final class SettingsScreen: FormScreen {
         continueBook.accessibilityIdentifier = "wznowOstatniaSesje"
         continueBook.accessibilityLabel = "Wznów ostatnie czytanie Eleven Labs"
         heading("Wygląd i dostępność", in: fields)
-        button("Wielkość tekstu Biblii") { [weak self] in self?.openSettings() }
+        button(ReadingSize.settingName) { [weak self] in self?.openSettings() }
         heading("O programie", in: fields)
         button("Autorzy i źródła") { [weak self] in
             let about = AboutScreen()

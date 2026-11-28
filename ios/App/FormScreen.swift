@@ -57,7 +57,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
             icon.cornerStyle = .capsule
             icon.baseForegroundColor = BookStyle.accent
             let settings = UIButton(configuration: icon, primaryAction: UIAction { [weak self] _ in self?.openSettings() })
-            settings.accessibilityLabel = "Ustawienia czytania"
+            settings.accessibilityLabel = ReadingSize.settingName
             settings.widthAnchor.constraint(equalToConstant: 48).isActive = true
             settings.heightAnchor.constraint(equalToConstant: 48).isActive = true
             header.addArrangedSubview(settings)
@@ -98,7 +98,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
 
     @objc func openSettings() {
         let settings = ReadingSettings()
-        settings.title = "Ustawienia czytania"
+        settings.title = ReadingSize.settingName
         navigationController?.pushViewController(settings, animated: !UIAccessibility.isReduceMotionEnabled)
     }
 
@@ -406,7 +406,7 @@ final class TextScreen: UIViewController {
     @objc private func save() { onSave?() }
     @objc private func openSettings() {
         let settings = ReadingSettings()
-        settings.title = "Ustawienia czytania"
+        settings.title = ReadingSize.settingName
         navigationController?.pushViewController(settings, animated: !UIAccessibility.isReduceMotionEnabled)
     }
     @objc private func openVerses() {

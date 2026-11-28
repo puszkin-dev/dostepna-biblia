@@ -27,12 +27,13 @@ enum BookStyle {
 
     static func settingsIcon(target: Any, action: Selector) -> UIBarButtonItem {
         let item = UIBarButtonItem(image: UIImage(systemName: "textformat.size"), style: .plain, target: target, action: action)
-        item.accessibilityLabel = "Ustawienia czytania"
+        item.accessibilityLabel = ReadingSize.settingName
         return item
     }
 }
 
 struct ReadingSize {
+    static let settingName = "Wielkość tekstu Biblii"
     static let points: [CGFloat] = [16, 18, 20, 23, 26]
     static let labels = ["Mniejszy", "Standardowy", "Większy", "Duży", "Bardzo duży"]
     static let standard = 1
@@ -57,7 +58,7 @@ struct ReadingSize {
 
 final class ReadingSettings: FormScreen {
     private let size = ReadingSize()
-    private let slider = ChoiceSlider("Wielkość tekstu Biblii")
+    private let slider = ChoiceSlider(ReadingSize.settingName)
     private let sample = UILabel()
     override func configure() {
         navigationItem.title = ""

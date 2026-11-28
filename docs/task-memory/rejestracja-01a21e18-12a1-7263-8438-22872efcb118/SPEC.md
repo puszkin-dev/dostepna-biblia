@@ -63,3 +63,7 @@ R-028 — przy każdej zmianie silnika w panelu mowy zachować fokus na regulacj
 R-029 — w wyborze silnika i widocznych komunikatach rozdzielić „Eleven Labs”; nazwa na regulacji: „Eleven Labs — naturalne głosy neuronowe”. Bez zmian języka syntezy, katalogu konta, numeru kompilacji i bez publikacji.
 
 R-030 — na wyraźne polecenie skonfigurować przekazany klucz w prywatnym pęku kluczy tej jednej instalacji iPhone’a. Sprawdzić rzeczywisty katalog po restarcie, bez syntezy, zapisu klucza w repozytorium lub w paczce aplikacji.
+
+R-031 — wszystkie wejścia do regulacji wielkości liter, tytuł jej ekranu i suwak nazywają się „Wielkość tekstu Biblii”. Sekcja syntezy pozostaje „Czytanie na głos”; nie zmieniać zapisanych preferencji.
+
+R-032 — nie przełączać systemowej blokady orientacji iPhone’a na potrzeby testów; poziom zadawać narzędziem testowym, sprawdzać układ, a gdy to nie działa, używać symulatora. Na zgłoszenie właściciela przywrócić blokadę pionową, jeśli jest wyłączona.

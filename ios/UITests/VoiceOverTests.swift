@@ -325,13 +325,16 @@ final class VoiceOverTests: XCTestCase {
         if !enabled { try voice.enable() }
         defer { if !enabled { try? voice.disable() } }
         let center = CGVector(dx: 0.5, dy: 0.5)
-        app.buttons["Ustawienia czytania"].coordinate(withNormalizedOffset: center).tap()
-        XCTAssertTrue(try voice.currentSpeech().utterance.contains("Ustawienia czytania"))
+        app.buttons["Wielkość tekstu Biblii"].coordinate(withNormalizedOffset: center).tap()
+        XCTAssertTrue(try voice.currentSpeech().utterance.contains("Wielkość tekstu Biblii"))
         app.coordinate(withNormalizedOffset: center).doubleTap()
         let slider = app.sliders["Wielkość tekstu Biblii"]
         XCTAssertTrue(slider.waitForExistence(timeout: 5))
         slider.coordinate(withNormalizedOffset: center).tap()
-        let speech = try voice.currentSpeech().utterance
+        let headerSpeech = try voice.moveBackward().utterance
+        XCTAssertTrue(headerSpeech.contains("Wielkość tekstu Biblii") && headerSpeech.localizedCaseInsensitiveContains("nagłówek"), headerSpeech)
+        print("Nagłówek: \(headerSpeech)")
+        let speech = try voice.moveForward().utterance
         XCTAssertTrue(speech.contains("Wielkość tekstu Biblii") && speech.contains("regulacja"), speech)
         let original = try XCTUnwrap(slider.value as? String)
         let maximum = original == "Bardzo duży"
