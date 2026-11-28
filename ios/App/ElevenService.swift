@@ -35,14 +35,6 @@ enum ElevenKey {
 struct ElevenVoice: Codable {
     let voice_id: String
     let name: String
-    let labels: [String: String]?
-    struct Language: Codable { let language: String }
-    let verified_languages: [Language]?
-
-    var availableInPolish: Bool {
-        let languages = (verified_languages ?? []).map(\.language) + [labels?["language"]].compactMap { $0 }
-        return languages.isEmpty || languages.contains { VoiceGroup.isPolish($0) || ["polish", "polski"].contains($0.lowercased()) }
-    }
 }
 
 final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
@@ -97,7 +89,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
             try Task.checkCancellation()
             try Self.check(response, body: data)
             let page = try JSONDecoder().decode(Page.self, from: data)
-            voices += page.voices.filter { !$0.voice_id.isEmpty && $0.availableInPolish && seen.insert($0.voice_id).inserted }
+            voices += page.voices.filter { !$0.voice_id.isEmpty && seen.insert($0.voice_id).inserted }
             if !page.has_more { break }
             guard let next = page.next_page_token, !next.isEmpty, pages.insert(next).inserted else {
                 throw ReaderError("ElevenLabs zwróciło niepełną listę głosów. Spróbuj ponownie.")

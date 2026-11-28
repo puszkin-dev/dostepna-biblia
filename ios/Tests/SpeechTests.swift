@@ -90,13 +90,16 @@ final class SpeechTests: XCTestCase {
     }
     func testGlosyIPrzerwania() async throws {
         let reader = SpeechReader.shared, session = AVAudioSession.sharedInstance()
-        defer { reader.stop() }
+        let suite = UUID().uuidString
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { reader.stop(); defaults.removePersistentDomain(forName: suite) }
+        let settings = SpeechPreferences(defaults)
         let text = "Czytanie sprawdzające przerwanie odtwarzania. "
-        _ = try reader.start(text)
+        _ = try reader.start(text, settings: settings)
         NotificationCenter.default.post(name: AVAudioSession.interruptionNotification, object: session,
                                         userInfo: [AVAudioSessionInterruptionTypeKey: AVAudioSession.InterruptionType.began.rawValue])
         XCTAssertEqual(reader.state, .idle)
-        _ = try reader.start(text)
+        _ = try reader.start(text, settings: settings)
         NotificationCenter.default.post(name: AVAudioSession.routeChangeNotification, object: session,
                                         userInfo: [AVAudioSessionRouteChangeReasonKey: AVAudioSession.RouteChangeReason.oldDeviceUnavailable.rawValue])
         await Task.yield()
@@ -105,6 +108,42 @@ final class SpeechTests: XCTestCase {
 }
 
 final class ElevenContractTests: XCTestCase {
+    func testKatalogNieZalezyOdJezykaAniMetadanych() async throws {
+        final class Pages: URLProtocol, @unchecked Sendable {
+            override class func canInit(with request: URLRequest) -> Bool { true }
+            override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+            override func stopLoading() {}
+            override func startLoading() {
+                guard let url = request.url,
+                      let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil) else {
+                    client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+                    return
+                }
+                let page = url.query?.contains("next_page_token=dalej") == true ? """
+                {"voices":[{"voice_id":"b","name":"Mój głos","category":"cloned"},
+                           {"voice_id":"c","name":"Nowy","labels":null,"verified_languages":[]},
+                           {"voice_id":"a","name":"Anna"}],"has_more":false}
+                """ : """
+                {"voices":[{"voice_id":"a","name":"Anna","labels":{"language":"it"},"verified_languages":[{"language":"it"}]}],
+                 "has_more":true,"next_page_token":"dalej"}
+                """
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+                client?.urlProtocol(self, didLoad: Data(page.utf8))
+                client?.urlProtocolDidFinishLoading(self)
+            }
+        }
+        let network = ElevenNetwork()
+        network.configuration.protocolClasses = [Pages.self]
+        defer { network.session.finishTasksAndInvalidate() }
+        let voices = try await network.voices(key: "probny")
+        XCTAssertEqual(voices.map(\.voice_id), ["a", "b", "c"])
+        for voice in voices {
+            let request = try ElevenNetwork.shared.speech(text: "Hej.", voice: voice.voice_id, key: "próba")
+            let body = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(request.httpBody)) as? [String: Any])
+            XCTAssertEqual(body["language_code"] as? String, "pl")
+        }
+    }
+
     func testTekstIPodzialBezUtratyLiter() {
         let text = "# **Zażółć gęślą jaźń**\n\n[Źródło](https://example.org/x) *tekst*."
         XCTAssertEqual(ElevenText.clean(text), "Zażółć gęślą jaźń\n\nŹródło tekst.")
@@ -170,6 +209,57 @@ final class ElevenDeviceTests: XCTestCase {
     }
     private func elements(_ view: UIView) -> [UIView] {
         [view] + view.subviews.flatMap(elements)
+    }
+
+    func testPelnyKatalogPoAktualizacjiNaZyczenie() async throws {
+        // Plik jednorazowy: niezależny wykaz ID z GET /v2/voices oraz zgoda na czteroznakową próbkę.
+        struct Probe: Decodable { let key: String; let ids: [String]; let chosen: String }
+        let file = documents.appendingPathComponent(".eleven-katalog")
+        try XCTSkipUnless(manager.fileExists(atPath: file.path), "Brak zlecenia krótkiej próby na koncie.")
+        let bytes = try Data(contentsOf: file)
+        try manager.removeItem(at: file)
+        let probe = try JSONDecoder().decode(Probe.self, from: bytes)
+        let prefs = SpeechPreferences()
+        let old = keys.reduce(into: [String: Any]()) { $0[$1] = prefs.defaults.object(forKey: $1) }
+        let previous = try ElevenKey.read()
+        addTeardownBlock { @MainActor [keys] in
+            SpeechReader.shared.leave()
+            for key in keys { prefs.defaults.set(old[key], forKey: key) }
+            if let previous { try ElevenKey.save(previous) } else { try ElevenKey.remove() }
+        }
+        try ElevenKey.save(probe.key)
+        let original = try XCTUnwrap(probe.ids.first { $0 != probe.chosen })
+        prefs.cloudSelected = true
+        prefs.cloudVoice = original
+        prefs.cloudVoices = [ElevenVoice(voice_id: original, name: "Poprzedni katalog")]
+        let screen = SettingsScreen()
+        screen.loadViewIfNeeded()
+        screen.viewDidAppear(false)
+        try await until("Nie odświeżono starego katalogu.") { prefs.cloudVoices.count == probe.ids.count }
+        let catalog = prefs.cloudVoices
+        XCTAssertEqual(Set(catalog.map(\.voice_id)), Set(probe.ids))
+        XCTAssertEqual(prefs.cloudVoice, original)
+        let slider = try XCTUnwrap(elements(screen.view).compactMap { $0 as? ChoiceSlider }.first { $0.accessibilityLabel == "Głos" })
+        XCTAssertEqual(Int(slider.maximumValue) + 1, catalog.count)
+        slider.value = 0
+        slider.sendActions(for: .valueChanged)
+        for (index, voice) in catalog.enumerated() {
+            if index > 0 { slider.accessibilityIncrement() }
+            XCTAssertEqual(slider.accessibilityValue, voice.name)
+            XCTAssertEqual(prefs.cloudVoice, voice.voice_id)
+        }
+        let index = try XCTUnwrap(catalog.firstIndex { $0.voice_id == probe.chosen })
+        slider.value = Float(index)
+        slider.sendActions(for: .valueChanged)
+        let reader = SpeechReader.shared
+        _ = try reader.start("Hej.", settings: prefs)
+        try await until("Nie zakończono próbki.") { reader.state == .idle }
+        if let error = reader.takeCloudError() { throw ReaderError(error) }
+        let id = ElevenText.cacheID(text: "Hej.", voice: probe.chosen)
+        let cache = manager.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("ElevenMP3")
+        let url = cache.appendingPathComponent(id + ".mp3")
+        XCTAssertTrue(ElevenMP3.complete(try Data(contentsOf: url)))
+        print("Pełny katalog: \(catalog.count) z \(probe.ids.count) głosów dostępnych suwakiem; próbka: \(catalog[index].name).")
     }
 
     func testDwieKrotkieGeneracjeNaZyczenie() async throws {

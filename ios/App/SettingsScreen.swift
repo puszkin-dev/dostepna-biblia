@@ -33,6 +33,7 @@ final class SettingsScreen: FormScreen {
             SpeechReader.shared.leave()
             if groups.indices.contains(index) { selectVoice(index == automaticGroup ? nil : groups[index].voices.first?.identifier) }
             refresh()
+            refreshCloudCatalog()
         }
         configureCloud()
         addChoice(voice) { [weak self] index in
@@ -221,31 +222,44 @@ final class SettingsScreen: FormScreen {
         verify.isEnabled = true
         apiKey.isEnabled = true
     }
+    private func refreshCloudCatalog() {
+        guard preferences.cloudSelected, checking == nil, let saved = try? ElevenKey.read() else { return }
+        loadCatalog(key: saved, saveKey: false)
+    }
     private func validateKey() {
-        guard checking == nil else { return }
+        // Ręczne sprawdzenie ma pierwszeństwo przed odświeżeniem podczas otwierania karty.
+        guard verify.isEnabled else { return }
+        cancelValidation()
         apiKey.resignFirstResponder()
         let input = (apiKey.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let key: String
         do { key = input.isEmpty ? try ElevenKey.read() ?? "" : input }
         catch { report(ElevenNetwork.message(error)); return }
         guard !key.isEmpty else { report("Wpisz klucz API ElevenLabs."); return }
-        apiKey.isEnabled = false
-        verify.isEnabled = false
-        report("Sprawdzam klucz i pobieram głosy…")
+        loadCatalog(key: key, saveKey: true)
+    }
+    private func loadCatalog(key: String, saveKey: Bool) {
+        if saveKey {
+            apiKey.isEnabled = false
+            verify.isEnabled = false
+            report("Sprawdzam klucz i pobieram głosy…")
+        }
         checking = Task { [weak self] in
             do {
                 let catalog = try await ElevenNetwork.shared.voices(key: key)
                 guard let self, !Task.isCancelled else { return }
-                try ElevenKey.save(key)
+                if saveKey { try ElevenKey.save(key) }
                 preferences.cloudVoices = catalog
                 if !catalog.contains(where: { $0.voice_id == self.preferences.cloudVoice }) {
                     preferences.cloudVoice = catalog.first?.voice_id
                 }
-                apiKey.text = nil
+                if saveKey { apiKey.text = nil }
                 cancelValidation()
                 refresh()
-                report(catalog.isEmpty ? "Klucz zapisany. Na tym koncie nie znaleziono odpowiednich głosów." :
-                       "Klucz zapisany. Liczba dostępnych głosów: \(catalog.count).")
+                let summary = catalog.isEmpty ? "Na koncie ElevenLabs nie ma dostępnych głosów." :
+                    "Liczba dostępnych głosów: \(catalog.count)."
+                if saveKey { report("Klucz zapisany. " + summary) }
+                else if catalog.isEmpty { report(summary) }
             } catch {
                 guard let self, !Task.isCancelled else { return }
                 cancelValidation()
@@ -288,6 +302,10 @@ final class SettingsScreen: FormScreen {
         }
     }
     override func viewWillAppear(_ animated: Bool) { super.viewWillAppear(animated); refresh() }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        refreshCloudCatalog()
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         cancelValidation()
