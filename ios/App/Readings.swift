@@ -46,6 +46,19 @@ struct ReadingDate: Equatable {
     }
     mutating func clampDay() { day = min(max(day, 1), lastDay) }
     var iso: String { String(format: "%04d-%02d-%02d", year, month, day) }
+    var isHolySaturday: Bool {
+        guard month == 3 || month == 4 else { return false }
+        // Wielkanoc gregoriańska: algorytm Meeusa, Jonesa i Butchera.
+        let cycle = year % 19, century = year / 100, withinCentury = year % 100
+        let correction = (century - (century + 8) / 25 + 1) / 3
+        let moon = (19 * cycle + century - century / 4 - correction + 15) % 30
+        let weekday = (32 + 2 * (century % 4) + 2 * (withinCentury / 4) - moon - withinCentury % 4) % 7
+        let offset = moon + weekday - 7 * ((cycle + 11 * moon + 22 * weekday) / 451) + 114
+        let easterMonth = offset / 31, easterDay = offset % 31 + 1
+        if easterDay == 1 { return month == 3 && day == 31 }
+        return month == easterMonth && day == easterDay - 1
+    }
+
     var title: String {
         let formatter = DateFormatter()
         formatter.calendar = Self.calendar
@@ -77,12 +90,15 @@ struct BibleService {
     init(fetch: @escaping Fetch = BibleService.download) { self.fetch = fetch }
 
     static func download(_ url: URL) async throws -> Data {
+        guard url.scheme == "https", let host = url.host, ["twojabiblia.pl", "liturgia.wiara.pl"].contains(host) else {
+            throw ReaderError("Niepoprawny adres źródła.")
+        }
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
         for attempt in 0...1 {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let http = response as? HTTPURLResponse,
-              http.url?.scheme == "https", http.url?.host == "twojabiblia.pl" else {
-                throw ReaderError("Niepoprawna odpowiedź serwisu TwojaBiblia.pl.")
+              http.url?.scheme == "https", http.url?.host == host else {
+                throw ReaderError("Niepoprawna odpowiedź serwisu \(host).")
             }
             if (200..<300).contains(http.statusCode) { return data }
             if http.statusCode == 429 {
@@ -91,9 +107,9 @@ struct BibleService {
                     try await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
                     continue
                 }
-                throw ReaderError("TwojaBiblia.pl chwilowo ogranicza liczbę pobrań. Spróbuj ponownie za chwilę.")
+                throw ReaderError("Serwis \(host) chwilowo ogranicza liczbę pobrań. Spróbuj ponownie za chwilę.")
             }
-            throw ReaderError("TwojaBiblia.pl zwróciła błąd \(http.statusCode). Spróbuj ponownie.")
+            throw ReaderError("Serwis \(host) zwrócił błąd \(http.statusCode). Spróbuj ponownie.")
         }
         throw ReaderError("Serwis jest chwilowo niedostępny.")
     }
@@ -136,40 +152,151 @@ struct BibleService {
     }
 
     func liturgy(_ date: ReadingDate, _ part: Part) async throws -> Reading {
+        var paragraphs = [date.title]
+        let name = "\(date.iso) - \(part.rawValue)"
+        let published = try await publishedLiturgy(date)
+        if date.isHolySaturday {
+            let note = "W Wielką Sobotę Kościół trwa przy grobie Pana i w ciągu dnia nie sprawuje Mszy Świętej. Po zapadnięciu zmroku rozpoczyna się Wigilia Paschalna, która należy już do Niedzieli Zmartwychwstania Pańskiego."
+            paragraphs.append(note + (published == nil
+                ? " TwojaBiblia.pl nie udostępnia na tę datę czytań Wigilii Paschalnej."
+                : " Poniżej znajdziesz czytania Wigilii Paschalnej."))
+        }
+        if let published {
+            if date.month == 12 && date.day == 25 {
+                paragraphs += try await christmasReadings(date, published: published, part: part)
+            } else {
+                paragraphs += [try Self.select(published, part), Self.source]
+            }
+        } else if !date.isHolySaturday {
+            throw ReaderError("TwojaBiblia.pl nie udostępnia czytań dla tej daty.")
+        }
+        return Reading(name: name, text: paragraphs.joined(separator: "\n\n"))
+    }
+
+    private func publishedLiturgy(_ date: ReadingDate) async throws -> String? {
         let calendarURL = try address("/wp-json/post-calendar/v1/month", [
             URLQueryItem(name: "year", value: String(date.year)), URLQueryItem(name: "month", value: String(date.month))])
         let data = try await fetch(calendarURL)
         let calendar = try JSONSerialization.jsonObject(with: data)
-        let missing = ReaderError("TwojaBiblia.pl nie udostępnia czytań dla tej daty.")
-        if let empty = calendar as? [Any], empty.isEmpty { throw missing }
+        if let empty = calendar as? [Any], empty.isEmpty { return nil }
         guard let days = calendar as? [String: Any] else { throw ReaderError("Niepoprawny kalendarz czytań.") }
-        guard let entry = days[String(date.day)] else { throw missing }
+        guard let entry = days[String(date.day)] else { return nil }
         guard let fields = entry as? [String: Any], let link = fields["url"] as? String,
               let url = URL(string: link), url.scheme == "https", url.host == "twojabiblia.pl",
               url.path.hasPrefix("/czytanie/" + date.iso.replacingOccurrences(of: "-", with: "/") + "/") else {
             throw ReaderError("Adres czytań nie zgadza się z wybraną datą.")
         }
         let page = try await document(url)
-        for node in try page.select("div[style]") {
-            let style = try node.attr("style").lowercased().filter { !$0.isWhitespace }
-            guard style.contains("text-align:justify") else { continue }
+        let justified = try page.select("div[style]").filter {
+            try $0.attr("style").lowercased().filter { !$0.isWhitespace }.contains("text-align:justify")
+        }
+        for node in justified + (try page.select("div[itemprop=text]").array()) {
             let text = try plain(node)
             guard text.localizedCaseInsensitiveContains("psalm"), text.localizedCaseInsensitiveContains("ewangelia") else { continue }
-            let body = try Self.select(text, part)
-            return Reading(name: "\(date.iso) - \(part.rawValue)", text: "\(date.title)\n\n\(body)\n\n\(Self.source)")
+            let notice = #"(?im)(?:^W wigilię [^\n]*?Msza Święta wigilijna tej uroczystości\.[ \t\n]*)?Jeśli chcesz zapoznać się z[^\n]*?kliknij[ \t]+TUTAJ\.?[ \t]*\n*"#
+            return text.replacingOccurrences(of: notice, with: "", options: .regularExpression)
         }
         throw ReaderError("Strona zmieniła układ lub nie zawiera pełnego tekstu czytań.")
     }
 
-    static func select(_ text: String, _ part: Part) throws -> String {
+    private func christmasReadings(_ date: ReadingDate, published: String, part: Part) async throws -> [String] {
+        let titles = ["Msza o świcie", "Msza w dzień"]
+        var text = published
+        var added: [String] = [], missing: [String] = []
+        guard let indexURL = URL(string: "https://liturgia.wiara.pl/kalendarz/67b53.Czytania-mszalne/" + date.iso) else {
+            throw ReaderError("Niepoprawny adres lekcjonarza.")
+        }
+        let lines = published.components(separatedBy: .newlines)
+        let needed = titles.filter { title in
+            !lines.contains { $0.trimmingCharacters(in: .whitespaces).caseInsensitiveCompare(title) == .orderedSame }
+        }
+        if needed.isEmpty { return [try Self.select(text, part, labelMass: true), Self.source] }
+        let index: Document
+        do {
+            index = try await document(indexURL)
+        } catch {
+            try Task.checkCancellation()
+            return [try Self.select(text, part, labelMass: true), Self.missingMasses(needed), Self.source]
+        }
+        for title in needed {
+            do {
+                let reading = try await christmasMass(title, index: index, base: indexURL)
+                let section = title.uppercased() + "\n\n" + reading
+                if title == titles[0], let day = text.range(of: #"(?im)^MSZA W DZIEŃ[ \t]*$"#, options: .regularExpression) {
+                    text.insert(contentsOf: section + "\n\n", at: day.lowerBound)
+                } else {
+                    text += "\n\n" + section
+                }
+                added.append(title)
+            } catch {
+                try Task.checkCancellation()
+                missing.append(title)
+            }
+        }
+        var result = [try Self.select(text, part, labelMass: true)]
+        if !missing.isEmpty {
+            result.append(Self.missingMasses(missing))
+        }
+        result.append(Self.source)
+        if !added.isEmpty {
+            result.append("Źródło dodatkowych czytań (" + added.joined(separator: ", ") + "): liturgia.wiara.pl, lekcjonarz z 2015 roku.")
+        }
+        return result
+    }
+
+    private static func missingMasses(_ titles: [String]) -> String {
+        "Nie udało się pobrać: " + titles.joined(separator: ", ") + ". Pokazano dostępne czytania."
+    }
+
+    private func christmasMass(_ title: String, index: Document, base: URL) async throws -> String {
+        let invalid = ReaderError("Serwis liturgia.wiara.pl nie udostępnił pełnych czytań: " + title + ".")
+        let links = try index.select("a[href]")
+        guard let link = try links.first(where: {
+            try $0.text().components(separatedBy: "-").last?.trimmingCharacters(in: .whitespacesAndNewlines)
+                .caseInsensitiveCompare(title) == .orderedSame
+        }), let url = try URL(string: link.attr("href"), relativeTo: base)?.absoluteURL,
+              url.scheme == "https", url.host == base.host,
+              url.deletingLastPathComponent().path == base.path, Int(url.lastPathComponent) != nil,
+              let anchor = url.fragment, anchor.range(of: #"^Par[0-9]+$"#, options: .regularExpression) != nil else { throw invalid }
+        let page = try await document(url)
+        guard let mark = try page.select("a[name=\(anchor)]").first(),
+              let block = mark.parents().first(where: { $0.hasClass("txt__rich-area") }) else { throw invalid }
+        try mark.remove()
+        for heading in try block.select("p.block-title") {
+            guard let verse = try heading.nextElementSibling(), verse.hasClass("bible-verse") else { continue }
+            try heading.text(heading.text() + " (" + verse.text() + ")")
+            try verse.remove()
+        }
+        let text = try plain(block)
+        guard text.localizedCaseInsensitiveContains("psalm"), text.localizedCaseInsensitiveContains("ewangelia") else { throw invalid }
+        return text
+    }
+
+    static func select(_ text: String, _ part: Part, labelMass: Bool = false) throws -> String {
         guard part != .all else { return text }
-        let pattern = #"(?im)^(?:(PIERWSZE CZYTANIE|I CZYTANIE)|(DRUGIE CZYTANIE|II CZYTANIE)|(PSALM RESPONSORYJNY|PSALM)|(ŚPIEW PRZED EWANGELIĄ|AKLAMACJA)|(EWANGELIA)|MSZA)(?=[ \t]*(?:\(|\r?$|[–:])|[ \t]+(?:W CZASIE|DŁUŻSZA|KRÓTSZA|WERSJA)\b)"#
+        // Grupy 1–5 odpowiadają wybieranym częściom; szósta przechowuje cały tytuł Mszy.
+        let pattern = #"(?im)^(?:(PIERWSZE CZYTANIE|I CZYTANIE)|(DRUGIE CZYTANIE|II CZYTANIE)|"#
+            + #"((?:\d+[ \t]+)?(?:PSALM RESPONSORYJNY|PSALM))|(ŚPIEW PRZED EWANGELIĄ|AKLAMACJA)|(EWANGELIA)|"#
+            + #"(?:TRZECIE|CZWARTE|PIĄTE|SZÓSTE|SIÓDME|ÓSME) CZYTANIE)"#
+            + #"(?=[ \t]*(?:\(|\r?$|[–:])|[ \t]+(?:W CZASIE|DŁUŻSZA|KRÓTSZA|WERSJA)\b)|"#
+            + #"^(MSZA(?=[ \t(–:]|$)(?-i:[^\n\p{Ll}]*)|MSZA[ \t]*(?:\(|[–:]|W CZASIE\b)[^\n]*)(?=\r?$)"#
         let regex = try NSRegularExpression(pattern: pattern)
         let ns = text as NSString
         let matches = regex.matches(in: text, range: NSRange(location: 0, length: ns.length))
         let group = Part.allCases.firstIndex(of: part) ?? 0
         var sections: [String] = []
-        for (i, match) in matches.enumerated() where match.range(at: group).location != NSNotFound {
+        let includeMassTitles = labelMass || matches.filter { $0.range(at: 6).location != NSNotFound }.count > 1
+        var mass: String?
+        for (i, match) in matches.enumerated() {
+            if match.range(at: 6).location != NSNotFound {
+                mass = ns.substring(with: match.range).trimmingCharacters(in: .whitespacesAndNewlines)
+                continue
+            }
+            guard match.range(at: group).location != NSNotFound else { continue }
+            if includeMassTitles, let title = mass {
+                sections.append(title)
+                mass = nil
+            }
             let end = i + 1 < matches.count ? matches[i + 1].range.location : ns.length
             sections.append(ns.substring(with: NSRange(location: match.range.location, length: end - match.range.location))
                 .trimmingCharacters(in: .whitespacesAndNewlines))

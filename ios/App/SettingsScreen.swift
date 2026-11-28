@@ -376,6 +376,7 @@ final class AboutScreen: FormScreen {
         link("Kod źródłowy oryginalnej wersji Windows na GitHubie", "https://github.com/puszkin-dev/dostepna-biblia/")
         heading("Źródła i prawa do tekstów", in: choices)
         paragraph("Czytania liturgiczne i teksty pobierane są z serwisu TwojaBiblia.pl. Przekład: Biblia Tysiąclecia, wydanie V. Prawa do tekstu przekładu: Wydawnictwo Pallottinum w Poznaniu.")
+        paragraph("25 grudnia czytania Mszy o świcie i Mszy w dzień, jeśli nie ma ich w głównym źródle, pochodzą z serwisu liturgia.wiara.pl (lekcjonarz z 2015 roku).")
         link("Informacja wydawcy o prawach do przekładu", "https://biblia.pl/informacje-o-wydaniu/")
     }
     private func paragraph(_ text: String) {

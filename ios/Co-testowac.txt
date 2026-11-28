@@ -15,3 +15,6 @@ Jeśli coś nie zagra, napiszcie, z którego silnika na który przeszliście, ja
 
 4. Wielkość tekstu Biblii
 Dawne „Ustawienia czytania” nazywają się teraz „Wielkość tekstu Biblii”. Na karcie Liturgia znajdźcie przycisk o tej nazwie i otwórzcie go. Sprawdźcie, czy VoiceOver tak samo odczytuje nagłówek ekranu. Przesuńcie suwak o jeden krok: litery w podglądzie powinny zmienić wielkość, a głos i tempo czytania pozostać bez zmian.
+
+5. Liturgia świąteczna
+Wybierzcie 25 grudnia 2026 i ustawcie „Ewangelia”. Czy przed tekstem słychać, czy to Pasterka, Msza o świcie, czy Msza w dzień? Przy ostatniej powinny być obie wersje Ewangelii. Następnie wybierzcie 4 kwietnia 2026 i „Drugie czytanie”: po wyjaśnieniu o Wielkiej Sobocie powinno być tylko to czytanie, bez kolejnego psalmu.

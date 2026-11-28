@@ -10,7 +10,7 @@ Nigdy nie zmieniaj lokalnej ani zdalnej gałęzi `main`: nie zapisuj na niej zmi
 
 Przed planowaniem lub implementacją kolejnej funkcji iOS, pozostając na `ios`, odśwież wyłącznie lokalny podgląd zdalnej gałęzi: `git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main`. Porównaj ostatni sprawdzony commit z `origin/main` za pomocą `git log` i `git diff`. Sprawdzaj nie tylko nowe funkcje, ale też poprawki zachowania, dostępności oraz zmiany źródeł danych istotne dla portu. W podsumowaniu pracy zapisz sprawdzony hash i wynik. Zmiany istotne dla bieżącej funkcji odwzoruj natywnie na `ios`; pozostałe wskaż jako kandydatów na później. Nie scalaj automatycznie `main` z `ios`.
 
-Punkt odniesienia na 28 listopada 2026: `4e113ab` (lżejsze wydanie Windows 1.1.2; bez nowej funkcji do przeniesienia).
+Punkt odniesienia po PR nr 1: `acf8194` (Windows 1.1.3; liturgia Narodzenia Pańskiego, Wielkiej Soboty i komunikaty wigilijne).
 
 ## Orientacja podczas testów iOS
 

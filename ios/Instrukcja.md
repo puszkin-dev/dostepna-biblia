@@ -4,6 +4,8 @@ Na dole jest pięć kart: Liturgia, Czytaj Biblię, Losuj cytat, Wyszukaj i Usta
 
 **Liturgia.** Miesiąc, dzień i rok to trzy osobne systemowe koła. Przesuwaj jednym palcem w górę lub w dół, aby zmienić wartość, a w prawo, aby przejść do następnej regulacji. Krótszy miesiąc skraca listę dni. Kolejny suwak wybiera część liturgii bez otwierania menu. „Czytaj” otwiera tekst. „Zapisz do TXT” działa również bez wcześniejszego czytania.
 
+**Boże Narodzenie i Wielka Sobota.** Na 25 grudnia otrzymasz Pasterkę, Mszę o świcie i Mszę w dzień. Nawet gdy wybierzesz sam psalm lub Ewangelię, przed tekstem znajdziesz nazwę Mszy. Brakujące czytania aplikacja dobiera z liturgia.wiara.pl. Gdy serwis nie odpowiada, dostępne teksty pozostają, a po nich przeczytasz, czego brakuje. W Wielką Sobotę najpierw pojawia się wyjaśnienie, a następnie czytania Wigilii Paschalnej, o ile zostały opublikowane. „Psalm” wybiera ponumerowane psalmy; czytania od trzeciego do ósmego znajdziesz w „Całej liturgii”.
+
 Przy systemowych rozmiarach tekstu z kategorii dostępności zamiast trzech kół obok siebie pojawiają się trzy suwaki jeden pod drugim. Kolejność i gesty VoiceOver pozostają takie same.
 
 **Czytaj Biblię.** Wyreguluj testament, księgę, a po pobraniu listy — rozdział. „0 — Wstęp” oznacza wprowadzenie do księgi. „Zapisz do TXT” zapisuje wybrany rozdział. Nie ma eksportu całej Biblii.

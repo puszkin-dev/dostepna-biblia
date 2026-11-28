@@ -68,6 +68,7 @@ Pięć plików wprost w /home/axel/www/. Publiczne odpowiedzi HTTPS i treść sp
 | R-030 | gotowe | Zapis poprzez formularz aplikacji i weryfikacja w pęku kluczy; 21 głosów rzeczywistego konta. Plik jednorazowy usunięty, testy nie zamawiały syntezy. |
 | R-031 | gotowe | Na iPhonie 17 Pro w Release sprawdzono skrót, nagłówek i suwak w VoiceOver, zmianę Standardowy → Większy i powrót; wspólna nazwa również w czytniku i karcie Ustawienia. Bez zmiany ustawień mowy. |
 | R-032 | gotowe | Projektowa zasada w Agent.md. Na żądanie naprawiono ustawienie prywatnego iPhone’a: systemowy VoiceOver przed i po stuknięciu odczytał „Zablokuj obrót” odpowiednio jako wyłączone i włączone. Obrót poziomy nie był potrzebny do sprawdzenia nazwy. |
+| R-033 | gotowe | Liturgia świąteczna PR nr 1: przecięcie kontrolnych przypadków z rzeczywistymi stronami i mową fizycznego iPhone’a 17 Pro. Szczegóły poniżej. |
 
 ### Dopisek 28 listopada — ustawienia mowy po testach
 
@@ -106,3 +107,9 @@ Prywatny klucz wpisano na życzenie tylko do pęku kluczy tej instalacji. Potwie
 Dodatkowy czysty symulator iPhone 13 mini: VoiceOver potwierdził kolejność od przycisku wpisania klucza przez tempo i głośność do bezpiecznego pola; niezależnie potwierdzono wpisanie znaku dotykiem z wyłączonym czytnikiem (Panel-mini6.xcresult). Symulowane podwójne stuknięcie w środek małego ekranu nie potwierdziło aktywacji z VoiceOver. Nie zaliczamy tej próby na symulatorze jako działania rzeczywistego gestu — to osobne potwierdzenie pochodzi z fizycznego telefonu. Testy pomocnicze: Windows 9 zaliczonych / 8 pominiętych dla innych platform, Mac 16 zaliczonych / 1 pominięty; natywny kontrakt wykonano oddzielnie na iPhonie.
 
 Właściciel podbił skryptem numer kompilacji z 1 do 2 na Macu. Bieżąca konfiguracja projektu: 1.0 (2). Odbiory opisane dla 1.0 (1) pozostają historyczne. Archiwizację i wysyłkę do Apple wykonuje właściciel.
+
+## Port liturgii Windows 1.1.3 (R-033)
+
+Podstawa: zatwierdzony PR Zvonimira nr 1, scalony w `acf8194`. Bez zmian w `main` w tym etapie. 25 grudnia: trzy Msze, dwie wersje Ewangelii w dzień, brak powtórnego pobierania już obecnych Mszy; przy częściowej awarii nie tracimy opublikowanych czytań. Wielka Sobota: data ruchoma, wyjaśnienie również przy braku wpisu, rozdzielenie numerowanych czytań i psalmów. Usuwany jest nieaktywny odsyłacz, nie cała sąsiednia uwaga.
+
+Na iPhonie 17 Pro w Swieta-d.xcresult: 15 testów logiki i źródeł oraz jeden test UI z VoiceOver, bez błędów. Żywe dane: 25.12, 04.04, 24.05, 24.06, 29.06 i 15.08.2026 oraz zwykła niedziela 29.11. Osobno kontrolowane odpowiedzi: brak wpisu, wadliwy odnośnik drugiego źródła, niedostępne źródło, już opublikowane Msze i Wielkanoc na granicy marca i kwietnia. W rozszerzonej próbie Swieta-e.xcresult VoiceOver wypowiedział nazwy wszystkich trzech Mszy po kolei na ekranie Ewangelii. Wynik nie jest nagraniem ludzkiego odsłuchu. Wcześniejsza próba błędnie założyła, że są trzy nagłówki Ewangelii zamiast czterech i że tytuł pierwszej Mszy zostanie przeczytany razem z datą. Testy XCTest wykonano w konfiguracji Debug. Próba jednostkowa w konfiguracji Release nie importowała testowanego modułu; osobne zwykłe budowanie Release, weryfikacja podpisu, instalacja i uruchomienie zakończyły się powodzeniem. Bez zmiany numeru 1.0 (2), blokady orientacji i bez dystrybucji. Pytest: Windows 9 zaliczonych / 8 pominiętych, Mac 16 / 1. W repozytorium uzupełniono informację o źródle i projekty stron; nie wdrażano ich na serwer. R-005, R-007 i R-009 pozostają do weryfikacji, jak przed tym portem.

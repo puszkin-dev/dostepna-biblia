@@ -346,6 +346,54 @@ final class VoiceOverTests: XCTestCase {
         XCTAssertFalse(changed.isEmpty)
     }
 
+    func testEwangelieNarodzeniaZVoiceOver() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        let voice = XCUIDevice.shared.voiceOverService
+        let wasEnabled = voice.isEnabled
+        if wasEnabled { try voice.disable() }
+        defer {
+            if wasEnabled && !voice.isEnabled { try? voice.enable() }
+            if !wasEnabled && voice.isEnabled { try? voice.disable() }
+        }
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        app.launch()
+        let wheels = app.pickerWheels.allElementsBoundByIndex
+        XCTAssertEqual(wheels.count, 3)
+        wheels[2].adjust(toPickerWheelValue: "2026")
+        wheels[0].adjust(toPickerWheelValue: "grudzień")
+        wheels[1].adjust(toPickerWheelValue: "25")
+        let slider = app.sliders["Część liturgii"]
+        slider.adjust(toNormalizedSliderPosition: 1)
+        try voice.enable()
+        let center = CGVector(dx: 0.5, dy: 0.5)
+        slider.coordinate(withNormalizedOffset: center).tap()
+        let choice = try voice.currentSpeech().utterance
+        XCTAssertTrue(choice.contains("Ewangelia") && choice.contains("regulacja"), choice)
+        app.buttons["Czytaj"].coordinate(withNormalizedOffset: center).tap()
+        app.coordinate(withNormalizedOffset: center).doubleTap()
+        let field = app.textViews["tekstWyniku"]
+        XCTAssertTrue(field.waitForExistence(timeout: 60))
+        let value = try XCTUnwrap(field.value as? String)
+        for mass in ["MSZA W NOCY", "MSZA O ŚWICIE", "MSZA W DZIEŃ"] { XCTAssertTrue(value.contains(mass), mass) }
+        var utterance = try voice.moveForward().utterance
+        if utterance.contains("25 grudnia") && !utterance.localizedCaseInsensitiveContains("MSZA W NOCY") {
+            utterance = try voice.moveForward().utterance
+        }
+        XCTAssertTrue(utterance.localizedCaseInsensitiveContains("MSZA W NOCY"), String(utterance.prefix(240)))
+        var spokenTitles = [utterance]
+        for title in ["MSZA O ŚWICIE", "MSZA W DZIEŃ"] {
+            for _ in 0..<24 {
+                utterance = try voice.moveForward().utterance
+                if utterance.localizedCaseInsensitiveContains(title) { break }
+                XCTAssertFalse(utterance.localizedCaseInsensitiveContains("pasek kart"), "Opuszczono tekst przed " + title)
+            }
+            XCTAssertTrue(utterance.localizedCaseInsensitiveContains(title), "Nie odczytano " + title)
+            spokenTitles.append(utterance)
+        }
+        print("VoiceOver: \(choice); " + spokenTitles.map { String($0.prefix(80)) }.joined(separator: "; "))
+    }
+
     func testGestyDatyICzytanieZPowrotem() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

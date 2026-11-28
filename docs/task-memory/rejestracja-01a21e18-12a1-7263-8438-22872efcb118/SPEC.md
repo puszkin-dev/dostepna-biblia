@@ -67,3 +67,5 @@ R-030 — na wyraźne polecenie skonfigurować przekazany klucz w prywatnym pęk
 R-031 — wszystkie wejścia do regulacji wielkości liter, tytuł jej ekranu i suwak nazywają się „Wielkość tekstu Biblii”. Sekcja syntezy pozostaje „Czytanie na głos”; nie zmieniać zapisanych preferencji.
 
 R-032 — nie przełączać systemowej blokady orientacji iPhone’a na potrzeby testów; poziom zadawać narzędziem testowym, sprawdzać układ, a gdy to nie działa, używać symulatora. Na zgłoszenie właściciela przywrócić blokadę pionową, jeśli jest wyłączona.
+
+R-033 — Przenieść na iOS zachowanie liturgii z PR nr 1 Zvonimira (Windows 1.1.3, main acf8194): trzy Msze 25 grudnia z nazwami przy wybranych częściach, usunięcie martwych wskazówek wigilijnych, Wielka Sobota z Wigilią lub wyjaśnieniem przy braku wpisu. Zachować opublikowane teksty w razie awarii dodatkowego źródła. Sprawdzić na rzeczywistym iPhonie, bez zmiany wersji, buildu i dystrybucji.

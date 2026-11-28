@@ -52,6 +52,80 @@ final class ReadingsTests: XCTestCase {
         XCTAssertThrowsError(try BibleService.select(text, .second))
     }
 
+    func testBrakCzytanWielkiejSoboty() async throws {
+        for (year, month, day) in [(2025, 4, 19), (2026, 4, 4), (2027, 3, 27), (2029, 3, 31)] {
+            var date = ReadingDate()
+            date.year = year
+            date.month = month
+            date.day = day
+            XCTAssertTrue(date.isHolySaturday)
+            let note = try await BibleService { _ in Data("{}".utf8) }.liturgy(date, .all)
+            XCTAssertTrue(note.text.contains("nie udostępnia na tę datę"))
+            date.day -= 1
+            XCTAssertFalse(date.isHolySaturday)
+        }
+    }
+
+    func testZachowaniePasterkiIAtrybucja() async throws {
+        var date = ReadingDate()
+        date.year = 2026
+        date.month = 12
+        date.day = 25
+        for complete in [false, true] {
+            let service = BibleService { url in
+                if url.host == "liturgia.wiara.pl" {
+                    XCTAssertFalse(complete, "Nie pobieraj ponownie Mszy obecnych w źródle.")
+                    throw URLError(.notConnectedToInternet)
+                }
+                if url.path.contains("wp-json") {
+                    return Data(#"{"25":{"url":"https://twojabiblia.pl/czytanie/2026/12/25/test/"}}"#.utf8)
+                }
+                let masses = complete ? ["MSZA W NOCY", "MSZA O ŚWICIE", "MSZA W DZIEŃ"] : ["MSZA W NOCY"]
+                let blocks = masses.map { "<p>\($0)</p><p>PSALM</p><p>Refren</p><p>EWANGELIA</p><p>Słowo</p>" }
+                return Data(("<div itemprop='text'>" + blocks.joined() + "</div>").utf8)
+            }
+            let result = try await service.liturgy(date, .all)
+            XCTAssertTrue(result.text.contains("MSZA W NOCY"))
+            XCTAssertFalse(result.text.contains("Źródło dodatkowych"))
+            XCTAssertEqual(result.text.contains("Nie udało się pobrać"), !complete)
+        }
+    }
+
+    func testBrakJednejMszyNieKasujePozostalych() async throws {
+        var date = ReadingDate()
+        date.year = 2026
+        date.month = 12
+        date.day = 25
+        let service = BibleService { url in
+            let html: String
+            switch url.host {
+            case "twojabiblia.pl" where url.path.contains("wp-json"):
+                html = #"{"25":{"url":"https://twojabiblia.pl/czytanie/2026/12/25/test/"}}"#
+            case "twojabiblia.pl":
+                html = "<div itemprop='text'><p>MSZA W NOCY (PASTERKA)</p><p>PSALM</p><p>EWANGELIA (Łk)</p><p>Noc</p></div>"
+            case "liturgia.wiara.pl" where url.fragment == nil:
+                html = """
+                <a href="https://example.org/9#Par9">Lekcjonarz - Msza o świcie</a>
+                <a href="/kalendarz/67b53.Czytania-mszalne/2026-12-25/8#Par11">Lekcjonarz - Msza w dzień</a>
+                """
+            case "liturgia.wiara.pl" where url.fragment == "Par11":
+                html = """
+                <div class="txt__rich-area"><p><a name="Par11">Tytuł</a></p><p>PSALM</p>
+                <p class="block-title">EWANGELIA</p><p class="bible-verse">J 1</p><p>Dzień</p></div>
+                """
+            default:
+                XCTFail("Nieoczekiwane żądanie: \(url)")
+                throw URLError(.badURL)
+            }
+            return Data(html.utf8)
+        }
+        let result = try await service.liturgy(date, .gospel)
+        XCTAssertTrue(result.text.contains("MSZA W DZIEŃ\n\nEWANGELIA (J 1)"))
+        XCTAssertTrue(result.text.contains("MSZA W NOCY (PASTERKA)"))
+        XCTAssertTrue(result.text.contains("Nie udało się pobrać: Msza o świcie."))
+        XCTAssertTrue(result.text.contains("Źródło dodatkowych czytań (Msza w dzień)"))
+    }
+
     func testKatalog() {
         XCTAssertEqual(Book.all.count, 73)
         XCTAssertEqual(Set(Book.all.map(\.code)).count, 73)

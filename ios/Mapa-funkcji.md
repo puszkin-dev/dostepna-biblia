@@ -9,6 +9,7 @@ Punkt odniesienia: DostepnaBiblia.cs, Dokumentacja.txt i projekt Windows 1.1.1. 
 | Alt+strzałka, Enter, Spacja na liście Windows | Bez rozwijania — gest góra/dół zmienia wartość, dwukrotne stuknięcie uruchamia akcję | Dostosowane na życzenie | Test regulacji na urządzeniu |
 | Dzień, miesiąc i rok, zakres od 2000 do następnego roku; skrócenie 31. dnia | Trzy natywne kolumny: miesiąc, dzień, rok; dostosowanie do 28, 29, 30, 31 dni | Przeniesione | testKalendarz, testPiecKartIRegulacje, mowa VO |
 | Sześć części, kilka czytań tego samego rodzaju, nagłówki wariantów i Mszy | Suwak części; czytania dzielone według nagłówków | Przeniesione | testCzesci, testWszystkieCzesciLiturgii |
+| Windows 1.1.3: Boże Narodzenie, Wielka Sobota, usunięcie nieczynnych wskazówek | Te same daty i części na dotychczasowym suwaku; dodatkowy lekcjonarz tylko dla brakujących Mszy. Przy awarii zachowujemy dostępne teksty | Przeniesione | testSwietaNaZywychDanych, testBrakCzytanWielkiejSoboty, testBrakJednejMszyNieKasujePozostalych, testEwangelieNarodzeniaZVoiceOver |
 | Kalendarz miesięczny, weryfikacja adresu, brak daty/sekcji lub zmiana układu | HTTPS, sprawdzanie ścieżki dnia, komunikaty po polsku | Przeniesione | testBrakiIDaneBledne, testCzesci |
 | Czytania na żądanie; domyślny przycisk Czytaj | Systemowy przycisk i osobny ekran czytania | Przeniesione z inną prezentacją | testCzytanieIZapisLiturgii |
 | Cała Biblia / Stary / Nowy Testament; 73 księgi w kolejności oryginału | Suwaki zakresu i księgi | Przeniesione | testKatalog i porównanie każdej pozycji z C# w pytest |

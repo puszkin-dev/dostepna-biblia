@@ -6,10 +6,6 @@ Właściciel zapisu: 01a21e18-12a1-7263-8438-22872efcb118.
 
 Stan zadania: aktywne
 
-Właściciel podbił skryptem numer kompilacji z 1 do 2 na Macu. Bieżąca konfiguracja projektu: 1.0 (2). Odbiory opisane dla 1.0 (1) pozostają historyczne. Archiwizację i wysyłkę do Apple wykonuje właściciel.
+R-033 wykonane. Punkt odniesienia: main acf8194, Windows 1.1.3. Na gałęzi ios przeniesiono obsługę świąt z zachowaniem dostępnych treści, podpisów Mszy i dotychczasowego suwaka. iPhone 17 Pro: Swieta-d.xcresult, Swieta-e.xcresult; VoiceOver odczytał regulację Ewangelii i tytuły wszystkich trzech Mszy. Po próbach zainstalowano i uruchomiono podpisaną wersję Release 1.0 (2). Brak dystrybucji i zwiększenia numeru. Strony zmieniono w repozytorium, a nie na publicznym serwerze.
 
-R-031–032 wykonane: nazwa regulacji liter sprawdzona na iPhonie z VoiceOver; blokada pionowa przywrócona i potwierdzona odczytem systemowym. Testy nie przełączają tej blokady.
-
-R-028–030 wykonane. Stabilny panel głosów, pierwsze szybkie przejście VoiceOver, oddzielna rola pojedynczego głosu i pełna nazwa „Eleven Labs — naturalne głosy neuronowe”. Bez klucza bezpośredni przycisk do edycji, z kluczem od razu regulacja głosu. Na iPhonie pozostawiono 21 głosów rzeczywistego konta, klucz tylko w pęku kluczy oraz wybrany Eleven Labs, bez generacji w tym etapie. Release 1.0 (1) podpisany, zainstalowany i potwierdzony rzeczywistym VoiceOver po ponownym uruchomieniu. Szczegóły pomiarów i rozliczenie wszystkich 32 ID w FINAL_REPORT.md. Nie wysłano aplikacji do Apple i nie zmieniono main. Podgląd 4e113ab.
-
-Poprzednie wymagania, w tym pełny niezależny od języka katalog R-027 i reguła polskich głosów lokalnych, nadal obowiązują. Pozostają formalności R-005, R-007 i R-009, w tym ocena deklaracji oraz aktualizacja publicznej polityki przed dystrybucją wariantu chmurowego. Bez sekretów w repozytorium.
+R-001–032 rozliczone w rejestrze i raporcie. Nadal otwarte osobne formalności R-005, R-007 i R-009. Nie zmieniano klucza, ustawień mowy ani systemowej blokady orientacji. Synchronizacja gałęzi ios zgodnie z Agent.md.

@@ -15,6 +15,35 @@ final class SourceTests: XCTestCase {
         }
     }
 
+    func testSwietaNaZywychDanych() async throws {
+        var date = ReadingDate()
+        date.year = 2026
+        let service = BibleService()
+        for (month, day, part, wanted, unwanted) in [
+            (12, 25, Part.gospel, ["MSZA W NOCY", "MSZA O ŚWICIE", "MSZA W DZIEŃ", "liturgia.wiara.pl"], ["kliknij TUTAJ", "PIERWSZE CZYTANIE"]),
+            (12, 25, .all, ["MSZA W NOCY", "MSZA O ŚWICIE", "MSZA W DZIEŃ"], ["kliknij TUTAJ", "W wigilię uroczystości"]),
+            (6, 24, .all, ["EWANGELIA"], ["kliknij TUTAJ"]),
+            (8, 15, .all, ["EWANGELIA"], ["kliknij TUTAJ"]),
+            (4, 4, .second, ["W Wielką Sobotę", "DRUGIE CZYTANIE"], ["TRZECIE CZYTANIE", "PSALM RESPONSORYJNY"]),
+            (4, 4, .psalm, ["1 PSALM", "2 PSALM"], ["ÓSME CZYTANIE", "EWANGELIA"]),
+            (6, 29, .all, ["Mszy wotywnej"], ["kliknij TUTAJ"]),
+            (5, 24, .all, ["EWANGELIA"], ["kliknij TUTAJ"])
+        ] {
+            date.month = month
+            date.day = day
+            let result = try await service.liturgy(date, part)
+            for needle in wanted { XCTAssertTrue(result.text.contains(needle), "\(date.iso): brak \(needle)") }
+            for needle in unwanted { XCTAssertFalse(result.text.contains(needle), "\(date.iso): \(needle)") }
+            if part == .gospel {
+                let headings = result.text.components(separatedBy: .newlines).filter { $0.hasPrefix("EWANGELIA") }
+                XCTAssertEqual(headings.count, 4, headings.joined(separator: "; "))
+                for reference in ["Łk 2, 1-14", "Łk 2, 15-20", "J 1, 1-18", "J 1, 1-5. 9-14"] {
+                    XCTAssertTrue(headings.contains { $0.contains(reference) }, headings.joined(separator: "; "))
+                }
+            }
+        }
+    }
+
     func testWstepJanaIOstatniRozdzialRodzaju() async throws {
         let service = BibleService()
         let john = try XCTUnwrap(Book.all.first { $0.code == "3-J" })
