@@ -56,12 +56,12 @@ final class VisualTests: XCTestCase {
         let original = XCUIDevice.shared.appearance
         defer { XCUIDevice.shared.appearance = original }
         XCUIDevice.shared.appearance = .dark
-        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL", "-silnikEleven", "YES"]
         app.launch()
         app.tabBars.buttons["Ustawienia"].tap()
-        try XCTSkipUnless(app.sliders["Silnik mowy"].value as? String == "ElevenLabs", "Brak skonfigurowanej próby ElevenLabs.")
+        XCTAssertEqual(app.sliders["Silnik mowy"].value as? String, "Eleven Labs — naturalne głosy neuronowe")
         capture("Eleven-duze-litery")
-        let field = app.secureTextFields["Klucz API ElevenLabs"]
+        let field = app.secureTextFields["Klucz API Eleven Labs"]
         reveal(field)
         XCTAssertTrue(field.isHittable)
         capture("Eleven-duze-pole")

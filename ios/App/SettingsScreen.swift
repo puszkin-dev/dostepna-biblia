@@ -10,10 +10,12 @@ final class SettingsScreen: FormScreen {
     private var forget = UIButton()
     private var continueBook = UIButton()
     private var checking: Task<Void, Never>?
-    private let voice = ChoiceSlider("Głos")
+    private let voice = VoiceChoiceSlider()
     private let rate = ChoiceSlider("Szybkość mowy")
     private let volume = ChoiceSlider("Głośność")
     private var groups: [VoiceGroup] = []
+    private var catalog: [ElevenVoice] = []
+    private var bookmarkTitle: String?
     private var automaticGroup = 0
     private var selectedGroup = 0
     private var sample = UIButton()
@@ -28,18 +30,22 @@ final class SettingsScreen: FormScreen {
             cancelValidation()
             apiKey.text = nil
             apiKey.resignFirstResponder()
+            SpeechReader.shared.leave()
+            selectedGroup = index
             preferences.cloudSelected = index == max(1, groups.count)
             notice.text = nil
-            SpeechReader.shared.leave()
-            if groups.indices.contains(index) { selectVoice(index == automaticGroup ? nil : groups[index].voices.first?.identifier) }
-            refresh()
+            if groups.indices.contains(index) {
+                preferences.voiceID = index == automaticGroup ? nil : groups[index].voices.first?.identifier
+            }
+            UIView.performWithoutAnimation {
+                self.updateEngineOptions()
+                self.publishLayout()
+            }
             refreshCloudCatalog()
         }
-        configureCloud()
         addChoice(voice) { [weak self] index in
             guard let self else { return }
             if preferences.cloudSelected {
-                let catalog = preferences.cloudVoices
                 guard catalog.indices.contains(index) else { return }
                 SpeechReader.shared.leave()
                 preferences.cloudVoice = catalog[index].voice_id
@@ -58,6 +64,7 @@ final class SettingsScreen: FormScreen {
             self?.preferences.volume = SpeechPreferences.percentages[index]
             SpeechReader.shared.leave()
         }
+        configureCloud()
         notice.numberOfLines = 0
         notice.font = .preferredFont(forTextStyle: .body)
         notice.adjustsFontForContentSizeCategory = true
@@ -73,7 +80,7 @@ final class SettingsScreen: FormScreen {
             refresh()
             UIAccessibility.post(notification: .announcement, argument: "Przywrócono domyślny głos, szybkość i głośność.")
         }
-        continueBook = button("Wznów ostatnie czytanie ElevenLabs") { [weak self] in
+        continueBook = button("Wznów ostatnie czytanie Eleven Labs") { [weak self] in
             guard let self, let (book, _) = ElevenBookmark.load() else { return }
             let saved = Reading(name: book.title, text: book.parts.joined(separator: "\n\n"))
             let reader = TextScreen(reading: saved)
@@ -81,6 +88,8 @@ final class SettingsScreen: FormScreen {
             reader.resumeOnOpen = true
             navigationController?.pushViewController(reader, animated: !UIAccessibility.isReduceMotionEnabled)
         }
+        continueBook.accessibilityIdentifier = "wznowOstatniaSesje"
+        continueBook.accessibilityLabel = "Wznów ostatnie czytanie Eleven Labs"
         heading("Wygląd i dostępność", in: fields)
         button("Wielkość tekstu Biblii") { [weak self] in self?.openSettings() }
         heading("O programie", in: fields)
@@ -98,16 +107,28 @@ final class SettingsScreen: FormScreen {
                 if let url = URL(string: address) { UIApplication.shared.open(url) }
             }.accessibilityTraits = .link
         }
+        loadLocalCatalog()
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(updateSample), name: SpeechReader.changed, object: nil)
         center.addObserver(self, selector: #selector(reloadVoices), name: AVSpeechSynthesizer.availableVoicesDidChangeNotification, object: nil)
         center.addObserver(self, selector: #selector(reloadVoices), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
-    @objc private func reloadVoices() { refresh() }
-    override func refresh() {
+    @objc private func reloadVoices() {
+        loadLocalCatalog()
+        refresh()
+        publishLayout()
+    }
+
+    private func loadLocalCatalog() {
         groups = VoiceGroup.catalog(AVSpeechSynthesisVoice.speechVoices())
         let automatic = VoiceGroup.automatic(in: groups)?.identifier
         automaticGroup = groupIndex(for: automatic) ?? 0
+    }
+
+    override func refresh() {
+        catalog = preferences.cloudVoices
+        bookmarkTitle = ElevenBookmark.load()?.0.title
+        forget.isHidden = (try? ElevenKey.read()) == nil
         let current = groupIndex(for: preferences.voiceID)
         if preferences.voiceID != nil && current == nil && !groups.isEmpty {
             preferences.voiceID = nil
@@ -116,32 +137,54 @@ final class SettingsScreen: FormScreen {
             if visible { UIAccessibility.post(notification: .announcement, argument: message) }
         }
         let cloud = preferences.cloudSelected
-        let index = cloud ? groups.count : current ?? automaticGroup
         let localNames = groups.isEmpty ? ["Głos iPhone’a niedostępny"] : groups.map(\.name)
-        group.show(localNames + ["ElevenLabs"], index: cloud ? localNames.count : index)
-        selectedGroup = cloud ? localNames.count : index
-        cloudBox.isHidden = !cloud
-        let bookmark = cloud ? ElevenBookmark.load()?.0 : nil
-        continueBook.isHidden = bookmark == nil
-        continueBook.configuration?.subtitle = bookmark?.title
-        continueBook.accessibilityIdentifier = "wznowOstatniaSesje"
-        continueBook.accessibilityLabel = "Wznów ostatnie czytanie ElevenLabs"
-        continueBook.accessibilityValue = bookmark?.title
-        if cloud {
-            let catalog = preferences.cloudVoices
-            let position = catalog.firstIndex { $0.voice_id == preferences.cloudVoice } ?? 0
-            showVoices(catalog.map(\.name), index: position)
-            voice.caption.isHidden = catalog.isEmpty
-            voice.isHidden = catalog.count <= 1
-        } else {
-            voice.caption.isHidden = false
-            showGroup(index)
-        }
+        selectedGroup = cloud ? localNames.count : current ?? automaticGroup
+        group.show(localNames + ["Eleven Labs — naturalne głosy neuronowe"], index: selectedGroup)
+        updateEngineOptions()
         let percentages = SpeechPreferences.percentages
         let labels = percentages.map { "\($0) procent" }
         rate.show(labels, index: preferences.speed / SpeechPreferences.step)
         volume.show(labels, index: preferences.volume / SpeechPreferences.step)
+    }
+
+    private func updateEngineOptions() {
+        let cloud = preferences.cloudSelected
+        cloudBox.isHidden = !cloud
+        continueBook.isHidden = !cloud || bookmarkTitle == nil
+        continueBook.configuration?.subtitle = bookmarkTitle
+        continueBook.accessibilityValue = bookmarkTitle
+        if cloud {
+            let selected = preferences.cloudVoice
+            let position = catalog.firstIndex { $0.voice_id == selected } ?? 0
+            if catalog.isEmpty {
+                let title = forget.isHidden ? "Wpisz klucz API Eleven Labs" : "Sprawdź klucz i pobierz głosy Eleven Labs"
+                voice.offer(title) { [weak self] in self?.editKey() }
+            } else {
+                voice.present(catalog.map(\.name), index: position)
+            }
+        } else {
+            showGroup(selectedGroup)
+        }
         updateSample()
+    }
+
+    private func editKey() {
+        view.layoutIfNeeded()
+        apiKey.becomeFirstResponder()
+        if let scroll = fields.superview as? UIScrollView {
+            scroll.scrollRectToVisible(apiKey.convert(apiKey.bounds, to: scroll).insetBy(dx: 0, dy: -12), animated: false)
+        }
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .layoutChanged, argument: apiKey)
+        }
+    }
+
+    private func publishLayout() {
+        guard visible else { return }
+        view.layoutIfNeeded()
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .layoutChanged, argument: nil)
+        }
     }
 
     private func groupIndex(for identifier: String?) -> Int? {
@@ -150,28 +193,15 @@ final class SettingsScreen: FormScreen {
     }
 
     private func showGroup(_ index: Int) {
-        selectedGroup = index
         guard groups.indices.contains(index) else {
-            showVoices(["Brak polskiego głosu"], index: 0)
+            voice.inform("Brak polskiego głosu")
             return
         }
         let entry = groups[index]
         let extra = index == automaticGroup ? ["Automatyczny"] : []
-        let position = entry.voices.firstIndex { $0.identifier == preferences.voiceID }
-        showVoices(extra + entry.labels, index: position.map { $0 + extra.count } ?? 0)
-    }
-
-    private func showVoices(_ names: [String], index: Int) {
-        voice.show(names, index: index)
-        // Jedyny głos jest już wybrany, a nie niedostępny.
-        let single = names.count == 1
-        voice.isHidden = single
-        voice.caption.accessibilityElementsHidden = !single
-        voice.caption.isAccessibilityElement = single
-        voice.caption.accessibilityLabel = "Głos"
-        if single {
-            voice.caption.accessibilityValue = groups.isEmpty && !preferences.cloudSelected ? "Brak polskiego głosu" : "\(names[index]), jedyny głos tego silnika"
-        }
+        let selected = preferences.voiceID
+        let position = entry.voices.firstIndex { $0.identifier == selected }
+        voice.present(extra + entry.labels, index: position.map { $0 + extra.count } ?? 0)
     }
 
     private func selectVoice(_ identifier: String?) {
@@ -188,18 +218,18 @@ final class SettingsScreen: FormScreen {
         hint.numberOfLines = 0
         hint.font = .preferredFont(forTextStyle: .body)
         hint.adjustsFontForContentSizeCategory = true
-        hint.text = "ElevenLabs otrzyma tekst, żeby przeczytać go po polsku. Odczyt i polska próbka korzystają z kredytów Twojego konta. Sprawdzenie klucza pobiera tylko listę głosów."
-        cloudBox.addArrangedSubview(hint)
+        hint.text = "Eleven Labs otrzyma tekst, żeby przeczytać go po polsku. Odczyt i polska próbka korzystają z kredytów Twojego konta. Sprawdzenie klucza pobiera tylko listę głosów."
         apiKey.borderStyle = .roundedRect
         apiKey.isSecureTextEntry = true
         let keyLabel = UILabel()
-        keyLabel.text = "Klucz API ElevenLabs"
+        keyLabel.text = "Klucz API Eleven Labs"
         keyLabel.font = .preferredFont(forTextStyle: .headline)
         keyLabel.adjustsFontForContentSizeCategory = true
         keyLabel.numberOfLines = 0
         keyLabel.isAccessibilityElement = false
+        keyLabel.accessibilityElementsHidden = true
         cloudBox.addArrangedSubview(keyLabel)
-        apiKey.accessibilityLabel = "Klucz API ElevenLabs"
+        apiKey.accessibilityLabel = "Klucz API Eleven Labs"
         apiKey.font = .preferredFont(forTextStyle: .body)
         apiKey.adjustsFontForContentSizeCategory = true
         apiKey.autocapitalizationType = .none
@@ -209,6 +239,7 @@ final class SettingsScreen: FormScreen {
         apiKey.returnKeyType = .done
         apiKey.addAction(UIAction { [weak self] _ in self?.validateKey() }, for: .editingDidEndOnExit)
         addControl(apiKey, to: cloudBox)
+        cloudBox.addArrangedSubview(hint)
         verify = button("Testuj i zapisz klucz", in: cloudBox) { [weak self] in self?.validateKey() }
         forget = button("Usuń zapisany klucz", in: cloudBox) { [weak self] in self?.forgetKey() }
     }
@@ -223,8 +254,8 @@ final class SettingsScreen: FormScreen {
         apiKey.isEnabled = true
     }
     private func refreshCloudCatalog() {
-        guard preferences.cloudSelected, checking == nil, let saved = try? ElevenKey.read() else { return }
-        loadCatalog(key: saved, saveKey: false)
+        guard preferences.cloudSelected, checking == nil else { return }
+        loadCatalog(key: nil, saveKey: false)
     }
     private func validateKey() {
         // Ręczne sprawdzenie ma pierwszeństwo przed odświeżeniem podczas otwierania karty.
@@ -235,10 +266,10 @@ final class SettingsScreen: FormScreen {
         let key: String
         do { key = input.isEmpty ? try ElevenKey.read() ?? "" : input }
         catch { report(ElevenNetwork.message(error)); return }
-        guard !key.isEmpty else { report("Wpisz klucz API ElevenLabs."); return }
+        guard !key.isEmpty else { report("Wpisz klucz API Eleven Labs."); return }
         loadCatalog(key: key, saveKey: true)
     }
-    private func loadCatalog(key: String, saveKey: Bool) {
+    private func loadCatalog(key suppliedKey: String?, saveKey: Bool) {
         if saveKey {
             apiKey.isEnabled = false
             verify.isEnabled = false
@@ -246,17 +277,29 @@ final class SettingsScreen: FormScreen {
         }
         checking = Task { [weak self] in
             do {
+                let key: String?
+                if let suppliedKey { key = suppliedKey }
+                else { key = try await Task.detached { try ElevenKey.read() }.value }
+                guard !Task.isCancelled else { return }
+                guard let key else { self?.cancelValidation(); return }
                 let catalog = try await ElevenNetwork.shared.voices(key: key)
                 guard let self, !Task.isCancelled else { return }
+                let changed = self.catalog != catalog
+                let previous = preferences.cloudVoice
                 if saveKey { try ElevenKey.save(key) }
+                self.catalog = catalog
                 preferences.cloudVoices = catalog
-                if !catalog.contains(where: { $0.voice_id == self.preferences.cloudVoice }) {
+                if !catalog.contains(where: { $0.voice_id == previous }) {
                     preferences.cloudVoice = catalog.first?.voice_id
                 }
                 if saveKey { apiKey.text = nil }
                 cancelValidation()
-                refresh()
-                let summary = catalog.isEmpty ? "Na koncie ElevenLabs nie ma dostępnych głosów." :
+                forget.isHidden = false
+                if changed || previous != preferences.cloudVoice || saveKey {
+                    updateEngineOptions()
+                    publishLayout()
+                }
+                let summary = catalog.isEmpty ? "Na koncie Eleven Labs nie ma dostępnych głosów." :
                     "Liczba dostępnych głosów: \(catalog.count)."
                 if saveKey { report("Klucz zapisany. " + summary) }
                 else if catalog.isEmpty { report(summary) }
@@ -275,17 +318,20 @@ final class SettingsScreen: FormScreen {
             apiKey.text = nil
             preferences.cloudVoices = []
             preferences.cloudVoice = nil
-            refresh()
+            catalog = []
+            forget.isHidden = true
+            updateEngineOptions()
+            publishLayout()
             report("Usunięto klucz i listę głosów z iPhone’a.")
         } catch { report(ElevenNetwork.message(error)) }
     }
     @objc private func updateSample() {
         if visible, let error = SpeechReader.shared.takeCloudError() { notice.text = error }
         let cloud = preferences.cloudSelected
-        sample.isEnabled = !cloud || preferences.cloudVoice != nil
+        let selected = preferences.cloudVoice
+        sample.isEnabled = !cloud || selected != nil
         if cloud {
-            forget.isHidden = (try? ElevenKey.read()) == nil
-            if let chosen = preferences.cloudVoices.first(where: { $0.voice_id == preferences.cloudVoice }), SpeechReader.shared.state == .idle {
+            if let chosen = catalog.first(where: { $0.voice_id == selected }), SpeechReader.shared.state == .idle {
                 sample.configuration?.title = "Odsłuchaj próbkę: \(chosen.name)"
                 return
             }

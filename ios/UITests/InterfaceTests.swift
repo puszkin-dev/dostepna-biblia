@@ -184,7 +184,7 @@ final class InterfaceTests: XCTestCase {
             // Ta próba sprawdza głosy iPhone’a bez konta usługi internetowej.
             for percent in stride(from: 100, through: 0, by: -5) {
                 engine.adjust(toNormalizedSliderPosition: CGFloat(percent) / 100)
-                if (engine.value as? String) != "ElevenLabs" { break }
+                if (engine.value as? String) != "Eleven Labs — naturalne głosy neuronowe" { break }
             }
         }
         let chosenEngine = try XCTUnwrap(engine.value as? String)

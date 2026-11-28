@@ -4,6 +4,186 @@ import XCTest
 @available(iOS 27.0, *)
 @MainActor
 final class VoiceOverTests: XCTestCase {
+    private func focusEngine(_ engine: XCUIElement, reader: XCUIVoiceOverService) throws {
+        let banner = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+            .descendants(matching: .any)["NotificationShortLookView"]
+        var spoken = ""
+        for _ in 0..<2 {
+            if banner.exists {
+                let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: banner)
+                XCTAssertEqual(XCTWaiter.wait(for: [hidden], timeout: 18), .completed)
+            }
+            engine.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            spoken = try reader.currentSpeech().utterance
+            if spoken.contains("Silnik mowy") { return }
+            // Po włączeniu usługi system czasem pozostawia fokus na nagłówku karty.
+            for _ in 0..<3 where spoken.localizedCaseInsensitiveContains("nagłówek") {
+                spoken = try reader.moveForward().utterance
+                if spoken.contains("Silnik mowy") { return }
+            }
+        }
+        XCTFail("Nie udało się rozpocząć na silniku mowy: " + spoken)
+    }
+
+    func testPierwszyGestPoZmianieKazdegoSilnika() async throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        let vo = XCUIDevice.shared.voiceOverService
+        let wasEnabled = vo.isEnabled
+        if wasEnabled { try vo.disable() }
+        defer {
+            if wasEnabled && !vo.isEnabled { try? vo.enable() }
+            if !wasEnabled && vo.isEnabled { try? vo.disable() }
+        }
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        let engine = app.sliders["Silnik mowy"]
+        XCUIDevice.shared.orientation = .portrait
+        let originalEngine = engine.normalizedSliderPosition
+        let originalVoice = app.sliders["Głos"]
+        let originalPosition = originalVoice.exists ? originalVoice.normalizedSliderPosition : nil
+        defer {
+            if vo.isEnabled { try? vo.disable() }
+            engine.adjust(toNormalizedSliderPosition: originalEngine)
+            if let originalPosition, originalVoice.exists {
+                originalVoice.adjust(toNormalizedSliderPosition: originalPosition)
+            }
+        }
+        engine.adjust(toNormalizedSliderPosition: 0)
+        let frame = app.frame
+        let center = CGPoint(x: frame.midX, y: frame.midY)
+        let first = try XCTUnwrap(engine.value as? String)
+        let cloud = "Eleven Labs — naturalne głosy neuronowe"
+        try vo.enable()
+        // Ustawiamy wyłącznie początkowy fokus. Właściwe próby nie ponawiają żadnego gestu.
+        try focusEngine(engine, reader: vo)
+
+        func switchAndRead(forward: Bool) async throws -> String {
+            let done = expectation(description: "Dwa szybkie gesty na iPhonie")
+            BibliaFlicki(center, forward) { success in
+                XCTAssertTrue(success, "XCTest nie wykonał sekwencji dotknięć.")
+                done.fulfill()
+            }
+            await fulfillment(of: [done], timeout: 15)
+            let spoken = try vo.currentSpeech().utterance
+            let name = try XCTUnwrap(engine.value as? String)
+            let slider = app.sliders["Głos"]
+            let single = app.staticTexts["Głos"]
+            if slider.exists || single.exists {
+                let item = slider.exists ? slider : single
+                let value = try XCTUnwrap(item.value as? String)
+                XCTAssertTrue(spoken.localizedCaseInsensitiveContains("Głos"), spoken)
+                XCTAssertTrue(spoken.localizedCaseInsensitiveContains(value.components(separatedBy: ",").first ?? value), spoken)
+                if value.contains("jedyny głos") {
+                    XCTAssertTrue(spoken.contains("jedyny głos"), spoken)
+                    XCTAssertFalse(spoken.localizedCaseInsensitiveContains("regulacja"), spoken)
+                }
+            } else {
+                XCTAssertEqual(name, cloud)
+                XCTAssertTrue(spoken.contains("klucz") && spoken.contains("Eleven Labs") && spoken.localizedCaseInsensitiveContains("przycisk"), spoken)
+            }
+            XCTAssertFalse(spoken.localizedCaseInsensitiveContains("wygaszony"), spoken)
+            XCTAssertFalse(spoken.localizedCaseInsensitiveContains("wyszarzony"), spoken)
+            if forward && (name == "SynTalk" || name == cloud) {
+                let picture = XCTAttachment(screenshot: app.screenshot())
+                picture.name = name == cloud ? "Panel-chmura" : "Panel-jeden-glos"
+                picture.lifetime = .keepAlways
+                add(picture)
+            }
+            print("Pierwszy flick: \(name) → \(spoken)")
+            let back = try vo.moveBackward().utterance
+            XCTAssertTrue(back.contains("Silnik mowy") && back.localizedCaseInsensitiveContains(name), back)
+            return name
+        }
+        var visited = [first]
+        while visited.last != cloud {
+            let name = try await switchAndRead(forward: true)
+            XCTAssertFalse(visited.contains(name), "Suwak utknął na: \(name)")
+            visited.append(name)
+        }
+        for expected in visited.dropLast().reversed() {
+            let name = try await switchAndRead(forward: false)
+            XCTAssertEqual(name, expected)
+        }
+    }
+
+    func testPoleKluczaZVoiceOver() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL", "-silnikEleven", "YES"]
+        let vo = XCUIDevice.shared.voiceOverService
+        let initial = vo.isEnabled
+        if initial { try vo.disable() }
+        defer {
+            if initial && !vo.isEnabled { try? vo.enable() }
+            if !initial && vo.isEnabled { try? vo.disable() }
+        }
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        try vo.enable()
+        try focusEngine(app.sliders["Silnik mowy"], reader: vo)
+        let next = try vo.moveForward().utterance
+        let field = app.secureTextFields["Klucz API Eleven Labs"]
+        let shortcut = next.localizedCaseInsensitiveContains("klucz") && next.contains("Eleven Labs")
+        XCTAssertTrue(shortcut || next.localizedCaseInsensitiveContains("Głos"), next)
+        #if targetEnvironment(simulator)
+        // Na symulatorze badamy kolejność mowy, a edycję osobno dotykiem.
+        // Aktywację dwukrotnym stuknięciem z VoiceOver sprawdza rzeczywisty telefon.
+        XCTAssertTrue(try vo.moveForward().utterance.contains("Szybkość mowy"))
+        XCTAssertTrue(try vo.moveForward().utterance.contains("Głośność"))
+        let key = try vo.moveForward().utterance
+        XCTAssertTrue(key.contains("Klucz API Eleven Labs"), key)
+        try vo.disable()
+        field.tap()
+        app.typeText("x")
+        XCTAssertFalse((field.value as? String ?? "").isEmpty)
+        print("Symulator: \(next) → szybkość, głośność → \(key). Potwierdzono wpisywanie dotykiem.")
+        #else
+        if !shortcut {
+            XCTAssertTrue(try vo.moveForward().utterance.contains("Szybkość mowy"))
+            XCTAssertTrue(try vo.moveForward().utterance.contains("Głośność"))
+            let key = try vo.moveForward().utterance
+            XCTAssertTrue(key.contains("Klucz API Eleven Labs"), key)
+        }
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).doubleTap()
+        XCTAssertTrue(field.exists)
+        XCTAssertTrue(app.keyboards.firstMatch.exists)
+        let spoken = try vo.currentSpeech().utterance
+        XCTAssertTrue(spoken.contains("Klucz API Eleven Labs"), spoken)
+        print("Panel i pole klucza: \(next) → \(spoken)")
+        #endif
+    }
+
+    func testOdbiorSkonfigurowanejInstalacjiNaZyczenie() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["BIBLIA_ODBIOR_TELEFONU"] == "1",
+                          "Wyłącznie na polecenie pozostawienia skonfigurowanego telefonu.")
+        continueAfterFailure = false
+        let vo = XCUIDevice.shared.voiceOverService
+        if vo.isEnabled { try vo.disable() }
+        defer { if !vo.isEnabled { try? vo.enable() } }
+        let app = XCUIApplication()
+        app.launchArguments = ["-AppleLanguages", "(pl)", "-AppleLocale", "pl_PL"]
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        let engine = app.sliders["Silnik mowy"]
+        engine.adjust(toNormalizedSliderPosition: 1)
+        app.terminate()
+        app.launch()
+        app.tabBars.buttons["Ustawienia"].tap()
+        let name = "Eleven Labs — naturalne głosy neuronowe"
+        XCTAssertEqual(engine.value as? String, name)
+        XCTAssertTrue(app.buttons["Usuń zapisany klucz"].exists)
+        let selected = try XCTUnwrap(app.sliders["Głos"].value as? String)
+        try vo.enable()
+        try focusEngine(engine, reader: vo)
+        let service = try vo.currentSpeech().utterance
+        XCTAssertTrue(service.contains(name), service)
+        let spoken = try vo.moveForward().utterance
+        XCTAssertTrue(spoken.contains(selected), spoken)
+        print("Po restarcie: \(service) → \(spoken).")
+    }
+
     func testElevenPoRestarcieZVoiceOver() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -20,8 +200,8 @@ final class VoiceOverTests: XCTestCase {
         let resume = app.buttons["wznowOstatniaSesje"]
         try XCTSkipUnless(resume.exists && (resume.value as? String) == "Próba krótkiego czytania ElevenLabs", "Brak przygotowanej sesji odbiorowej.")
         let engine = app.sliders["Silnik mowy"]
-        XCTAssertEqual(engine.value as? String, "ElevenLabs")
-        let secret = app.secureTextFields["Klucz API ElevenLabs"]
+        XCTAssertEqual(engine.value as? String, "Eleven Labs — naturalne głosy neuronowe")
+        let secret = app.secureTextFields["Klucz API Eleven Labs"]
         XCTAssertTrue(secret.exists)
         let image = XCTAttachment(screenshot: app.screenshot())
         image.name = "ElevenLabs-ustawienia"

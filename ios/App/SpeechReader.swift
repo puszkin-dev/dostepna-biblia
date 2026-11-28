@@ -207,7 +207,7 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
             index = cursor.index
             seconds = cursor.seconds
         } else {
-            guard let voice = settings.cloudVoice else { throw ReaderError("Najpierw zapisz klucz i wybierz głos ElevenLabs w Ustawieniach.") }
+            guard let voice = settings.cloudVoice else { throw ReaderError("Najpierw zapisz klucz i wybierz głos Eleven Labs w Ustawieniach.") }
             book = ElevenBookmark(id: UUID(), title: title ?? "Próbka", parts: parts, voice: voice, model: ElevenNetwork.model)
             index = 0
             seconds = 0

@@ -83,6 +83,64 @@ final class SpeechTests: XCTestCase {
         XCTAssertNotNil(try SpeechReader.shared.start("Po polsku.", settings: settings))
         XCTAssertNil(settings.voiceID)
     }
+    func testNatychmiastowaZmianaPaneluSilnika() throws {
+        let prefs = SpeechPreferences()
+        let keys = ["silnikEleven", "glosMowy", "katalogEleven", "glosEleven"]
+        let saved = keys.map { prefs.defaults.object(forKey: $0) }
+        defer {
+            for (key, value) in zip(keys, saved) { prefs.defaults.set(value, forKey: key) }
+        }
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+        let window = UIWindow(windowScene: scene)
+        let screen = SettingsScreen()
+        prefs.cloudSelected = false
+        prefs.voiceID = nil
+        window.rootViewController = UINavigationController(rootViewController: screen)
+        window.isHidden = false
+        defer { window.isHidden = true }
+        window.layoutIfNeeded()
+        let controls = screen.choices.arrangedSubviews.compactMap { $0 as? ChoiceSlider }
+        let engine = try XCTUnwrap(controls.first { $0.accessibilityLabel == "Silnik mowy" })
+        let voice = try XCTUnwrap(controls.compactMap { $0 as? VoiceChoiceSlider }.first)
+        let last = Int(engine.maximumValue)
+        var timings: [Double] = []
+        let examples = [ElevenVoice(voice_id: "a", name: "Ala"), ElevenVoice(voice_id: "b", name: "Jan")]
+        for count in 0...examples.count {
+            prefs.cloudVoices = Array(examples.prefix(count))
+            prefs.cloudVoice = prefs.cloudVoices.first?.voice_id
+            screen.refresh()
+            for index in Array(0...last) + Array((0..<last).reversed()) {
+                guard Int(engine.value.rounded()) != index else { continue }
+                let before = CACurrentMediaTime()
+                engine.value = Float(index)
+                engine.sendActions(for: .valueChanged)
+                screen.view.layoutIfNeeded()
+                CATransaction.flush()
+                timings.append((CACurrentMediaTime() - before) * 1000)
+                XCTAssertEqual(prefs.cloudSelected, index == last)
+                if index == last {
+                    XCTAssertFalse(voice.isHidden)
+                    if count == 0 {
+                        XCTAssertEqual(voice.accessibilityTraits, .button)
+                        XCTAssertTrue(voice.accessibilityLabel?.contains("klucz") == true)
+                    } else if count == 1 {
+                        XCTAssertEqual(voice.accessibilityTraits, .staticText)
+                        XCTAssertEqual(voice.accessibilityValue, "Ala, jedyny głos tego silnika")
+                    } else if count == 2 {
+                        XCTAssertTrue(voice.accessibilityTraits.contains(.adjustable))
+                        XCTAssertEqual(voice.accessibilityValue, "Ala")
+                    }
+                } else {
+                    XCTAssertFalse(voice.isHidden)
+                    XCTAssertFalse(voice.accessibilityTraits.contains(.notEnabled))
+                }
+            }
+        }
+        timings.sort()
+        print(String(format: "Panel silników: %d przejść, mediana %.2f ms, maksimum %.2f ms (obsługa, układ i zatwierdzenie).",
+                     timings.count, timings[timings.count / 2], try XCTUnwrap(timings.last)))
+    }
+
     func testAkapityIPustyTekst() {
         XCTAssertEqual(SpeechReader.paragraphs("  A\nB\n\n\n\n C  "), ["A\nB", "C"])
         XCTAssertThrowsError(try SpeechReader.shared.start("  \n\n  "))
@@ -209,6 +267,32 @@ final class ElevenDeviceTests: XCTestCase {
     }
     private func elements(_ view: UIView) -> [UIView] {
         [view] + view.subviews.flatMap(elements)
+    }
+
+    func testSkonfigurujKluczNaTymTelefonieNaZyczenie() async throws {
+        let file = manager.temporaryDirectory.appendingPathComponent("eleven-zachowaj-na-telefonie")
+        try XCTSkipUnless(manager.fileExists(atPath: file.path), "Brak jednorazowego zlecenia konfiguracji telefonu.")
+        let data = try Data(contentsOf: file)
+        try manager.removeItem(at: file)
+        let key = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        let prefs = SpeechPreferences()
+        let previous = prefs.cloudSelected
+        var configured = false
+        defer { if !configured { prefs.cloudSelected = previous } }
+        prefs.cloudSelected = true
+        let screen = SettingsScreen()
+        screen.loadViewIfNeeded()
+        let controls = elements(screen.view)
+        let field = try XCTUnwrap(controls.compactMap { $0 as? UITextField }.first { $0.isSecureTextEntry })
+        let save = try XCTUnwrap(controls.compactMap { $0 as? UIButton }.first { $0.configuration?.title == "Testuj i zapisz klucz" })
+        field.text = key
+        save.sendActions(for: .primaryActionTriggered)
+        try await until("Formularz nie zakończył sprawdzania klucza.") { save.isEnabled }
+        guard field.text?.isEmpty != false, try ElevenKey.read() == key,
+              prefs.cloudVoices.contains(where: { $0.voice_id == prefs.cloudVoice })
+        else { throw ReaderError("Formularz nie potwierdził klucza i wyboru głosu.") }
+        configured = true
+        print("Pęk kluczy potwierdzony. Głosy konta na telefonie: \(prefs.cloudVoices.count). Bez syntezy.")
     }
 
     func testPelnyKatalogPoAktualizacjiNaZyczenie() async throws {

@@ -57,3 +57,9 @@ Pełne źródło prywatne: `ios/elevenlabs.txt`. R-022: wybór silnika, bezpiecz
 Aktualizacja odbioru R-022–026: właściciel przekazał klucz do prób, odwołał wstrzymanie i wymaga rzeczywistej generacji w ElevenLabs, nie zastępowania jej sztucznym dźwiękiem. Używać bardzo krótkich fraz ze względu na niewielki limit. Nie włączać pliku z kluczem do repozytorium ani artefaktów testowych.
 
 R-027 — wszystkie głosy udostępnione przez konto ElevenLabs mają być możliwe do wybrania niezależnie od wskazanego lub niepodanego języka, także głosy dodane ręcznie. Ograniczenie tylko do polskich głosów R-020 nadal dotyczy lokalnej syntezy iOS. Język tekstu w ElevenLabs pozostaje pl.
+
+R-028 — przy każdej zmianie silnika w panelu mowy zachować fokus na regulacji; pierwszy szybki flick w prawo ma odczytać opcję nowego silnika, a powrót w lewo ponownie silnik. Jedyny głos jest informacją, nie wygaszoną regulacją. Sprawdzić rzeczywistą mowę przy szybkiej parze gestów na iPhonie, w obie strony, oraz oddzielnie czas przeliczenia i ułożenia panelu.
+
+R-029 — w wyborze silnika i widocznych komunikatach rozdzielić „Eleven Labs”; nazwa na regulacji: „Eleven Labs — naturalne głosy neuronowe”. Bez zmian języka syntezy, katalogu konta, numeru kompilacji i bez publikacji.
+
+R-030 — na wyraźne polecenie skonfigurować przekazany klucz w prywatnym pęku kluczy tej jednej instalacji iPhone’a. Sprawdzić rzeczywisty katalog po restarcie, bez syntezy, zapisu klucza w repozytorium lub w paczce aplikacji.

@@ -57,6 +57,7 @@ targets:
     dependencies:
       - target: dostepna biblia
     settings:
+      SWIFT_OBJC_BRIDGING_HEADER: UITests/Gesty.h
       PRODUCT_MODULE_NAME: DostepnaBibliaUITests
       PRODUCT_BUNDLE_IDENTIFIER: com.dostepna.biblia.uitests
 schemes:

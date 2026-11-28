@@ -34,7 +34,7 @@ final class ElevenAudio {
         }, kAudioFileMP3Type, &parser)
         guard status == noErr else { throw Self.invalid }
     }
-    private static var invalid: ReaderError { ReaderError("Nie można odtworzyć strumienia MP3 ElevenLabs.") }
+    private static var invalid: ReaderError { ReaderError("Nie można odtworzyć strumienia MP3 Eleven Labs.") }
 
     func feed(_ bytes: Data) throws {
         guard let parser, !closed else { return }

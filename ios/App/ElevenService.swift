@@ -32,7 +32,7 @@ enum ElevenKey {
     }
 }
 
-struct ElevenVoice: Codable {
+struct ElevenVoice: Codable, Equatable {
     let voice_id: String
     let name: String
 }
@@ -70,7 +70,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
 
     func voices(key: String) async throws -> [ElevenVoice] {
         guard !key.isEmpty, !key.contains(where: { $0.isWhitespace || $0.isNewline }) else {
-            throw ReaderError("Wpisz klucz API ElevenLabs bez spacji.")
+            throw ReaderError("Wpisz klucz API Eleven Labs bez spacji.")
         }
         struct Page: Decodable {
             let voices: [ElevenVoice]
@@ -92,7 +92,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
             voices += page.voices.filter { !$0.voice_id.isEmpty && seen.insert($0.voice_id).inserted }
             if !page.has_more { break }
             guard let next = page.next_page_token, !next.isEmpty, pages.insert(next).inserted else {
-                throw ReaderError("ElevenLabs zwróciło niepełną listę głosów. Spróbuj ponownie.")
+                throw ReaderError("Eleven Labs zwróciło niepełną listę głosów. Spróbuj ponownie.")
             }
             token = next
         } while true
@@ -102,7 +102,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
     func speech(text: String, voice: String, key: String) throws -> URLRequest {
         let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")
         guard !voice.isEmpty, voice.unicodeScalars.allSatisfy(allowed.contains) else {
-            throw ReaderError("Niepoprawny identyfikator głosu ElevenLabs. Odśwież listę głosów.")
+            throw ReaderError("Niepoprawny identyfikator głosu Eleven Labs. Odśwież listę głosów.")
         }
         var request = try request(path: "/v1/text-to-speech/\(voice)/stream",
                                   query: [.init(name: "output_format", value: Self.format)], key: key)
@@ -116,7 +116,7 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
     }
 
     static func check(_ response: URLResponse?, body: Data) throws {
-        guard let http = response as? HTTPURLResponse else { throw ReaderError("Brak odpowiedzi ElevenLabs.") }
+        guard let http = response as? HTTPURLResponse else { throw ReaderError("Brak odpowiedzi Eleven Labs.") }
         guard !(200..<300).contains(http.statusCode) else { return }
         let object = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any]
         let fields = [object, object?["detail"] as? [String: Any], object?["error"] as? [String: Any]]
@@ -124,22 +124,22 @@ final class ElevenNetwork: NSObject, URLSessionTaskDelegate {
         let code = codes.joined(separator: " ").lowercased()
         let message: String
         if code.contains("quota") || code.contains("credit") || http.statusCode == 402 {
-            message = "Brak kredytów lub wyczerpany limit wydatków ElevenLabs."
+            message = "Brak kredytów lub wyczerpany limit wydatków Eleven Labs."
         } else if code.contains("permission") || code.contains("authorization_error") || http.statusCode == 403 {
             message = "Klucz nie ma wymaganych uprawnień. Sprawdź dostęp do głosów i generowania mowy."
         } else if http.statusCode == 401 || code.contains("invalid_api_key") {
-            message = "Klucz ElevenLabs jest błędny lub wygasł."
+            message = "Klucz Eleven Labs jest błędny lub wygasł."
         } else if http.statusCode == 429 || code.contains("concurrent") || code.contains("rate_limit") {
-            message = "ElevenLabs ograniczyło liczbę żądań. Spróbuj później."
+            message = "Eleven Labs ograniczyło liczbę żądań. Spróbuj później."
         } else {
-            message = "ElevenLabs nie wykonało żądania (kod \(http.statusCode)). Nie ponowiono go automatycznie."
+            message = "Eleven Labs nie wykonało żądania (kod \(http.statusCode)). Nie ponowiono go automatycznie."
         }
         throw ReaderError(message)
     }
     static func message(_ error: Error) -> String {
         if let known = error as? ReaderError { return known.message }
-        if error is URLError { return "Nie udało się połączyć z ElevenLabs. Sprawdź internet i spróbuj ponownie." }
-        return "Nie udało się odczytać danych ElevenLabs lub zapisać ich na iPhonie."
+        if error is URLError { return "Nie udało się połączyć z Eleven Labs. Sprawdź internet i spróbuj ponownie." }
+        return "Nie udało się odczytać danych Eleven Labs lub zapisać ich na iPhonie."
     }
 }
 

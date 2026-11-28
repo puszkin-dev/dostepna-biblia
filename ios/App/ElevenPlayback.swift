@@ -142,7 +142,7 @@ final class ElevenTransfer: NSObject, URLSessionDataDelegate, @unchecked Sendabl
             guard bytes > 0, expected < 0 || expected == bytes,
                   let content = try? Data(contentsOf: partial, options: .mappedIfSafe), ElevenMP3.complete(content),
                   let audio = try? AVAudioFile(forReading: partial), audio.length > 0 else {
-                throw ReaderError("Nagranie ElevenLabs jest niekompletne. Nie zapisano go w pamięci podręcznej.")
+                throw ReaderError("Nagranie Eleven Labs jest niekompletne. Nie zapisano go w pamięci podręcznej.")
             }
             try FileManager.default.moveItem(at: partial, to: final)
             finish(nil)
@@ -225,7 +225,7 @@ final class ElevenPlayback {
             if let error = existing.failure { throw error }
             return existing
         }
-        guard let key = try ElevenKey.read() else { throw ReaderError("Najpierw wpisz i zapisz klucz ElevenLabs w Ustawieniach.") }
+        guard let key = try ElevenKey.read() else { throw ReaderError("Najpierw wpisz i zapisz klucz Eleven Labs w Ustawieniach.") }
         let request = try ElevenNetwork.shared.speech(text: book.parts[position], voice: book.voice, key: key)
         let item = ElevenTransfer(destination: url)
         transfers[url.lastPathComponent] = item

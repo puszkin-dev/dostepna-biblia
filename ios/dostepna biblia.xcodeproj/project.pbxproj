@@ -10,6 +10,7 @@
 		05B66BC751BCBE0033C00E0C /* ElevenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5ED7B9CE0721789AD630B8 /* ElevenService.swift */; };
 		0F3B31A913DD7E59643433EC /* InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */; };
 		11DF973EFDFA98B58FD9C3B0 /* VoiceOverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */; };
+		15EE012C1D77A161B4A8A142 /* Gesty.m in Sources */ = {isa = PBXBuildFile; fileRef = 922FFF4395403FD8CCE9DC25 /* Gesty.m */; };
 		244A037A65C201CEBD53EA2F /* ChoiceSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */; };
 		2C1FE00F2C89418FBE95730E /* SourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4516FBED7020A57D26A0BB5 /* SourceTests.swift */; };
 		35157854EB109657016F7A61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05BBDE0A44DA6151E1A9C0B0 /* Assets.xcassets */; };
@@ -70,6 +71,7 @@
 		78EB6EFAF58ED2DF642FB99C /* dostepna biblia - testy interfejsu.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "dostepna biblia - testy interfejsu.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CBD7746FCAD08C3AC09D38B /* BookStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookStyle.swift; sourceTree = "<group>"; };
 		8AB6E8B92C2A2D615939D82F /* Readings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readings.swift; sourceTree = "<group>"; };
+		922FFF4395403FD8CCE9DC25 /* Gesty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gesty.m; sourceTree = "<group>"; };
 		93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceTests.swift; sourceTree = "<group>"; };
 		9CF81A2D174F10B9695C604F /* OtherScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherScreens.swift; sourceTree = "<group>"; };
 		ADA0B59F5E4BAD923BCC440F /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 		C32DEF84D41695AF1A64A357 /* ElevenPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenPlayback.swift; sourceTree = "<group>"; };
 		C4516FBED7020A57D26A0BB5 /* SourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTests.swift; sourceTree = "<group>"; };
 		C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		DBF6C2A809929FF265D88CBD /* Gesty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gesty.h; sourceTree = "<group>"; };
 		E4D2F0FDD0180478D22A2944 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EC89737AD70DA3FDDD9BED5B /* dostepna biblia - testy.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "dostepna biblia - testy.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F770651A374EF7F987008A0C /* ReadingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsTests.swift; sourceTree = "<group>"; };
@@ -119,6 +122,8 @@
 		4CBDC46BD1690555025219EF /* UITests */ = {
 			isa = PBXGroup;
 			children = (
+				DBF6C2A809929FF265D88CBD /* Gesty.h */,
+				922FFF4395403FD8CCE9DC25 /* Gesty.m */,
 				93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */,
 				FEB40FEB9993A07192B1552D /* VisualTests.swift */,
 				6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */,
@@ -330,6 +335,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15EE012C1D77A161B4A8A142 /* Gesty.m in Sources */,
 				0F3B31A913DD7E59643433EC /* InterfaceTests.swift in Sources */,
 				B14AC5B9F03EA097F2BE19F8 /* VisualTests.swift in Sources */,
 				11DF973EFDFA98B58FD9C3B0 /* VoiceOverTests.swift in Sources */,
@@ -364,6 +370,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.uitests;
 				PRODUCT_MODULE_NAME = DostepnaBibliaUITests;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = UITests/Gesty.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "dostepna biblia";
 			};
@@ -551,6 +558,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dostepna.biblia.uitests;
 				PRODUCT_MODULE_NAME = DostepnaBibliaUITests;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = UITests/Gesty.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "dostepna biblia";
 			};
