@@ -180,7 +180,13 @@ final class InterfaceTests: XCTestCase {
         XCTAssertNotEqual(chosenRate, "50 procent")
         XCTAssertNotEqual(chosenVolume, "100 procent")
         let engine = app.sliders["Silnik mowy"]
-        if engine.isEnabled { engine.adjust(toNormalizedSliderPosition: 1) }
+        if engine.isEnabled {
+            // Ta próba sprawdza głosy iPhone’a bez konta usługi internetowej.
+            for percent in stride(from: 100, through: 0, by: -5) {
+                engine.adjust(toNormalizedSliderPosition: CGFloat(percent) / 100)
+                if (engine.value as? String) != "ElevenLabs" { break }
+            }
+        }
         let chosenEngine = try XCTUnwrap(engine.value as? String)
         let slider = app.sliders["Głos"]
         if slider.exists { slider.adjust(toNormalizedSliderPosition: 1) }

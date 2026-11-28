@@ -117,7 +117,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
     }
 
     @discardableResult
-    func button(_ title: String, action: @escaping () -> Void) -> UIButton {
+    func button(_ title: String, in stack: UIStackView? = nil, action: @escaping () -> Void) -> UIButton {
         let primary = ["Czytaj", "Losuj cytat", "Szukaj"].contains(title)
         var appearance = primary ? UIButton.Configuration.filled() : UIButton.Configuration.tinted()
         appearance.baseBackgroundColor = BookStyle.accent
@@ -134,7 +134,7 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
         let button = UIButton(configuration: appearance, primaryAction: UIAction { _ in action() })
         button.titleLabel?.numberOfLines = 0
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        addControl(button)
+        addControl(button, to: stack)
         return button
     }
 
@@ -229,6 +229,8 @@ class FormScreen: UIViewController, UIDocumentPickerDelegate {
 final class TextScreen: UIViewController {
     private let reading: Reading
     private let textView = UITextView()
+    var resumeOnOpen = false
+    private var resumable = false
     private var firstOpen = true
     private var destination: Reading.Verse?
     private let playback = UIStackView()
@@ -319,13 +321,18 @@ final class TextScreen: UIViewController {
         let state = SpeechReader.shared.state
         let label: String
         switch state {
-        case .idle: label = "Czytaj na głos"
+        case .idle:
+            if SpeechPreferences().cloudSelected, let (book, _) = ElevenBookmark.load(), book.title == reading.name {
+                resumable = book.parts == ElevenText.chunks(ElevenText.clean(reading.text)) || book.parts.joined(separator: "\n\n") == reading.text
+            } else { resumable = false }
+            label = resumable ? "Wznów czytanie" : "Czytaj na głos"
         case .preparing: label = "Przygotowywanie mowy…"
         case .paused: label = "Wznów czytanie"
         case .speaking: label = "Wstrzymaj czytanie"
         }
-        let largeControls = traitCollection.preferredContentSizeCategory.isAccessibilityCategory && state != .idle
-        transportWidths.forEach { $0.isActive = !largeControls && state != .idle }
+        let showTransport = state != .idle || resumable
+        let largeControls = traitCollection.preferredContentSizeCategory.isAccessibilityCategory && showTransport
+        transportWidths.forEach { $0.isActive = !largeControls && showTransport }
         playback.distribution = largeControls ? .fillEqually : .fill
         play.configuration?.title = largeControls ? nil : label
         play.configuration?.image = UIImage(systemName: state == .speaking ? "pause.fill" : "play.fill")
@@ -333,20 +340,26 @@ final class TextScreen: UIViewController {
         play.largeContentTitle = label
         play.largeContentImage = play.configuration?.image
         play.isEnabled = state != .preparing
-        rewind.isHidden = state == .idle
-        halt.isHidden = state == .idle
+        halt.isHidden = !showTransport
+        rewind.isHidden = !showTransport
+        if state == .idle, viewIfLoaded?.window != nil, navigationController?.topViewController === self, presentedViewController == nil, let message = SpeechReader.shared.takeCloudError() {
+            let alert = UIAlertController(title: "Czytanie na głos", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: !UIAccessibility.isReduceMotionEnabled)
+        }
     }
     @objc private func toggleSpeech() {
         switch SpeechReader.shared.state {
-        case .idle: startSpeech()
+        case .idle: beginSpeech(fromBeginning: false)
         case .preparing: break
         case .speaking: SpeechReader.shared.pause()
         case .paused: SpeechReader.shared.resume()
         }
     }
-    @objc private func startSpeech() {
+    @objc private func startSpeech() { beginSpeech(fromBeginning: true) }
+    private func beginSpeech(fromBeginning: Bool) {
         do {
-            if let message = try SpeechReader.shared.start(reading.text, title: reading.name) {
+            if let message = try SpeechReader.shared.start(reading.text, title: reading.name, fromBeginning: fromBeginning) {
                 let alert = UIAlertController(title: "Zmieniono głos", message: message, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 present(alert, animated: true)
@@ -357,14 +370,26 @@ final class TextScreen: UIViewController {
             present(alert, animated: true)
         }
     }
-    @objc private func stopSpeech() { SpeechReader.shared.stop() }
+    @objc private func stopSpeech() {
+        if SpeechReader.shared.state == .idle && resumable {
+            do { try ElevenBookmark.clear(); updatePlayback() } catch {
+                let alert = UIAlertController(title: "Czytanie na głos", message: "Nie udało się usunąć zapisanego miejsca.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+            }
+        } else { SpeechReader.shared.stop() }
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopSpeech()
+        SpeechReader.shared.leave()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if resumeOnOpen {
+            resumeOnOpen = false
+            beginSpeech(fromBeginning: false)
+        }
         if let destination {
             self.destination = nil
             textView.selectedRange = NSRange(location: destination.offset, length: 0)

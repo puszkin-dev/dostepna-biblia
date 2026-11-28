@@ -103,3 +103,51 @@ final class SpeechTests: XCTestCase {
         XCTAssertEqual(reader.state, .idle)
     }
 }
+
+final class ElevenContractTests: XCTestCase {
+    func testTekstIPodzialBezUtratyLiter() {
+        let text = "# **Zażółć gęślą jaźń**\n\n[Źródło](https://example.org/x) *tekst*."
+        XCTAssertEqual(ElevenText.clean(text), "Zażółć gęślą jaźń\n\nŹródło tekst.")
+        XCTAssertEqual(ElevenText.chunks(ElevenText.clean(" ** ")), [])
+        let long = String(repeating: "ę", count: 4001)
+        XCTAssertEqual(ElevenText.chunks(long).map(\.count), [2000, 2000, 1])
+        XCTAssertEqual(ElevenText.chunks(long).joined(), long)
+        let prefix = String(repeating: "A", count: 1950) + "."
+        let suffix = String(repeating: "ą", count: 90)
+        XCTAssertEqual(ElevenText.chunks(prefix + " " + suffix), [prefix, suffix])
+    }
+    func testZadanieBezWysylkiIKluczCache() throws {
+        let request = try ElevenNetwork.shared.speech(text: "Łaska", voice: "glos", key: "fikcyjny")
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.url?.path, "/v1/text-to-speech/glos/stream")
+        let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(request.httpBody)) as? [String: Any])
+        XCTAssertEqual(payload["model_id"] as? String, "eleven_v4")
+        XCTAssertEqual(payload["language_code"] as? String, "pl")
+        XCTAssertEqual(payload["text"] as? String, "Łaska")
+        XCTAssertThrowsError(try ElevenNetwork.shared.speech(text: "Łaska", voice: "../inny", key: "fikcyjny"))
+        let id = ElevenText.cacheID(text: "Łaska", voice: "A")
+        XCTAssertNotEqual(id, ElevenText.cacheID(text: "Łaska", voice: "B"))
+        XCTAssertNotEqual(id, ElevenText.cacheID(text: "Laska", voice: "A"))
+    }
+    func testUrwanaRamkaNieJestGotowymPlikiem() {
+        var frame = Data([255, 251, 144, 0])
+        frame.append(Data(repeating: 0, count: 413))
+        XCTAssertTrue(ElevenMP3.complete(frame + frame))
+        XCTAssertFalse(ElevenMP3.complete(frame + frame.dropLast()))
+        XCTAssertFalse(ElevenMP3.complete(Data()))
+        XCTAssertFalse(ElevenMP3.complete(Data("To nie jest MP3".utf8)))
+    }
+    func testRozneBledySerwisuBezSieci() throws {
+        let url = try XCTUnwrap(URL(string: "https://example.org/"))
+        for (status, code, message) in [(401, "invalid_api_key", "wygasł"), (401, "missing_permissions", "uprawnień"),
+                                         (401, "quota_exceeded", "kredytów"), (429, "", "liczbę żądań"),
+                                         (503, "", "503")] {
+            let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: nil)
+            let data = try JSONSerialization.data(withJSONObject: ["detail": ["status": code]])
+            XCTAssertThrowsError(try ElevenNetwork.check(response, body: data)) {
+                XCTAssertTrue($0.localizedDescription.contains(message))
+            }
+        }
+        XCTAssertTrue(ElevenNetwork.message(URLError(.notConnectedToInternet)).contains("internet"))
+    }
+}

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05B66BC751BCBE0033C00E0C /* ElevenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5ED7B9CE0721789AD630B8 /* ElevenService.swift */; };
 		0F3B31A913DD7E59643433EC /* InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9C883F1FB2ACCF7561602 /* InterfaceTests.swift */; };
 		11DF973EFDFA98B58FD9C3B0 /* VoiceOverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC0E648DFAA878885570D6D /* VoiceOverTests.swift */; };
 		244A037A65C201CEBD53EA2F /* ChoiceSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */; };
@@ -22,6 +23,7 @@
 		7D905B77F45FEBF50FCB53BE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA0B59F5E4BAD923BCC440F /* Application.swift */; };
 		8A3F51E46792B69E77BF5738 /* SpeechReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6503EEB0411B46E7ECD36815 /* SpeechReader.swift */; };
 		8A63528ADAF38C724F561B11 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = EFEE0B22918E4B7277EC56FB /* SwiftSoup */; };
+		922BCB92284EB0A246166F27 /* ElevenPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32DEF84D41695AF1A64A357 /* ElevenPlayback.swift */; };
 		95E0021A2B212E171331574B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4A1316139FECFEF26EE18F46 /* PrivacyInfo.xcprivacy */; };
 		A26B2B9EF9C35D9DF3158527 /* Readings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB6E8B92C2A2D615939D82F /* Readings.swift */; };
 		A26C80B938D7A31A08F8DA28 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */; };
@@ -29,6 +31,7 @@
 		B14AC5B9F03EA097F2BE19F8 /* VisualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB40FEB9993A07192B1552D /* VisualTests.swift */; };
 		D03C747B491597CA616E9A80 /* Licencja-SwiftSoup.txt in Resources */ = {isa = PBXBuildFile; fileRef = 11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */; };
 		E4CD7A78E9ECF5E4D8E63C82 /* ReadingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F770651A374EF7F987008A0C /* ReadingsTests.swift */; };
+		FD0AB9A53F18BAE40C90F3DA /* ElevenAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4B52BAAFA39102B62674BB /* ElevenAudio.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,9 +56,11 @@
 		088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceSlider.swift; sourceTree = "<group>"; };
 		11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Licencja-SwiftSoup.txt"; sourceTree = "<group>"; };
 		19D580C67E3BDD0D8488BA38 /* FormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormScreen.swift; sourceTree = "<group>"; };
+		1F4B52BAAFA39102B62674BB /* ElevenAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenAudio.swift; sourceTree = "<group>"; };
 		2C24907DC051BAD20FE8153C /* SpeechTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTests.swift; sourceTree = "<group>"; };
 		2C401C1BB004347808B5CB08 /* dostepna biblia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "dostepna biblia.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FB691050DBCF48D9B973E8F /* LiturgyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgyScreen.swift; sourceTree = "<group>"; };
+		3C5ED7B9CE0721789AD630B8 /* ElevenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenService.swift; sourceTree = "<group>"; };
 		4A1316139FECFEF26EE18F46 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5933E88BE0D2B5A475DB4FDC /* VerseList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseList.swift; sourceTree = "<group>"; };
 		63376A0E1274BCFD3BA2A5F2 /* AppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceTests.swift; sourceTree = "<group>"; };
@@ -69,6 +74,7 @@
 		9CF81A2D174F10B9695C604F /* OtherScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherScreens.swift; sourceTree = "<group>"; };
 		ADA0B59F5E4BAD923BCC440F /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		B7C122E2A55A0DA384DB2BDE /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
+		C32DEF84D41695AF1A64A357 /* ElevenPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenPlayback.swift; sourceTree = "<group>"; };
 		C4516FBED7020A57D26A0BB5 /* SourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTests.swift; sourceTree = "<group>"; };
 		C8F2B0001DB1F16864BE701A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		E4D2F0FDD0180478D22A2944 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -151,6 +157,9 @@
 				FF3D99FA2F82B1FABD77DA6C /* Book.swift */,
 				7CBD7746FCAD08C3AC09D38B /* BookStyle.swift */,
 				088A7EB6583C935E4ADABB38 /* ChoiceSlider.swift */,
+				1F4B52BAAFA39102B62674BB /* ElevenAudio.swift */,
+				C32DEF84D41695AF1A64A357 /* ElevenPlayback.swift */,
+				3C5ED7B9CE0721789AD630B8 /* ElevenService.swift */,
 				19D580C67E3BDD0D8488BA38 /* FormScreen.swift */,
 				11B7B952BAE9A1B5141E0AC6 /* Licencja-SwiftSoup.txt */,
 				2FB691050DBCF48D9B973E8F /* LiturgyScreen.swift */,
@@ -304,6 +313,9 @@
 				A5D8C8DD5DE3A34907D678B4 /* Book.swift in Sources */,
 				51FF71F20C26CB4D5A4512ED /* BookStyle.swift in Sources */,
 				244A037A65C201CEBD53EA2F /* ChoiceSlider.swift in Sources */,
+				FD0AB9A53F18BAE40C90F3DA /* ElevenAudio.swift in Sources */,
+				922BCB92284EB0A246166F27 /* ElevenPlayback.swift in Sources */,
+				05B66BC751BCBE0033C00E0C /* ElevenService.swift in Sources */,
 				36F11E6BED29A7C928F67056 /* FormScreen.swift in Sources */,
 				4956E85D7EC549ADB590DE2E /* LiturgyScreen.swift in Sources */,
 				3DE8BD1728B558EC9FA761B7 /* OtherScreens.swift in Sources */,

@@ -44,7 +44,23 @@ struct SpeechPreferences {
         get { defaults.string(forKey: "glosMowy") }
         nonmutating set { defaults.set(newValue, forKey: "glosMowy") }
     }
+    var cloudSelected: Bool {
+        get { defaults.bool(forKey: "silnikEleven") }
+        nonmutating set { defaults.set(newValue, forKey: "silnikEleven") }
+    }
+    var cloudVoice: String? {
+        get { defaults.string(forKey: "glosEleven") }
+        nonmutating set { defaults.set(newValue, forKey: "glosEleven") }
+    }
+    var cloudVoices: [ElevenVoice] {
+        get {
+            guard let data = defaults.data(forKey: "katalogEleven") else { return [] }
+            return (try? JSONDecoder().decode([ElevenVoice].self, from: data)) ?? []
+        }
+        nonmutating set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "katalogEleven") }
+    }
     func reset() {
+        cloudSelected = false
         for key in ["tempoProcent", "glosnoscProcent", "tempoMowy", "glosnoscMowy", "glosMowy"] { defaults.removeObject(forKey: key) }
     }
 }
@@ -117,10 +133,17 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
             NotificationCenter.default.post(name: Self.changed, object: self)
         }
     }
+    private var cloud: ElevenPlayback?
+    private var cloudError: String?
+    func takeCloudError() -> String? {
+        defer { cloudError = nil }
+        return cloudError
+    }
     private let synth = AVSpeechSynthesizer()
     private let session = AVAudioSession.sharedInstance()
     private var last: AVSpeechUtterance?
     private var active = Set<ObjectIdentifier>()
+    var isSample: Bool { readingTitle == nil }
     private var readingTitle: String?
     private override init() {
         super.init()
@@ -130,7 +153,8 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
         center.addObserver(self, selector: #selector(interrupted), name: AVAudioSession.interruptionNotification, object: session)
         center.addObserver(self, selector: #selector(routeChanged), name: AVAudioSession.routeChangeNotification, object: session)
         center.addObserver(self, selector: #selector(enteredBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        center.addObserver(self, selector: #selector(stop), name: AVAudioSession.mediaServicesWereResetNotification, object: session)
+        center.addObserver(self, selector: #selector(leave), name: AVAudioSession.mediaServicesWereResetNotification, object: session)
+        center.addObserver(self, selector: #selector(leave), name: UIApplication.willTerminateNotification, object: nil)
         let commands = MPRemoteCommandCenter.shared()
         commands.playCommand.addTarget(self, action: #selector(remotePlay))
         commands.pauseCommand.addTarget(self, action: #selector(remotePause))
@@ -141,8 +165,14 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
     static func paragraphs(_ text: String) -> [String] {
         text.components(separatedBy: "\n\n").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
     }
-    func start(_ text: String, title: String? = nil, settings: SpeechPreferences = SpeechPreferences()) throws -> String? {
-        stop()
+    func start(_ text: String, title: String? = nil, settings: SpeechPreferences = SpeechPreferences(),
+               fromBeginning: Bool = false) throws -> String? {
+        leave()
+        cloudError = nil
+        if settings.cloudSelected {
+            try startCloud(text, title: title, settings: settings, fromBeginning: fromBeginning)
+            return nil
+        }
         let parts = Self.paragraphs(text)
         guard !parts.isEmpty else { throw ReaderError("Brak tekstu do przeczytania.") }
         let identifier = settings.voiceID
@@ -165,16 +195,73 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
         queue.forEach(synth.speak)
         return fallback ? "Poprzedni głos nie jest dostępny wśród polskich głosów. Teraz czyta \(voice.name)." : nil
     }
+    private func startCloud(_ text: String, title: String?, settings: SpeechPreferences, fromBeginning: Bool) throws {
+        let parts = ElevenText.chunks(ElevenText.clean(text))
+        guard !parts.isEmpty else { throw ReaderError("Brak tekstu do przeczytania.") }
+        let saved = title != nil && !fromBeginning ? ElevenBookmark.load() : nil
+        let book: ElevenBookmark
+        let index: Int
+        let seconds: Double
+        if let (previous, cursor) = saved, previous.title == title, (previous.parts == parts || previous.parts.joined(separator: "\n\n") == text) {
+            book = previous
+            index = cursor.index
+            seconds = cursor.seconds
+        } else {
+            guard let voice = settings.cloudVoice else { throw ReaderError("Najpierw zapisz klucz i wybierz głos ElevenLabs w Ustawieniach.") }
+            book = ElevenBookmark(id: UUID(), title: title ?? "Próbka", parts: parts, voice: voice, model: ElevenNetwork.model)
+            index = 0
+            seconds = 0
+        }
+        let playback = try ElevenPlayback(book: book, index: index, seconds: seconds, remember: title != nil, settings: settings)
+        do {
+            try session.setCategory(.playback, mode: .spokenAudio, options: title == nil ? [.mixWithOthers] : [])
+            try session.setActive(true)
+            cloud = playback
+            readingTitle = title
+            state = .preparing
+            playback.preparing = { [weak self] in self?.state = .preparing }
+            playback.started = { [weak self] in self?.state = .speaking }
+            playback.finished = { [weak self] error in
+                guard let self else { return }
+                cloudError = error.map(ElevenNetwork.message)
+                cloud = nil
+                let announcement = cloudError
+                finish()
+                if let announcement { UIAccessibility.post(notification: .announcement, argument: announcement) }
+            }
+            try playback.start()
+        } catch {
+            try? playback.stop(keep: true)
+            cloud = nil
+            finish()
+            throw ReaderError(ElevenNetwork.message(error))
+        }
+    }
     func pause() {
+        if let cloud, state == .speaking { cloud.pause(); if self.cloud != nil { state = .paused }; return }
         guard state == .speaking, synth.pauseSpeaking(at: .immediate) else { return }
         state = .paused
     }
     func resume() {
         guard state == .paused else { return }
-        do { try session.setActive(true) } catch { stop(); return }
+        do { try session.setActive(true) } catch { leave(); return }
+        if let cloud {
+            do { try cloud.resume(); state = .speaking }
+            catch { cloudError = "Nie można wznowić odtwarzania."; leave() }
+            return
+        }
         if synth.continueSpeaking() { state = .speaking }
     }
-    @objc func stop() {
+    @objc func stop() { end(keep: false) }
+    @objc func leave() { end(keep: true) }
+    private func end(keep: Bool) {
+        if let cloud {
+            do { try cloud.stop(keep: keep) }
+            catch { cloudError = "Nie udało się zapisać zmiany sesji." }
+            self.cloud = nil
+            finish()
+            return
+        }
         guard last != nil else { return }
         last = nil
         active.removeAll()
@@ -188,7 +275,7 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
         try? session.setActive(false, options: .notifyOthersOnDeactivation)
         state = .idle
     }
-    @objc private func enteredBackground() { if readingTitle == nil { stop() } }
+    @objc private func enteredBackground() { if readingTitle == nil { leave() } else { cloud?.checkpoint() } }
     private func updateNowPlaying() {
         let commands = MPRemoteCommandCenter.shared()
         commands.playCommand.isEnabled = readingTitle != nil && state == .paused
@@ -240,11 +327,11 @@ final class SpeechReader: NSObject, AVSpeechSynthesizerDelegate {
         if active.contains(ObjectIdentifier(utterance)), !synth.isPaused { state = .speaking }
     }
     @objc private func interrupted(_ note: Notification) {
-        if note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt == AVAudioSession.InterruptionType.began.rawValue { stop() }
+        if note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt == AVAudioSession.InterruptionType.began.rawValue { leave() }
     }
     @objc private func routeChanged(_ note: Notification) {
         if note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt == AVAudioSession.RouteChangeReason.oldDeviceUnavailable.rawValue {
-            DispatchQueue.main.async { self.stop() }
+            DispatchQueue.main.async { self.leave() }
         }
     }
 }
