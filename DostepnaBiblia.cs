@@ -54,8 +54,11 @@ internal static class Liturgia
         @"(?<Mass>(?-i:MSZA[ \t][^\r\n\p{Ll}]*))(?=\r?$))",
         RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+    // Feast pages with a Vigil Mass point to its readings with a "kliknij TUTAJ" link that no longer
+    // works. The sentence before the link is removed too when it only announces the Vigil Mass.
     private static readonly Regex VigilNotice = new Regex(
-        @"(?is)<p\b[^>]*>(?:(?!</p>).)*?kliknij\s*(?:</span>\s*)?<a\b[^>]*>\s*TUTAJ\s*</a>(?:(?!</p>).)*</p>");
+        @"^(?:[^\r\n]*?wigili[^\r\n]*?\.[ \t]+)?Jeśli chcesz zapoznać się z[^\r\n]*?kliknij[ \t]+TUTAJ\.?[ \t]*(?:\r\n)*",
+        RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     internal static async Task<string> ReadDay(DateTime date, Part part = Part.All)
     {
@@ -78,9 +81,8 @@ internal static class Liturgia
             throw new FormatException("Adres czytań nie zgadza się z wybraną datą.");
 
         string html = await Http.GetStringAsync(readingUrl).ConfigureAwait(false);
+        string content = VigilNotice.Replace(ExtractReadings(html), "");
         bool christmas = date.Month == 12 && date.Day == 25;
-        // The Christmas page points to the Vigil Mass with a link that no longer works.
-        string content = ExtractReadings(christmas ? VigilNotice.Replace(html, "") : html);
         if (christmas)
         {
             string masses = await ReadChristmasMasses(date, content).ConfigureAwait(false);

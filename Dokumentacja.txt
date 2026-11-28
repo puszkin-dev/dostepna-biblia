@@ -150,8 +150,16 @@ Aplikacja nie zawiera wbudowanej bazy tekstów liturgicznych ani Biblii.
 
 TwojaBiblia.pl publikuje na 25 grudnia tylko Mszę w nocy. Dlatego
 czytania Mszy o świcie i Mszy w dzień program pobiera z liturgia.wiara.pl
-(Liturgia Słowa według lekcjonarza z 2015 roku). Pomija też umieszczony
-na TwojaBiblia.pl komunikat o Mszy wigilijnej z nieaktywnym odnośnikiem.
+(Liturgia Słowa według lekcjonarza z 2015 roku).
+
+W niektóre uroczystości TwojaBiblia.pl umieszcza przed czytaniami
+komunikat „Jeśli chcesz zapoznać się z Liturgią Słowa Mszy wigilijnej…
+kliknij TUTAJ” z odnośnikiem, który już nie działa. Dotyczy to m.in.
+Narodzenia Pańskiego (25 grudnia), Zesłania Ducha Świętego, Narodzenia
+św. Jana Chrzciciela (24 czerwca), Świętych Apostołów Piotra i Pawła
+(29 czerwca) i Wniebowzięcia NMP (15 sierpnia). Program pomija ten
+komunikat i pokazuje czytania Mszy z dnia uroczystości. Pozostałe uwagi
+z tego miejsca, np. o Mszach wotywnych 29 czerwca, zostają w tekście.
 
 Źródło czytań i informacja o przekładzie
 https://twojabiblia.pl/czytania-z-dnia/
