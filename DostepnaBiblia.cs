@@ -34,6 +34,14 @@ internal static class Liturgia
     private const string ChristmasMissing =
         "Nie udało się pobrać czytań Mszy o świcie i Mszy w dzień z liturgia.wiara.pl. " +
         "Sprawdź połączenie i spróbuj ponownie.";
+    private const string HolySaturdayNote =
+        "W Wielką Sobotę Kościół trwa przy grobie Pana, rozważając Jego mękę i śmierć, " +
+        "i w ciągu dnia nie sprawuje Mszy Świętej. Dlatego sama Wielka Sobota nie ma własnych czytań mszalnych. " +
+        "Po zapadnięciu zmroku rozpoczyna się Wigilia Paschalna, która należy już " +
+        "do Niedzieli Zmartwychwstania Pańskiego.";
+    private const string HolySaturdayVigil = " Poniżej znajdziesz czytania Wigilii Paschalnej.";
+    private const string HolySaturdayMissing =
+        " TwojaBiblia.pl nie udostępnia na tę datę czytań Wigilii Paschalnej.";
 
     [STAThread]
     private static void Main()
@@ -48,7 +56,10 @@ internal static class Liturgia
 
     private static readonly Regex SectionHeadings = new Regex(
         @"^(?:(?:(?<First>PIERWSZE CZYTANIE|I CZYTANIE)|(?<Second>DRUGIE CZYTANIE|II CZYTANIE)|" +
-        @"(?<Psalm>PSALM RESPONSORYJNY|PSALM)|(?<Acclamation>ŚPIEW PRZED EWANGELIĄ|AKLAMACJA)|" +
+        // The Easter Vigil numbers its psalms and has readings three to eight, which only end
+        // the previous section.
+        @"(?:TRZECIE|CZWARTE|PIĄTE|SZÓSTE|SIÓDME|ÓSME) CZYTANIE|" +
+        @"(?<Psalm>(?:\d+[ \t]+)?(?:PSALM RESPONSORYJNY|PSALM))|(?<Acclamation>ŚPIEW PRZED EWANGELIĄ|AKLAMACJA)|" +
         @"(?<Gospel>EWANGELIA)|(?<Mass>MSZA))(?=[ \t]*(?:\(|\r?$|[–:])|[ \t]+(?:W CZASIE|DŁUŻSZA|KRÓTSZA|WERSJA)\b)|" +
         // Mass titles such as "MSZA W NOCY (PASTERKA)" are written in capitals on their own line.
         @"(?<Mass>(?-i:MSZA[ \t][^\r\n\p{Ll}]*))(?=\r?$))",
@@ -61,6 +72,33 @@ internal static class Liturgia
         RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     internal static async Task<string> ReadDay(DateTime date, Part part = Part.All)
+    {
+        string content = await ReadPublishedDay(date).ConfigureAwait(false);
+        string note = null;
+        if (date == EasterSunday(date.Year).AddDays(-1))
+            note = HolySaturdayNote + (content == null ? HolySaturdayMissing : HolySaturdayVigil);
+        else if (content == null)
+            return null;
+
+        bool christmas = date.Month == 12 && date.Day == 25;
+        if (content != null && christmas)
+        {
+            string masses = await ReadChristmasMasses(date, content).ConfigureAwait(false);
+            if (masses.Length != 0)
+                content += "\r\n\r\n" + masses;
+        }
+        if (content != null && part != Part.All)
+            content = SelectPart(content, part);
+        string text = date.ToString("dddd, d MMMM yyyy", Polish);
+        if (note != null)
+            text += "\r\n\r\n" + note;
+        if (content != null)
+            text += "\r\n\r\n" + content + "\r\n\r\n" + (christmas ? ChristmasSource : Source);
+        return text;
+    }
+
+    // Returns the readings published by TwojaBiblia.pl for the date, or null when it has none.
+    private static async Task<string> ReadPublishedDay(DateTime date)
     {
         var monthUrl = new Uri(Site, string.Format(CultureInfo.InvariantCulture,
             "wp-json/post-calendar/v1/month?year={0}&month={1}", date.Year, date.Month));
@@ -81,18 +119,20 @@ internal static class Liturgia
             throw new FormatException("Adres czytań nie zgadza się z wybraną datą.");
 
         string html = await Http.GetStringAsync(readingUrl).ConfigureAwait(false);
-        string content = VigilNotice.Replace(ExtractReadings(html), "");
-        bool christmas = date.Month == 12 && date.Day == 25;
-        if (christmas)
-        {
-            string masses = await ReadChristmasMasses(date, content).ConfigureAwait(false);
-            if (masses.Length != 0)
-                content += "\r\n\r\n" + masses;
-        }
-        if (part != Part.All)
-            content = SelectPart(content, part);
-        return date.ToString("dddd, d MMMM yyyy", Polish) + "\r\n\r\n" +
-            content + "\r\n\r\n" + (christmas ? ChristmasSource : Source);
+        return VigilNotice.Replace(ExtractReadings(html), "");
+    }
+
+    // Anonymous Gregorian algorithm (Meeus/Jones/Butcher).
+    internal static DateTime EasterSunday(int year)
+    {
+        int a = year % 19, b = year / 100, c = year % 100;
+        int d = b / 4, e = b % 4, f = (b + 8) / 25, g = (b - f + 1) / 3;
+        int h = (19 * a + b - d - g + 15) % 30;
+        int i = c / 4, k = c % 4;
+        int l = (32 + 2 * e + 2 * i - h - k) % 7;
+        int m = (a + 11 * h + 22 * l) / 451;
+        int monthAndDay = h + l - 7 * m + 114;
+        return new DateTime(year, monthAndDay / 31, monthAndDay % 31 + 1);
     }
 
     private static async Task<string> ReadChristmasMasses(DateTime date, string published)
@@ -196,19 +236,24 @@ internal static class Liturgia
 
     private static string ExtractReadings(string html)
     {
-        // The reading is printed in a justified block, with either an inline title or a heading.
-        var startPattern = new Regex(
-            @"<div\b[^>]*style=""\s*text-align\s*:\s*justify\s*;?\s*""[^>]*>",
-            RegexOptions.IgnoreCase);
-        foreach (Match start in startPattern.Matches(html))
+        var startPatterns = new[] {
+            // The reading is usually printed in a justified block, with either an inline title or a heading.
+            new Regex(@"<div\b[^>]*style=""\s*text-align\s*:\s*justify\s*;?\s*""[^>]*>", RegexOptions.IgnoreCase),
+            // Some pages, such as the Easter Vigil, have the readings directly in the post content.
+            new Regex(@"<div\b[^>]*\bitemprop=""text""[^>]*>", RegexOptions.IgnoreCase)
+        };
+        foreach (Regex startPattern in startPatterns)
         {
-            string block = DivContent(html, start.Index);
-            if (block == null)
-                continue;
-            string text = ToPlainText(block);
-            if (text.IndexOf("PSALM", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                text.IndexOf("EWANGELIA", StringComparison.OrdinalIgnoreCase) >= 0)
-                return text;
+            foreach (Match start in startPattern.Matches(html))
+            {
+                string block = DivContent(html, start.Index);
+                if (block == null)
+                    continue;
+                string text = ToPlainText(block);
+                if (text.IndexOf("PSALM", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    text.IndexOf("EWANGELIA", StringComparison.OrdinalIgnoreCase) >= 0)
+                    return text;
+            }
         }
         throw new FormatException("Strona zmieniła układ lub nie zawiera pełnego tekstu czytań.");
     }

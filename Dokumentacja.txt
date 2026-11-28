@@ -43,6 +43,18 @@ i Mszy w dzień. Każdą poprzedza jej nazwa, np. „MSZA O ŚWICIE”.
 Gdy wybierzesz jedną część, na przykład Ewangelię, zobaczysz ją
 z każdej z tych Mszy, również poprzedzoną nazwą Mszy.
 
+W Wielką Sobotę w ciągu dnia nie sprawuje się Mszy Świętej. Program
+wyjaśnia to na początku tekstu, a potem pokazuje czytania Wigilii
+Paschalnej, które TwojaBiblia.pl publikuje pod tą datą: Exultet
+(Orędzie Wielkanocne), siedem czytań ze Starego Testamentu
+z psalmami, Epistołę, psalm i Ewangelię. Wigilia jest sprawowana
+po zapadnięciu zmroku i należy już do Niedzieli Zmartwychwstania.
+Opcje „Pierwsze czytanie”
+i „Drugie czytanie” pokazują pierwsze i drugie czytanie Wigilii,
+a „Psalm” wszystkie ponumerowane psalmy. Pozostałe czytania znajdziesz
+w opcji „Cała liturgia”. Gdy TwojaBiblia.pl nie udostępnia czytań
+Wigilii dla danego roku, program pokazuje samo wyjaśnienie.
+
 3. Zapisywanie do pliku TXT
 
 1) Ustaw datę i część liturgii, którą chcesz zapisać.
